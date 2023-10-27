@@ -14,15 +14,20 @@ sense.
 
 The plan is to develop an exercise comprised of the following steps:
 
+- Add a `bin/tomcat-docker.sh` script to launch the [Tomcat Docker image][].
+- Set up a continuous integration pipeline based on [GitHub Actions][] and the
+  `bin/tomcat-docker.sh` script.
 - Creating a [walking skeleton][] implementation and adding a large end-to-end
-  test to validate it, likely using [Selenium WebDriver][].
+  test to validate it, likely using [Selenium WebDriver][] as well as [headless
+  Chrome][].
 - Developing the String Calculator using TDD and small unit tests.
 - Adding a medium integration test to ensure the Servlet passes parameters to
   the internal String Calculator logic and passes back the results.
 - Adding unit tests for JavaScript components, likely incorporating the [Mocha
   testing framework][], [Chai assertion library][], and [Sinon test double framework][].
 - Using [test doubles][] in unit tests. This may involve extending the String
-  Calculator example or adding a completely different one.
+  Calculator example or adding a completely different one, possibly based on
+  [Apache Solr][].
 
 ## Status
 
@@ -132,12 +137,16 @@ url pattern](https://stackoverflow.com/questions/4140448/difference-between-and-
 
 [String Calculator kata]: https://osherove.com/tdd-kata-1
 [Test Pyramid]: https://mike-bland.com/2023/08/31/the-test-pyramid-and-the-chain-reaction.html
-[Selenium WebDriver]: https://www.selenium.dev/documentation/webdriver/
+[Tomcat Docker image]: https://hub.docker.com/_/tomcat
+[GitHub Actions]: https://github.com/features/actions
 [walking skeleton]: https://wiki.c2.com/?WalkingSkeleton
+[Selenium WebDriver]: https://www.selenium.dev/documentation/webdriver/
+[headless Chrome]: https://developer.chrome.com/blog/headless-chrome/
 [Mocha testing framework]: https://mochajs.org/
 [Chai assertion library]: https://www.chaijs.com/
 [Sinon test double framework]: https://sinonjs.org/
 [test doubles]: https://mike-bland.com/2023/09/06/test-doubles.html
+[Apache Solr]: https://solr.apache.org/
 [HTML &lt;form&gt;]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
 [Open Source software]: https://opensource.org/osd-annotated
 [Mozilla Public License 2.0]: https://www.mozilla.org/MPL/
