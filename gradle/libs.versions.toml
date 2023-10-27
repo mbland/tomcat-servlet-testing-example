@@ -1,0 +1,7 @@
+[versions]
+servletVer = "6.0.0"
+junitVer = "5.9.3"
+
+[libraries]
+servlet = { module = "jakarta.servlet:jakarta.servlet-api", version.ref="servletVer"}
+junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitVer" }
