@@ -21,6 +21,7 @@ class StringCalculatorServletTest {
     @Disabled("Need to get WAR deploying successfully first.")
     @Test void helloWorldPlaceholder() throws Exception {
         HttpClient client = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(BASE_URI)
@@ -31,6 +32,7 @@ class StringCalculatorServletTest {
                 req, BodyHandlers.ofString()
         );
 
+        assertEquals(200, resp.statusCode());
         assertEquals("Hello, World!", resp.body());
     }
 }
