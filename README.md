@@ -14,7 +14,6 @@ sense.
 
 The plan is to develop an exercise comprised of the following steps:
 
-- Add a `bin/tomcat-docker.sh` script to launch the [Tomcat Docker image][].
 - Set up a continuous integration pipeline based on [GitHub Actions][] and the
   `bin/tomcat-docker.sh` script.
 - Creating a [walking skeleton][] implementation and adding a large end-to-end
@@ -131,13 +130,18 @@ url pattern](https://stackoverflow.com/questions/4140448/difference-between-and-
 - [The Java EE 6 Tutorial: Java Servlet
   Technology](https://docs.oracle.com/javaee/6/tutorial/doc/bnafd.html)
 
+## Add a `bin/tomcat-docker.sh` script to launch the [Tomcat Docker image][]
+
+This script can be run manually, but the plan is to make it part of the CI
+build. I'm also planning to try launching it from the setup of the tests that
+need it, eventually.
+
 ## Additional References
 
 - [Building a web application with Gradle](https://openliberty.io/guides/gradle-intro.html)
 
 [String Calculator kata]: https://osherove.com/tdd-kata-1
 [Test Pyramid]: https://mike-bland.com/2023/08/31/the-test-pyramid-and-the-chain-reaction.html
-[Tomcat Docker image]: https://hub.docker.com/_/tomcat
 [GitHub Actions]: https://github.com/features/actions
 [walking skeleton]: https://wiki.c2.com/?WalkingSkeleton
 [Selenium WebDriver]: https://www.selenium.dev/documentation/webdriver/
@@ -168,3 +172,4 @@ url pattern](https://stackoverflow.com/questions/4140448/difference-between-and-
 [Create Tomcat > Local run configuration]: https://www.baeldung.com/tomcat-deploy-war#1-local-configuration
 [Tomcat deployment]: https://tomcat.apache.org/tomcat-10.1-doc/appdev/deployment.html
 [JUnit]: https://junit.org/
+[Tomcat Docker image]: https://hub.docker.com/_/tomcat

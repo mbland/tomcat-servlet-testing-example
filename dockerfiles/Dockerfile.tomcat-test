@@ -1,0 +1,6 @@
+# syntax=docker/dockerfile:1.6.0
+ARG TOMCAT_TAG=10.1.15-jdk21-temurin-jammy
+ARG SERVLET_ARTIFACT=strcalc/build/libs/strcalc.war
+
+FROM tomcat:${TOMCAT_TAG}
+COPY ../${SERVLET_ARTIFACT} /usr/local/tomcat/webapps/
