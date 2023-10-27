@@ -21,7 +21,7 @@ The plan is to develop an exercise comprised of the following steps:
   the internal String Calculator logic and passes back the results.
 - Adding unit tests for JavaScript components, likely incorporating the [Mocha
   testing framework][], [Chai assertion library][], and [Sinon test double framework][].
-- Using test doubles in unit tests. This may involve extending the String
+- Using [test doubles][] in unit tests. This may involve extending the String
   Calculator example or adding a completely different one.
 
 ## Status
@@ -137,6 +137,7 @@ url pattern](https://stackoverflow.com/questions/4140448/difference-between-and-
 [Mocha testing framework]: https://mochajs.org/
 [Chai assertion library]: https://www.chaijs.com/
 [Sinon test double framework]: https://sinonjs.org/
+[test doubles]: https://mike-bland.com/2023/09/06/test-doubles.html
 [HTML &lt;form&gt;]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
 [Open Source software]: https://opensource.org/osd-annotated
 [Mozilla Public License 2.0]: https://www.mozilla.org/MPL/
