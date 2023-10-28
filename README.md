@@ -14,8 +14,9 @@ sense.
 
 The plan is to develop an exercise comprised of the following steps:
 
-- Set up a continuous integration pipeline based on [GitHub Actions][] and the
-  `bin/tomcat-docker.sh` script.
+- Set up a continuous integration pipeline based on [GitHub Actions][].
+- Add Java annotations or Gradle build tags for small, medium, and large tests,
+  if possible.
 - Creating a [walking skeleton][] implementation and adding a large end-to-end
   test to validate it, likely using [Selenium WebDriver][] as well as [headless
   Chrome][].
@@ -132,9 +133,14 @@ url pattern](https://stackoverflow.com/questions/4140448/difference-between-and-
 
 ## Add a `bin/tomcat-docker.sh` script to launch the [Tomcat Docker image][]
 
-This script can be run manually, but the plan is to make it part of the CI
-build. I'm also planning to try launching it from the setup of the tests that
-need it, eventually.
+This script can be run manually.
+
+## Add the `LocalTomcatServer` test helper
+
+The full path is `com.mike_bland.training.testing.tomcat.LocalTomcatServer`.
+
+This class runs `git` and `docker` commands to emulate the
+`bin/tomcat-docker.sh` script on demand for `StringCalculatorServletTest`.
 
 ## Additional References
 

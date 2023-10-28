@@ -7,5 +7,5 @@ cd -P "${BASH_SOURCE[0]%/*}/.." || exit 1
 #   https://stackoverflow.com/a/51314059
 
 IMAGE_ID="$(docker build -q -f dockerfiles/Dockerfile.tomcat-test .)"
-docker run --rm "$IMAGE_ID"
+docker run --rm -p 8080:8080 "$IMAGE_ID"
 docker rmi "$IMAGE_ID"

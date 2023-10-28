@@ -8,7 +8,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,7 +19,18 @@ class StringCalculatorServletTest {
     final String BASE_URL = "http://localhost:8080/strcalc";
     final URI BASE_URI = URI.create(BASE_URL);
 
-    @Disabled("Need to get WAR deploying successfully first.")
+    static private LocalTomcatServer tomcatServer = new LocalTomcatServer();
+
+    @BeforeAll
+    static void setUpClass() throws Exception {
+       tomcatServer.start();
+    }
+
+    @AfterAll
+    static void tearDownClass() throws Exception {
+        tomcatServer.stop();
+    }
+
     @Test void helloWorldPlaceholder() throws Exception {
         HttpClient client = HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.NORMAL)
