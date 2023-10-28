@@ -30,17 +30,14 @@ class StringCalculatorServletTest {
     }
 
     @Test void helloWorldPlaceholder() throws Exception {
-        HttpClient client = HttpClient.newBuilder()
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .build();
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(tomcatUri)
-                .GET()
-                .build();
+        HttpClient.Builder builder = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NORMAL);
+        HttpRequest req = HttpRequest.newBuilder().uri(tomcatUri).GET().build();
+        HttpResponse<String> resp;
 
-        HttpResponse<String> resp = client.send(
-                req, BodyHandlers.ofString()
-        );
+        try (HttpClient client = builder.build()) {
+            resp = client.send(req, BodyHandlers.ofString());
+        }
 
         assertEquals(200, resp.statusCode());
         assertEquals("Hello, World!", resp.body());
