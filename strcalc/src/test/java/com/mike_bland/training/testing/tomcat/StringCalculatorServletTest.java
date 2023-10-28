@@ -3,11 +3,11 @@
  */
 package com.mike_bland.training.testing.tomcat;
 
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.net.URI;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -16,14 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 // Tomcat must be running and the latest build deployed before running this
 // test. Run the Local Tomcat run configuration first.
 class StringCalculatorServletTest {
-    final String BASE_URL = "http://localhost:8080/strcalc";
-    final URI BASE_URI = URI.create(BASE_URL);
-
     static private LocalTomcatServer tomcatServer = new LocalTomcatServer();
+    static private URI tomcatUri;
 
     @BeforeAll
     static void setUpClass() throws Exception {
-       tomcatServer.start();
+       tomcatUri = tomcatServer.start();
     }
 
     @AfterAll
@@ -36,7 +34,7 @@ class StringCalculatorServletTest {
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(BASE_URI)
+                .uri(tomcatUri)
                 .GET()
                 .build();
 

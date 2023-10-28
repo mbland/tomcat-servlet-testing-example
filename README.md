@@ -140,7 +140,9 @@ This script can be run manually.
 The full path is `com.mike_bland.training.testing.tomcat.LocalTomcatServer`.
 
 This class runs `git` and `docker` commands to emulate the
-`bin/tomcat-docker.sh` script on demand for `StringCalculatorServletTest`.
+`bin/tomcat-docker.sh` script on demand for `StringCalculatorServletTest`. A key
+difference is that `LocalTomcatServer` will allocate a unique port for every
+test run, so that it won't conflict with an existing local instance.
 
 ## Additional References
 

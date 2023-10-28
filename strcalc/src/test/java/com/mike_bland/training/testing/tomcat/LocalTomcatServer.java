@@ -3,22 +3,27 @@ package com.mike_bland.training.testing.tomcat;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.URI;
 
 public class LocalTomcatServer {
     public final String DOCKERFILE = "dockerfiles/Dockerfile.tomcat-test";
     private boolean running = false;
     private String imageId;
+    private int port;
     private Process runCmd;
 
-    public synchronized void start() throws IOException, InterruptedException {
+    public synchronized URI start() throws IOException, InterruptedException {
         assertDockerIsAvailable();
 
         if (!running) {
             imageId = createTemporaryImage();
-            runCmd = runTemporaryImage(imageId);
+            port = pickUnusedPort();
+            runCmd = runTemporaryImage(imageId, port);
             Thread.sleep(1000);
             running = true;
         }
+        return URI.create("http://localhost:" + port + "/strcalc");
     }
 
     public synchronized void stop() throws IOException, InterruptedException{
@@ -87,13 +92,18 @@ public class LocalTomcatServer {
         }
     }
 
-    Process runTemporaryImage(String imageId) throws IOException {
-        // TODO(mbland): Call 'docker run' with an unused port and provide a
-        // baseUri() method.
+    Process runTemporaryImage(String imageId, int port) throws IOException {
         final String errPrefix = "error running Docker image: ";
+        final String portMap = port + ":8080";
         ProcessBuilder builder = new ProcessBuilder(
-                "docker", "run", "--rm", "-p", "8080:8080", imageId);
+                "docker", "run", "--rm", "-p", portMap, imageId);
         return startProcess(builder, errPrefix);
+    }
+
+    int pickUnusedPort() throws IOException {
+        try (ServerSocket sock = new ServerSocket(0)) {
+            return sock.getLocalPort();
+        }
     }
 
     void destroyTemporaryImage(String imageId) throws IOException {
