@@ -20,9 +20,8 @@ public class LocalServer {
     }
 
     public synchronized URI start() throws IOException, InterruptedException {
-        Docker.assertIsAvailable();
-
         if (!running) {
+            Docker.assertIsAvailable();
             imageId = Docker.createTemporaryImage(dockerfile);
             port = PortPicker.pickUnusedPort();
             String portMap = String.format("%1$d:%2$d", port, containerPort);
