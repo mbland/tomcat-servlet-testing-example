@@ -144,6 +144,46 @@ This class runs `git` and `docker` commands to emulate the
 difference is that `LocalServer` will allocate a unique port for every test run,
 so that it won't conflict with an existing local instance.
 
+## Add the `@SmallTest`, `@MediumTest`, and `@LargeTest` annotations
+
+These are JUnit composed annotations based on the guidance from:
+
+- [JUnit: 2.1.1. Meta-Annotations and Composed
+  Annotations](https://junit.org/junit5/docs/current/user-guide/#writing-tests-meta-annotations)
+
+## Add `test-medium`, `test-large`, `test-all` tasks, update `test` and `check`
+
+These tasks and updates use JUnit composed annotations and the `includeTags`
+config option based on guidance from:
+
+- [Gradle: Testing in Java & JVM
+  projects](https://docs.gradle.org/current/userguide/java_testing.html)
+- [Gradle: Authoring
+  Tasks](https://docs.gradle.org/current/userguide/more_about_tasks.html)
+
+Note that with no `@SmallTest` methods defined, running the `test` task produces
+the following warning:
+
+```none
+$ ./gradlew test --warning-mode all --rerun-tasks
+
+[...snip...]
+
+> Task :strcalc:test
+No test executed. This behavior has been deprecated. This will fail with an
+error in Gradle 9.0. There are test sources present but no test was executed.
+Please check your test configuration. Consult the upgrading guide for further
+information:
+https://docs.gradle.org/8.4/userguide/upgrading_version_8.html#test_task_fail_on_no_test_executed
+
+[...snip...]
+```
+
+The same is true for `test-medium` and `test-large` when no `@MediumTest` or
+`@LargeTest` methods are present.` The `SmallPlaceholderTest` and
+`LargePlaceholderTest` classes exist to silence this warning until actual
+`@SmallTest` and `@LargeTest` methods appear.
+
 ## Additional References
 
 - [Building a web application with Gradle](https://openliberty.io/guides/gradle-intro.html)
