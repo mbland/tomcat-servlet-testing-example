@@ -1,9 +1,9 @@
 package com.mike_bland.training.testing.tomcat;
 
+import com.mike_bland.training.testing.utils.GitRepository;
 import com.mike_bland.training.testing.utils.PortPicker;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
@@ -36,22 +36,6 @@ public class LocalTomcatServer {
         }
     }
 
-    File repositoryRoot() throws IOException {
-        try {
-            Process showToplevel = new ProcessBuilder(
-                    "git", "rev-parse", "--show-toplevel")
-                    .start();
-
-            try (BufferedReader stdout = showToplevel.inputReader()) {
-                return new File(stdout.readLine());
-            }
-        } catch (IOException ex) {
-            throw new IOException(
-                    "failed to get git repository root: " + ex.toString()
-            );
-        }
-    }
-
     void assertDockerIsAvailable() throws IOException {
         try {
             Process dockerInfo = new ProcessBuilder("docker", "info")
@@ -71,7 +55,7 @@ public class LocalTomcatServer {
         try {
             Process dockerBuild = new ProcessBuilder(
                     "docker", "build", "-q", "-f", DOCKERFILE, ".")
-                    .directory(repositoryRoot())
+                    .directory(GitRepository.getRoot())
                     .start();
 
             try (BufferedReader stdout = dockerBuild.inputReader();
