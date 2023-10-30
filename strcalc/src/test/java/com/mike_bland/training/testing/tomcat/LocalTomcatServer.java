@@ -18,7 +18,7 @@ public class LocalTomcatServer {
         assertDockerIsAvailable();
 
         if (!running) {
-            imageId = createTemporaryImage();
+            imageId = createTemporaryImage(DOCKERFILE);
             port = PortPicker.pickUnusedPort();
             runCmd = runTemporaryImage(imageId, port);
             Thread.sleep(1000);
@@ -51,10 +51,10 @@ public class LocalTomcatServer {
         }
     }
 
-    String createTemporaryImage() throws IOException {
+    String createTemporaryImage(String dockerfile) throws IOException {
         try {
             Process dockerBuild = new ProcessBuilder(
-                    "docker", "build", "-q", "-f", DOCKERFILE, ".")
+                    "docker", "build", "-q", "-f", dockerfile, ".")
                     .directory(GitRepository.getRoot())
                     .start();
 
