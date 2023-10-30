@@ -1,4 +1,4 @@
-package com.mike_bland.training.testing.tomcat;
+package com.mike_bland.training.testing.utils;
 
 import com.mike_bland.training.testing.utils.Docker;
 import com.mike_bland.training.testing.utils.PortPicker;
@@ -6,7 +6,7 @@ import com.mike_bland.training.testing.utils.PortPicker;
 import java.io.IOException;
 import java.net.URI;
 
-public class LocalTomcatServer {
+public class LocalServer {
     private String dockerfile;
     private int containerPort;
     private boolean running = false;
@@ -14,7 +14,7 @@ public class LocalTomcatServer {
     private int port;
     private Process runCmd;
 
-    LocalTomcatServer(String dockerfile, int containerPort) {
+    public LocalServer(String dockerfile, int containerPort) {
         this.dockerfile = dockerfile;
         this.containerPort = containerPort;
     }

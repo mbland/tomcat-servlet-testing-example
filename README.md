@@ -135,14 +135,14 @@ url pattern](https://stackoverflow.com/questions/4140448/difference-between-and-
 
 This script can be run manually.
 
-## Add the `LocalTomcatServer` test helper
+## Add the `LocalServer` test helper
 
-The full path is `com.mike_bland.training.testing.tomcat.LocalTomcatServer`.
+The full path is `com.mike_bland.training.testing.utils.LocalServer`.
 
 This class runs `git` and `docker` commands to emulate the
 `bin/tomcat-docker.sh` script on demand for `StringCalculatorServletTest`. A key
-difference is that `LocalTomcatServer` will allocate a unique port for every
-test run, so that it won't conflict with an existing local instance.
+difference is that `LocalServer` will allocate a unique port for every test run,
+so that it won't conflict with an existing local instance.
 
 ## Additional References
 

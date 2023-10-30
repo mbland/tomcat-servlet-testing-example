@@ -8,6 +8,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.net.URI;
+
+import com.mike_bland.training.testing.utils.LocalServer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -16,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 // Tomcat must be running and the latest build deployed before running this
 // test. Run the Local Tomcat run configuration first.
 class StringCalculatorServletTest {
-    private static LocalTomcatServer tomcatServer = new LocalTomcatServer(
+    private static LocalServer tomcatServer = new LocalServer(
             "dockerfiles/Dockerfile.tomcat-test", 8080
     );
     private static URI tomcatUri;
