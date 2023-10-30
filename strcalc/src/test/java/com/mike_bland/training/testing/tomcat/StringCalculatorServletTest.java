@@ -16,12 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 // Tomcat must be running and the latest build deployed before running this
 // test. Run the Local Tomcat run configuration first.
 class StringCalculatorServletTest {
-    static private LocalTomcatServer tomcatServer = new LocalTomcatServer();
-    static private URI tomcatUri;
+    private static LocalTomcatServer tomcatServer = new LocalTomcatServer(
+            "dockerfiles/Dockerfile.tomcat-test", 8080
+    );
+    private static URI tomcatUri;
 
     @BeforeAll
     static void setUpClass() throws Exception {
-       tomcatUri = tomcatServer.start();
+       tomcatUri = tomcatServer.start().resolve("/strcalc");
     }
 
     @AfterAll

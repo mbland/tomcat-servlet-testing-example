@@ -7,23 +7,30 @@ import java.io.IOException;
 import java.net.URI;
 
 public class LocalTomcatServer {
-    public final String DOCKERFILE = "dockerfiles/Dockerfile.tomcat-test";
+    private String dockerfile;
+    private int containerPort;
     private boolean running = false;
     private String imageId;
     private int port;
     private Process runCmd;
 
+    LocalTomcatServer(String dockerfile, int containerPort) {
+        this.dockerfile = dockerfile;
+        this.containerPort = containerPort;
+    }
+
     public synchronized URI start() throws IOException, InterruptedException {
         Docker.assertIsAvailable();
 
         if (!running) {
-            imageId = Docker.createTemporaryImage(DOCKERFILE);
+            imageId = Docker.createTemporaryImage(dockerfile);
             port = PortPicker.pickUnusedPort();
-            runCmd = Docker.runImage(imageId, port + ":8080");
+            String portMap = String.format("%1$d:%2$d", port, containerPort);
+            runCmd = Docker.runImage(imageId, portMap);
             Thread.sleep(1000);
             running = true;
         }
-        return URI.create("http://localhost:" + port + "/strcalc");
+        return URI.create(String.format("http://localhost:%1$d", port));
     }
 
     public synchronized void stop() throws IOException, InterruptedException{
