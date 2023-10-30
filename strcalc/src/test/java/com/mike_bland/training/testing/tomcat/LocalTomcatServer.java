@@ -20,7 +20,7 @@ public class LocalTomcatServer {
         if (!running) {
             imageId = createTemporaryImage(DOCKERFILE);
             port = PortPicker.pickUnusedPort();
-            runCmd = runTemporaryImage(imageId, port);
+            runCmd = runTemporaryImage(imageId, port + ":8080");
             Thread.sleep(1000);
             running = true;
         }
@@ -72,9 +72,9 @@ public class LocalTomcatServer {
         }
     }
 
-    Process runTemporaryImage(String imageId, int port) throws IOException {
+    Process runTemporaryImage(String imageId, String portMap)
+            throws IOException {
         try {
-            final String portMap = port + ":8080";
             return new ProcessBuilder(
                     "docker", "run", "--rm", "-p", portMap, imageId)
                     .start();
