@@ -12,10 +12,10 @@ import java.io.IOException;
 public class Docker {
     public static void assertIsAvailable() throws IOException {
         try {
-            Process dockerInfo = new ProcessBuilder("docker", "info")
+            var dockerInfo = new ProcessBuilder("docker", "info")
                     .start();
 
-            try (BufferedReader stderr = dockerInfo.errorReader()) {
+            try (var stderr = dockerInfo.errorReader()) {
                 if (dockerInfo.waitFor() != 0) {
                     throw new IOException(stderr.readLine());
                 }
@@ -28,13 +28,13 @@ public class Docker {
     public static String createTemporaryImage(String dockerfile)
             throws IOException {
         try {
-            Process dockerBuild = new ProcessBuilder(
+            var dockerBuild = new ProcessBuilder(
                     "docker", "build", "-q", "-f", dockerfile, ".")
                     .directory(GitRepository.getRoot())
                     .start();
 
-            try (BufferedReader stdout = dockerBuild.inputReader();
-                 BufferedReader stderr = dockerBuild.errorReader()) {
+            try (var stdout = dockerBuild.inputReader();
+                 var stderr = dockerBuild.errorReader()) {
                 if (dockerBuild.waitFor() == 0) {
                     return stdout.readLine();
                 }
@@ -61,11 +61,11 @@ public class Docker {
 
     public static void destroyImage(String imageId) throws IOException {
         try {
-            Process dockerRmi = new ProcessBuilder(
+            var dockerRmi = new ProcessBuilder(
                     "docker", "rmi", imageId)
                     .start();
 
-            try (BufferedReader stderr = dockerRmi.errorReader()) {
+            try (var stderr = dockerRmi.errorReader()) {
                 if (dockerRmi.waitFor() != 0) {
                     throw new IOException(stderr.readLine());
                 }

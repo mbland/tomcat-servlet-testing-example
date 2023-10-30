@@ -37,12 +37,12 @@ class StringCalculatorServletTest {
     }
 
     @Test void helloWorldPlaceholder() throws Exception {
-        HttpClient.Builder builder = HttpClient.newBuilder()
+        var builder = HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.NORMAL);
-        HttpRequest req = HttpRequest.newBuilder().uri(tomcatUri).GET().build();
+        var req = HttpRequest.newBuilder().uri(tomcatUri).GET().build();
         HttpResponse<String> resp;
 
-        try (HttpClient client = builder.build()) {
+        try (var client = builder.build()) {
             resp = client.send(req, BodyHandlers.ofString());
         }
 

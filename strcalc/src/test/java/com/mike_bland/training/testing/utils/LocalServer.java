@@ -28,7 +28,7 @@ public class LocalServer {
             Docker.assertIsAvailable();
             imageId = Docker.createTemporaryImage(dockerfile);
             port = PortPicker.pickUnusedPort();
-            String portMap = String.format("%1$d:%2$d", port, containerPort);
+            var portMap = String.format("%1$d:%2$d", port, containerPort);
             runCmd = Docker.runImage(imageId, portMap);
             Thread.sleep(waitMs);
             running = true;

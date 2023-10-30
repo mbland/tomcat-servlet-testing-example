@@ -13,7 +13,7 @@ import java.io.IOException;
 public class GitRepository {
     public static File getRoot() throws IOException {
         try {
-            Process showToplevel = new ProcessBuilder(
+            var showToplevel = new ProcessBuilder(
                     "git", "rev-parse", "--show-toplevel")
                     .start();
 
