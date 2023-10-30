@@ -25,12 +25,12 @@ class StringCalculatorServletTest {
 
     @BeforeAll
     static void setUpClass() throws Exception {
-       tomcatUri = tomcatServer.start(1000).resolve("/strcalc");
+       tomcatUri = tomcatServer.start(500).resolve("/strcalc");
     }
 
     @AfterAll
     static void tearDownClass() throws Exception {
-        tomcatServer.stop(1000);
+        tomcatServer.stop(250);
     }
 
     @Test void helloWorldPlaceholder() throws Exception {
