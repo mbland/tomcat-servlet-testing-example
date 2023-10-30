@@ -1,9 +1,10 @@
 package com.mike_bland.training.testing.tomcat;
 
+import com.mike_bland.training.testing.utils.PortPicker;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.URI;
 
 public class LocalTomcatServer {
@@ -18,7 +19,7 @@ public class LocalTomcatServer {
 
         if (!running) {
             imageId = createTemporaryImage();
-            port = pickUnusedPort();
+            port = PortPicker.pickUnusedPort();
             runCmd = runTemporaryImage(imageId, port);
             Thread.sleep(1000);
             running = true;
@@ -98,12 +99,6 @@ public class LocalTomcatServer {
         ProcessBuilder builder = new ProcessBuilder(
                 "docker", "run", "--rm", "-p", portMap, imageId);
         return startProcess(builder, errPrefix);
-    }
-
-    int pickUnusedPort() throws IOException {
-        try (ServerSocket sock = new ServerSocket(0)) {
-            return sock.getLocalPort();
-        }
     }
 
     void destroyTemporaryImage(String imageId) throws IOException {
