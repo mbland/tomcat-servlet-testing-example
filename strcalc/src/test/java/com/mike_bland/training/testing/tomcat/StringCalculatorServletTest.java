@@ -28,7 +28,7 @@ class StringCalculatorServletTest {
 
     @BeforeAll
     static void setUpClass() throws Exception {
-       tomcatUri = tomcatServer.start(500).resolve("/strcalc");
+       tomcatUri = tomcatServer.start(1000).resolve("/strcalc");
     }
 
     @AfterAll
