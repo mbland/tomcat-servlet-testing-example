@@ -36,83 +36,85 @@ public class LocalTomcatServer {
         }
     }
 
-    Process startProcess(ProcessBuilder builder, String errPrefix)
-            throws IOException {
-        try {
-            return builder.start();
-        } catch (IOException ex) {
-            throw new IOException(errPrefix + ": " + ex.toString());
-        }
-    }
-
     File repositoryRoot() throws IOException {
-        final String errPrefix = "failed to get git repository root: ";
-        Process showToplevel = startProcess(
-                new ProcessBuilder(
-                        "git", "rev-parse", "--show-toplevel"),
-                errPrefix);
+        try {
+            Process showToplevel = new ProcessBuilder(
+                    "git", "rev-parse", "--show-toplevel")
+                    .start();
 
-        try (BufferedReader stdout = showToplevel.inputReader()) {
-            return new File(stdout.readLine());
+            try (BufferedReader stdout = showToplevel.inputReader()) {
+                return new File(stdout.readLine());
+            }
         } catch (IOException ex) {
-            throw new IOException(errPrefix + ex.toString());
+            throw new IOException(
+                    "failed to get git repository root: " + ex.toString()
+            );
         }
     }
 
     void assertDockerIsAvailable() throws IOException {
-        final String errPrefix = "Docker not available: ";
-        Process dockerInfo = startProcess(
-                new ProcessBuilder("docker", "info"),
-                errPrefix);
+        try {
+            Process dockerInfo = new ProcessBuilder("docker", "info")
+                    .start();
 
-        try (BufferedReader stderr = dockerInfo.errorReader()) {
-            if (dockerInfo.waitFor() != 0) {
-                throw new IOException(errPrefix + stderr.readLine());
+            try (BufferedReader stderr = dockerInfo.errorReader()) {
+                if (dockerInfo.waitFor() != 0) {
+                    throw new IOException(stderr.readLine());
+                }
             }
         } catch (IOException | InterruptedException e) {
-            throw new IOException(errPrefix + e.toString());
+            throw new IOException("Docker not available: " + e);
         }
     }
 
     String createTemporaryImage() throws IOException {
-        final String errPrefix = "failed to create temporary Docker image: ";
-        ProcessBuilder builder = new ProcessBuilder(
-                "docker", "build", "-q", "-f", DOCKERFILE, ".")
-                .directory(repositoryRoot());
-        Process dockerBuild = startProcess(builder, errPrefix);
+        try {
+            Process dockerBuild = new ProcessBuilder(
+                    "docker", "build", "-q", "-f", DOCKERFILE, ".")
+                    .directory(repositoryRoot())
+                    .start();
 
-        try (BufferedReader stdout = dockerBuild.inputReader();
-             BufferedReader stderr = dockerBuild.errorReader()) {
-            if (dockerBuild.waitFor() == 0) {
-                return stdout.readLine();
+            try (BufferedReader stdout = dockerBuild.inputReader();
+                 BufferedReader stderr = dockerBuild.errorReader()) {
+                if (dockerBuild.waitFor() == 0) {
+                    return stdout.readLine();
+                }
+                throw new IOException(stderr.readLine());
             }
-            throw new IOException(errPrefix + stderr.readLine());
-
         } catch (IOException | InterruptedException e) {
-            throw new IOException(errPrefix + e.toString());
+            throw new IOException(
+                    "failed to create temporary Docker image: " + e
+            );
         }
     }
 
     Process runTemporaryImage(String imageId, int port) throws IOException {
-        final String errPrefix = "error running Docker image: ";
-        final String portMap = port + ":8080";
-        ProcessBuilder builder = new ProcessBuilder(
-                "docker", "run", "--rm", "-p", portMap, imageId);
-        return startProcess(builder, errPrefix);
+        try {
+            final String portMap = port + ":8080";
+            return new ProcessBuilder(
+                    "docker", "run", "--rm", "-p", portMap, imageId)
+                    .start();
+
+        } catch (IOException e) {
+            throw new IOException("error running Docker image: " + e);
+        }
     }
 
     void destroyTemporaryImage(String imageId) throws IOException {
-        final String errPrefix = "failed to destroy temporary Docker image: ";
-        Process dockerRmi = startProcess(
-                new ProcessBuilder("docker", "rmi", imageId),
-                errPrefix);
+        try {
+            Process dockerRmi = new ProcessBuilder(
+                    "docker", "rmi", imageId)
+                    .start();
 
-        try (BufferedReader stderr = dockerRmi.errorReader()) {
-            if (dockerRmi.waitFor() != 0) {
-                throw new IOException(errPrefix + stderr.readLine());
+            try (BufferedReader stderr = dockerRmi.errorReader()) {
+                if (dockerRmi.waitFor() != 0) {
+                    throw new IOException(stderr.readLine());
+                }
             }
         } catch (IOException | InterruptedException e) {
-            throw new IOException(errPrefix + e.toString());
+            throw new IOException(
+                    "failed to destroy temporary Docker image: " + e
+            );
         }
     }
 }
