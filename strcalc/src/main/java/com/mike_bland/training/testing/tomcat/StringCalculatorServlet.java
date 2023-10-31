@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("")
+@WebServlet("/add")
 public class StringCalculatorServlet extends HttpServlet {
 
     @Override

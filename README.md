@@ -15,8 +15,6 @@ sense.
 The plan is to develop an exercise comprised of the following steps:
 
 - Set up a continuous integration pipeline based on [GitHub Actions][].
-- Add Java annotations or Gradle build tags for small, medium, and large tests,
-  if possible.
 - Creating a [walking skeleton][] implementation and adding a large end-to-end
   test to validate it, likely using [Selenium WebDriver][] as well as [headless
   Chrome][].
@@ -45,7 +43,7 @@ This software is made available as [Open Source software][] under the [Mozilla
 Public License 2.0][]. For the text of the license, see the
 [LICENSE.txt](LICENSE.txt) file.
 
-## Setup
+## Development environment setup
 
 ### Install the Java Development Kit
 
@@ -100,6 +98,8 @@ sense of Java in VSCode:
 - [VSCode: Navigate and edit Java source code](https://code.visualstudio.com/docs/java/java-editing)
 - [Testing Java with Visual Studio Code](https://code.visualstudio.com/docs/java/java-testing)
 
+## Running Tomcat and adding a Tomcat test helper
+
 ### [Create Tomcat > Local run configuration][]
 
 In IntelliJ, I created the "Local Tomcat" run configuration, stored in the repo
@@ -131,11 +131,11 @@ url pattern](https://stackoverflow.com/questions/4140448/difference-between-and-
 - [The Java EE 6 Tutorial: Java Servlet
   Technology](https://docs.oracle.com/javaee/6/tutorial/doc/bnafd.html)
 
-## Add a `bin/tomcat-docker.sh` script to launch the [Tomcat Docker image][]
+### Add a `bin/tomcat-docker.sh` script to launch the [Tomcat Docker image][]
 
 This script can be run manually.
 
-## Add the `LocalServer` test helper
+### Add the `LocalServer` test helper
 
 The full path is `com.mike_bland.training.testing.utils.LocalServer`.
 
@@ -144,14 +144,16 @@ This class runs `git` and `docker` commands to emulate the
 difference is that `LocalServer` will allocate a unique port for every test run,
 so that it won't conflict with an existing local instance.
 
-## Add the `@SmallTest`, `@MediumTest`, and `@LargeTest` annotations
+## Partitioning tests into small, medium, and large test sizes
+
+### Add the `@SmallTest`, `@MediumTest`, and `@LargeTest` annotations
 
 These are JUnit composed annotations based on the guidance from:
 
 - [JUnit: 2.1.1. Meta-Annotations and Composed
   Annotations](https://junit.org/junit5/docs/current/user-guide/#writing-tests-meta-annotations)
 
-## Add `test-medium`, `test-large`, `test-all` tasks, update `test` and `check`
+### Add `test-medium`, `test-large`, `test-all` tasks, update `test` and `check`
 
 These tasks and updates use JUnit composed annotations and the `includeTags`
 config option based on guidance from:
@@ -180,9 +182,75 @@ https://docs.gradle.org/8.4/userguide/upgrading_version_8.html#test_task_fail_on
 ```
 
 The same is true for `test-medium` and `test-large` when no `@MediumTest` or
-`@LargeTest` methods are present.` The `SmallPlaceholderTest` and
+`@LargeTest` methods are present. The `SmallPlaceholderTest` and
 `LargePlaceholderTest` classes exist to silence this warning until actual
 `@SmallTest` and `@LargeTest` methods appear.
+
+## Adding the `/strcalc` landing page
+
+### Add `src/main/webapp/index.html` and Hamcrest matchers
+
+Per the [Gradle WAR plugin][], files in `src/main/webapp` are copied to the root
+of the servlet WAR file. Adding the `src/main/webapp/index.html` landing page
+necessitated two things:
+
+- Updating the `@WebServlet` annotation on `StringCalculatorServlet` from `""`
+  to `"/add"`. This enables Tomcat to serve `index.html` as `/strcalc/`, and the
+  servlet now serves `/strcalc/add/`.
+- Updating the `helloWorldPlaceholder` test method to `landingPageHelloWorld`.
+  This test now checks that the response is of [Content-Type][] `text/html`
+  instead of `text/plain`, and that it contains `"Hello, World!"`, not that it
+  matches exactly.
+
+Changing the test assertion to check that the response body contains `"Hello,
+World!"` necessitated using the [Hamcrest matcher library][]. We could've used:
+
+```java
+assertTrue(resp.body().contains("Hello, World!"));
+```
+
+But when it fails, we get very little information about the problem:
+
+```text
+Expected :true
+Actual   :false
+```
+
+Using the Hamcrest matcher:
+
+```java
+assertThat(resp.body(), containsString("Hello, World!"));
+```
+
+we're able to see more information:
+
+```text
+java.lang.AssertionError:
+Expected: a string containing "Hello, World!"
+     but: was "&lt!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>String Calculator - Mike Bland Training</title>
+</head>
+<body>
+<p>Hello, world!</p>
+</body>
+</html>
+"
+```
+
+## Setting up continuous integration
+
+Coming soon...
+
+## Adding large tests
+
+Coming soon...
+
+## Implementing core logic using Test Driven Development and unit tests
+
+Coming soon...
 
 ## Additional References
 
@@ -221,3 +289,5 @@ The same is true for `test-medium` and `test-large` when no `@MediumTest` or
 [Tomcat deployment]: https://tomcat.apache.org/tomcat-10.1-doc/appdev/deployment.html
 [JUnit]: https://junit.org/
 [Tomcat Docker image]: https://hub.docker.com/_/tomcat
+[Content-Type]: https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Type
+[Hamcrest matcher library]: https://hamcrest.org

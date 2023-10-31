@@ -17,12 +17,15 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Tomcat must be running and the latest build deployed before running this
 // test. Run the Local Tomcat run configuration first.
 class StringCalculatorServletTest {
-    private static LocalServer tomcatServer = new LocalServer(
+    private static final LocalServer tomcatServer = new LocalServer(
             "dockerfiles/Dockerfile.tomcat-test", 8080
     );
     private static URI tomcatUri;
@@ -38,7 +41,7 @@ class StringCalculatorServletTest {
     }
 
     @MediumTest
-    void helloWorldPlaceholder() throws Exception {
+    void landingPageHelloWorld() throws Exception {
         var builder = HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.NORMAL);
         var req = HttpRequest.newBuilder().uri(tomcatUri).GET().build();
@@ -49,6 +52,9 @@ class StringCalculatorServletTest {
         }
 
         assertEquals(200, resp.statusCode());
-        assertEquals("Hello, World!", resp.body());
+        var contentType = resp.headers().firstValue("Content-Type");
+        assertTrue(contentType.isPresent());
+        assertEquals("text/html", contentType.get());
+        assertThat(resp.body(), containsString("Hello, World!"));
     }
 }

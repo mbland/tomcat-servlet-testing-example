@@ -1,7 +1,16 @@
 [versions]
 servletVer = "6.0.0"
 junitVer = "5.10.0"
+hamcrestVer = "2.2"
 
-[libraries]
-servlet = { module = "jakarta.servlet:jakarta.servlet-api", version.ref="servletVer"}
-junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitVer" }
+[libraries.servlet]
+module = "jakarta.servlet:jakarta.servlet-api"
+version.ref="servletVer"
+
+[libraries.junit]
+module = "org.junit.jupiter:junit-jupiter"
+version.ref = "junitVer"
+
+[libraries.hamcrest]
+module = "org.hamcrest:hamcrest"
+version.ref = "hamcrestVer"
