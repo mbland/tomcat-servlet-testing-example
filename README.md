@@ -55,7 +55,8 @@ Releases][] via [SDKMAN!][].
 I followed the [Tomcat 10.1 Setup instructions][] to install Tomcat locally
 at `/opt/tomcat/apache-tomcat-10.1.15`. I created `bin/tomcat.sh` as a thin
 wrapper around Tomcat's `bin/catalina.sh` that detects and sets `JAVA_HOME`
-and sets `CATALINA_HOME`. Verified that it was installed correctly via `bin/tomcat.sh start` and visiting <http://localhost:8080/>.
+and sets `CATALINA_HOME`. Verified that it was installed correctly via
+`bin/tomcat.sh start` and visiting <http://localhost:8080/>.
 
 - [Introduction to Apache Tomcat](https://www.baeldung.com/tomcat)
 
@@ -242,7 +243,8 @@ Expected: a string containing "Hello, World!"
 
 ## Setting up continuous integration
 
-Coming soon...
+Added the `.github/CODEOWNERS` file and `.github/workflows/run-tests.yaml` file
+for [GitHub Actions][]. Configured using the [setup-java GitHub Actions plugin][].
 
 ## Adding large tests
 
@@ -291,3 +293,4 @@ Coming soon...
 [Tomcat Docker image]: https://hub.docker.com/_/tomcat
 [Content-Type]: https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Type
 [Hamcrest matcher library]: https://hamcrest.org
+[setup-java GitHub Actions plugin]: https://github.com/actions/setup-java
