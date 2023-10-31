@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.mike_bland.training.testing.utils;
+package com.mike_bland.training.testing;
 
 import com.mike_bland.training.testing.sizes.LargeTest;
 

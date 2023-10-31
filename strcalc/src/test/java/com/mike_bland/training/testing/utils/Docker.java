@@ -6,7 +6,6 @@
 
 package com.mike_bland.training.testing.utils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
 public class Docker {
