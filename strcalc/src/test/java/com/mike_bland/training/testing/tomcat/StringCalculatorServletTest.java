@@ -11,20 +11,23 @@ import com.mike_bland.training.testing.utils.LocalServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Tomcat must be running and the latest build deployed before running this
 // test. Run the Local Tomcat run configuration first.
 class StringCalculatorServletTest {
+    private static final String SERVLET_ROOT = "/strcalc";
+
     private static final LocalServer tomcatServer = new LocalServer(
             "dockerfiles/Dockerfile.tomcat-test", 8080
     );
@@ -32,7 +35,7 @@ class StringCalculatorServletTest {
 
     @BeforeAll
     static void setUpClass() throws Exception {
-       tomcatUri = tomcatServer.start(1000).resolve("/strcalc");
+       tomcatUri = tomcatServer.start(1000);
     }
 
     @AfterAll
@@ -40,21 +43,32 @@ class StringCalculatorServletTest {
         tomcatServer.stop(250);
     }
 
-    @MediumTest
-    void landingPageHelloWorld() throws Exception {
+    HttpRequest.Builder newRequestBuilder(String relPath) {
+        var uri = tomcatUri.resolve("%s/%s".formatted(SERVLET_ROOT, relPath));
+        return HttpRequest.newBuilder().uri(uri);
+    }
+
+    HttpResponse<String> sendRequest(HttpRequest req)
+            throws IOException, InterruptedException {
         var builder = HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.NORMAL);
-        var req = HttpRequest.newBuilder().uri(tomcatUri).GET().build();
-        HttpResponse<String> resp;
 
         try (var client = builder.build()) {
-            resp = client.send(req, BodyHandlers.ofString());
+            return client.send(req, BodyHandlers.ofString());
         }
+    }
+
+    @MediumTest
+    void landingPageHelloWorld() throws Exception {
+        var req = newRequestBuilder("").GET().build();
+
+        var resp = sendRequest(req);
 
         assertEquals(200, resp.statusCode());
-        var contentType = resp.headers().firstValue("Content-Type");
-        assertTrue(contentType.isPresent());
-        assertEquals("text/html", contentType.get());
+        assertEquals(
+                Optional.of("text/html"),
+                resp.headers().firstValue("Content-Type")
+        );
         assertThat(resp.body(), containsString("Hello, World!"));
     }
 }
