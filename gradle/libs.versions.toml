@@ -1,6 +1,6 @@
 [versions]
 servletVer = "6.0.0"
-junitVer = "5.9.3"
+junitVer = "5.10.0"
 
 [libraries]
 servlet = { module = "jakarta.servlet:jakarta.servlet-api", version.ref="servletVer"}
