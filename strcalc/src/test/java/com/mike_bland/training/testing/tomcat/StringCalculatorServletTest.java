@@ -71,4 +71,18 @@ class StringCalculatorServletTest {
         );
         assertThat(resp.body(), containsString("Hello, World!"));
     }
+
+    @MediumTest
+    void addEndpointPlaceholder() throws Exception {
+        var req = newRequestBuilder("add").GET().build();
+
+        var resp = sendRequest(req);
+
+        assertEquals(200, resp.statusCode());
+        assertEquals(
+                Optional.of("text/plain;charset=UTF-8"),
+                resp.headers().firstValue("Content-Type")
+        );
+        assertEquals("placeholder for /add API endpoint", resp.body());
+    }
 }

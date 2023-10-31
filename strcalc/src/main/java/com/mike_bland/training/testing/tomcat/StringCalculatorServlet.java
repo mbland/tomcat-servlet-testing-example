@@ -21,6 +21,6 @@ public class StringCalculatorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setContentType("text/plain");
-        resp.getWriter().print("Hello, World!");
+        resp.getWriter().print("placeholder for /add API endpoint");
     }
 }
