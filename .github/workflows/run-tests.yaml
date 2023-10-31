@@ -19,3 +19,14 @@ jobs:
 
       - name: Build and test
         run: ./gradlew build --no-daemon --warning-mode all
+
+      # Per the advice from:
+      # - https://octopus.com/blog/githubactions-running-unit-tests
+      - name: Post test report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Java tests
+          path: '**/build/test-results/test*/TEST-*.xml'
+          reporter: java-junit
+          fail-on-error: true
