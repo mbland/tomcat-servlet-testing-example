@@ -42,9 +42,16 @@ java {
 // support includeTags():
 //
 // - https://docs.gradle.org/current/userguide/jvm_test_suite_plugin.html#jvm_test_suite_plugin
+val setJunitXmlOptions = { testTask: Test ->
+    testTask.reports {
+        junitXml.apply { isOutputPerTestCase = true }
+    }
+}
+
 val smallTests = tasks.named<Test>("test") {
     description = "Runs small unit tests annotated with @SmallTest"
     useJUnitPlatform { includeTags("small") }
+    setJunitXmlOptions(this)
 }
 val testClasses = tasks.named("testClasses")
 val war = tasks.named("war")
@@ -52,6 +59,7 @@ val war = tasks.named("war")
 val addCommonTestSuiteConfiguration = { testTask: Test ->
     testTask.group = "verification"
     testTask.dependsOn(war, testClasses)
+    setJunitXmlOptions(testTask)
 
     // Based on advice from:
     // - https://docs.gradle.org/current/userguide/upgrading_version_8.html#test_task_default_classpath
