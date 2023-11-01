@@ -3,7 +3,7 @@ name: Run Tests
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  ci:
+  build-test:
     name: "Run Tests"
     runs-on: ubuntu-latest
     steps:
@@ -21,12 +21,10 @@ jobs:
         run: ./gradlew build --no-daemon --warning-mode all
 
       # Per the advice from:
-      # - https://octopus.com/blog/githubactions-running-unit-tests
-      - name: Post test report
-        uses: dorny/test-reporter@v1
+      # - https://github.com/marketplace/actions/test-reporter
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: Java tests
+          name: test-results
           path: '**/build/test-results/test*/TEST-*.xml'
-          reporter: java-junit
-          fail-on-error: true

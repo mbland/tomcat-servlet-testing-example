@@ -1,0 +1,30 @@
+# Per the advice from:
+# - https://octopus.com/blog/githubactions-running-unit-tests
+# - https://github.com/marketplace/actions/test-reporter
+
+name: Publish Test Results
+
+on:
+  workflow_run:
+    workflows: ['Run Tests']
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post test report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          artifact: test-results
+          name: Test Results
+          path: '**/build/test-results/test*/TEST-*.xml'
+          reporter: java-junit
+          fail-on-error: true
