@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.net.URI;
 
 public class LocalServer {
-    private String dockerfile;
-    private int containerPort;
+    private final String dockerfile;
+    private final int containerPort;
     private boolean running = false;
     private String imageId;
     private int port;
