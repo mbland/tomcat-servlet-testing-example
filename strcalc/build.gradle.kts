@@ -143,6 +143,18 @@ tasks.named<JacocoReport>("jacocoTestReport") {
     shouldRunAfter(smallTests)
 }
 
+// Generates:
+// - strcalc/build/reports/jacoco/jacocoXmlTestReport/jacocoXmlTestReport.xml
+tasks.register<JacocoReport>("jacocoXmlTestReport") {
+    shouldRunAfter(smallTests)
+    executionData(smallTests.get())
+    sourceSets(sourceSets.main.get())
+    reports {
+        html.required = false
+        xml.required = true
+    }
+}
+
 tasks.named("check") {
     dependsOn(allTests)
 }
