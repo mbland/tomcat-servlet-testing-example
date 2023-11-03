@@ -6,6 +6,7 @@
 
 plugins {
     war
+    jacoco
 }
 
 repositories {
@@ -33,6 +34,10 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
+}
+
+jacoco {
+    toolVersion = "0.8.11"
 }
 
 // The small/medium/large test schema is implemented via JUnit5 composite tags
@@ -69,6 +74,9 @@ val addCommonTestSuiteConfiguration = { testTask: Test ->
     // - https://docs.gradle.org/current/userguide/upgrading_version_8.html#test_task_default_classpath
     testTask.testClassesDirs = files(smallTests.map { it.testClassesDirs })
     testTask.classpath = files(smallTests.map { it.classpath })
+    testTask.extensions.configure(JacocoTaskExtension::class) {
+        isEnabled = false
+    }
 }
 
 val mediumTests = tasks.register<Test>("test-medium") {
@@ -129,6 +137,10 @@ task("merge-test-reports") {
     allTestSizes.forEach {
         suite: TaskProvider<Test> -> mergeTestReports(suite.get().name)
     }
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    shouldRunAfter(smallTests)
 }
 
 tasks.named("check") {
