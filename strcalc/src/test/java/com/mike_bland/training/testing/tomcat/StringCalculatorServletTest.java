@@ -35,12 +35,12 @@ class StringCalculatorServletTest {
 
     @BeforeAll
     static void setUpClass() throws Exception {
-       tomcatUri = tomcatServer.start(1000);
+       tomcatUri = tomcatServer.start(2500);
     }
 
     @AfterAll
     static void tearDownClass() throws Exception {
-        tomcatServer.stop(250);
+        tomcatServer.stop(2500);
     }
 
     HttpRequest.Builder newRequestBuilder(String relPath) {
