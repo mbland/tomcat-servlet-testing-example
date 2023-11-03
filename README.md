@@ -1,7 +1,15 @@
 # Tomcat Servlet Testing Example
 
 My attempt at an outside-in testing example in Java using a Tomcat servlet
-container. It will eventually incorporate the [String Calculator kata][] to
+container.
+
+Source: <https://github.com/mbland/tomcat-servlet-testing-example>
+
+[![License](https://img.shields.io/github/license/mbland/tomcat-servlet-testing-example.svg)](https://github.com/mbland/tomcat-servlet-testing-example/blob/main/LICENSE.txt)
+[![CI status](https://github.com/mbland/tomcat-servlet-testing-example/actions/workflows/run-tests.yaml/badge.svg)](https://github.com/mbland/tomcat-servlet-testing-example/actions/workflows/run-tests.yaml?branch=main)
+[![Test results](https://github.com/mbland/tomcat-servlet-testing-example/actions/workflows/publish-test-results.yaml/badge.svg)](https://github.com/mbland/tomcat-servlet-testing-example/actions/workflows/publish-test-results.yaml?branch=main)
+
+This project will eventually incorporate the [String Calculator kata][] to
 demonstrate Test-Driven Development and small unit tests in general. However, it
 will illustrate a full, balanced, [Test Pyramid][] based testing strategy
 incorporating developer written automated tests of all sizes (small, medium, and
