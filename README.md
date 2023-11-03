@@ -245,7 +245,8 @@ Expected: a string containing "Hello, World!"
 
 Added the [.github/CODEOWNERS](.github/CODEOWNERS) file and
 [.github/workflows/run-tests.yaml](.github/workflows/run-tests.yaml) file
-for [GitHub Actions][]. Configured using the [setup-java GitHub Actions plugin][].
+for [GitHub Actions][]. Configured using the [setup-java GitHub Actions
+plugin][] and the [gradle/gradle-build-action GitHub Actions plugin][].
 
 ### Publishing JUnit test results
 
@@ -327,6 +328,7 @@ Coming soon...
 [Content-Type]: https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Type
 [Hamcrest matcher library]: https://hamcrest.org
 [setup-java GitHub Actions plugin]: https://github.com/actions/setup-java
+[gradle/gradle-build-action GitHub Actions plugin]: https://github.com/gradle/gradle-build-action
 [org.apache.ant:ant-junit]: https://mvnrepository.com/artifact/org.apache.ant/ant-junit
 [Merging Per-Suite JUnit Reports into Single File with Gradle + Kotlin]: https://blog.lehnerpat.com/post/2018-09-10/merging-per-suite-junit-reports-into-single-file-with-gradle-kotlin/
 [Using Ant from Gradle]: https://docs.gradle.org/current/userguide/ant.html
