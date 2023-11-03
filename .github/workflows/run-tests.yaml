@@ -20,6 +20,10 @@ jobs:
       - name: Build and test
         run: ./gradlew build --no-daemon --warning-mode all
 
+      - name: Merge test reports
+        run: ./gradlew merge-test-reports --no-daemon --warning-mode all
+        if: always()
+
       # Per the advice from:
       # - https://github.com/marketplace/actions/test-reporter
       - name: Upload test results
@@ -27,4 +31,4 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: '**/build/test-results/test*/TEST-*.xml'
+          path: '**/build/test-results/test*/TESTS-TestSuites.xml'

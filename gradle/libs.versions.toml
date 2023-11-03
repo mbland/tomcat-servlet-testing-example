@@ -2,6 +2,7 @@
 servletVer = "6.0.0"
 junitVer = "5.10.0"
 hamcrestVer = "2.2"
+antJunitVer = "1.10.14"
 
 [libraries.servlet]
 module = "jakarta.servlet:jakarta.servlet-api"
@@ -14,3 +15,7 @@ version.ref = "junitVer"
 [libraries.hamcrest]
 module = "org.hamcrest:hamcrest"
 version.ref = "hamcrestVer"
+
+[libraries.antJunit]
+module = "org.apache.ant:ant-junit"
+version.ref = "antJunitVer"

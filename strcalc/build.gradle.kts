@@ -13,6 +13,8 @@ repositories {
     mavenCentral()
 }
 
+val antJUnit: Configuration by configurations.creating
+
 dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.hamcrest)
@@ -22,6 +24,8 @@ dependencies {
     // This dependency is used internally, and not exposed to consumers on their
     // own compile classpath.
     providedCompile(libs.servlet)
+
+    antJUnit(libs.antJunit)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -49,7 +53,7 @@ val setJunitXmlOptions = { testTask: Test ->
 }
 
 val smallTests = tasks.named<Test>("test") {
-    description = "Runs small unit tests annotated with @SmallTest"
+    description = "Runs small unit tests annotated with @SmallTest."
     useJUnitPlatform { includeTags("small") }
     setJunitXmlOptions(this)
 }
@@ -68,23 +72,63 @@ val addCommonTestSuiteConfiguration = { testTask: Test ->
 }
 
 val mediumTests = tasks.register<Test>("test-medium") {
-    description = "Runs medium integration tests annotated with @MediumTest"
+    description = "Runs medium integration tests annotated with @MediumTest."
     addCommonTestSuiteConfiguration(this)
     useJUnitPlatform { includeTags("medium") }
     shouldRunAfter(smallTests)
 }
 
 val largeTests = tasks.register<Test>("test-large") {
-    description = "Runs large system tests annotated with @LargeTest"
+    description = "Runs large system tests annotated with @LargeTest."
     addCommonTestSuiteConfiguration(this)
     useJUnitPlatform { includeTags("large") }
     shouldRunAfter(mediumTests)
 }
 
+val allTestSizes = arrayOf(smallTests, mediumTests, largeTests)
+
 val allTests = tasks.register<Task>("test-all") {
-    description = "Runs the small, medium, and large test suites in order"
+    description = "Runs the small, medium, and large test suites in order."
     group = "verification"
-    dependsOn(smallTests, mediumTests, largeTests)
+    dependsOn(allTestSizes)
+}
+
+internal val testResultsDir = java.testResultsDir
+internal val aggregatorClass = "org.apache.tools.ant.taskdefs.optional." +
+        "junit.XMLResultAggregator"
+
+// Based on
+// - https://blog.lehnerpat.com/post/2018-09-10/merging-per-suite-junit-reports-into-single-file-with-gradle-kotlin/
+// - https://docs.gradle.org/current/userguide/ant.html
+val mergeTestReports = fun(taskName: String) {
+    val resultsDir = testResultsDir.dir(taskName).get().asFile
+    val reportTaskName = "merged-report-$taskName"
+    // logger.quiet(rootDir.toPath().relativize(resultsDir.toPath()).toString())
+
+    if (!resultsDir.exists()) return
+
+    ant.withGroovyBuilder {
+        "taskdef"(
+                "name" to reportTaskName,
+                "classname" to aggregatorClass,
+                "classpath" to antJUnit.asPath
+        )
+        reportTaskName("todir" to resultsDir) {
+            "fileset"(
+                    "dir" to resultsDir,
+                    "includes" to "TEST-*.xml")
+        }
+    }
+}
+
+task("merge-test-reports") {
+    description = "Merges all JUnit XML results files for each test size into" +
+            " a single file."
+    group = "verification"
+    shouldRunAfter(allTestSizes)
+    allTestSizes.forEach {
+        suite: TaskProvider<Test> -> mergeTestReports(suite.get().name)
+    }
 }
 
 tasks.named("check") {

@@ -228,7 +228,7 @@ we're able to see more information:
 ```text
 java.lang.AssertionError:
 Expected: a string containing "Hello, World!"
-     but: was "&lt!DOCTYPE html>
+     but: was "<DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -243,8 +243,41 @@ Expected: a string containing "Hello, World!"
 
 ## Setting up continuous integration
 
-Added the `.github/CODEOWNERS` file and `.github/workflows/run-tests.yaml` file
+Added the [.github/CODEOWNERS](.github/CODEOWNERS) file and
+[.github/workflows/run-tests.yaml](.github/workflows/run-tests.yaml) file
 for [GitHub Actions][]. Configured using the [setup-java GitHub Actions plugin][].
+
+### Publishing JUnit test results
+
+[run-tests.yaml](.github/workflows/run-tests.yaml) runs `gradlew
+merge-test-reports` to aggregate individual `TEST-*.xml` JUnit results files
+into `TESTS-TestSuites.xml` files. This task uses [org.apache.ant:ant-junit][]
+based on advice from [Merging Per-Suite JUnit Reports into Single File with
+Gradle + Kotlin][]. (See also: [Using Ant from Gradle][].)
+
+The aggregated files are uploaded via the [actions/upload-artifact GitHub
+Actions plugin][].
+[.github/workflows/publish-test-results.yaml](.github/workflows/publish-test-results.yaml)
+then uses the [actions/download-artifact GitHub Actions plugin][] to retrieve
+the results and pass them to the [dorny/test-reporter GitHub Actions
+plugin][dorny/test-reporter]. That plugin makes the test results for the tested
+commit available via the status icon next to the commit hash in the GitHub UI.
+
+As explained by the [dorny/test-reporter][] page, the separate
+`publish-test-results.yaml` file is necessary to ensure the plugin has
+permission to launch a [check run][]:
+
+> When someone pushes code to the repository, GitHub automatically sends the
+> `check_suite` event with an action of `requested` to all GitHub Apps installed
+> on the repository that have the `checks:write` permission.
+
+Not having `checks:write` permission for the plugin can lead to the cryptic error:
+
+```text
+Error: HttpError: Resource not accessible by integration
+```
+
+For more on `GITHUB_TOKEN` permissions, see [Assigning permissions to jobs].
 
 ## Adding large tests
 
@@ -294,3 +327,11 @@ Coming soon...
 [Content-Type]: https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Type
 [Hamcrest matcher library]: https://hamcrest.org
 [setup-java GitHub Actions plugin]: https://github.com/actions/setup-java
+[org.apache.ant:ant-junit]: https://mvnrepository.com/artifact/org.apache.ant/ant-junit
+[Merging Per-Suite JUnit Reports into Single File with Gradle + Kotlin]: https://blog.lehnerpat.com/post/2018-09-10/merging-per-suite-junit-reports-into-single-file-with-gradle-kotlin/
+[Using Ant from Gradle]: https://docs.gradle.org/current/userguide/ant.html
+[actions/upload-artifact GitHub Actions plugin]: https://github.com/actions/upload-artifact
+[actions/download-artifact GitHub Actions plugin]: https://github.com/actions/download-artifact
+[dorny/test-reporter]: https://github.com/marketplace/actions/test-reporter
+[check run]: https://docs.github.com/en/apps/creating-github-apps/writing-code-for-a-github-app/building-ci-checks-with-a-github-app#about-checks
+[Assigning permissions to jobs]: https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
