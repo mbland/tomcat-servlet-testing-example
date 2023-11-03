@@ -20,10 +20,10 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Build and test
-        run: ./gradlew build --warning-mode all
+        run: ./gradlew build
 
       - name: Merge test reports
-        run: ./gradlew merge-test-reports --warning-mode all
+        run: ./gradlew merge-test-reports
         if: always()
 
       # Per the advice from:
