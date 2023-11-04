@@ -316,10 +316,9 @@ Gradle + Kotlin][]. (See also: [Using Ant from Gradle][].)
 The aggregated files are uploaded via the [actions/upload-artifact GitHub
 Actions plugin][].
 [.github/workflows/publish-test-results.yaml](.github/workflows/publish-test-results.yaml)
-then uses the [actions/download-artifact GitHub Actions plugin][] to retrieve
-the results and pass them to the [dorny/test-reporter GitHub Actions
-plugin][dorny/test-reporter]. That plugin makes the test results for the tested
-commit available via the status icon next to the commit hash in the GitHub UI.
+then uses the [dorny/test-reporter GitHub Actions plugin][dorny/test-reporter].
+That plugin downloads the test results and makes them available via the status
+icon next to the commit hash in the GitHub UI.
 
 As explained by the [dorny/test-reporter][] page, the separate
 `publish-test-results.yaml` file is necessary to ensure the plugin has
@@ -327,7 +326,7 @@ permission to launch a [check run][]:
 
 > When someone pushes code to the repository, GitHub automatically sends the
 > `check_suite` event with an action of `requested` to all GitHub Apps installed
-> on the repository that have the `checks:write` permission.
+> on the repository that have the `checks: write` permission.
 
 Not having `checks:write` permission for the plugin can lead to the cryptic error:
 
@@ -444,6 +443,34 @@ the top of this file) to see Coveralls in action.
 
 The [continuous integration](#ci) system publishes JaCoCo code coverage results
 to Coveralls using the [coverallsapp/github-action GitHub Actions plugin][].
+Coveralls will make the coverage results for the tested commit available via the
+status icon next to the commit hash in the GitHub UI. It will also add comments
+to pull requests summarizing how the changes affect code coverage.
+
+### Alternative coverage reporting
+
+If you prefer not to use Coveralls, you can search the [GitHub Actions
+marketplace][] for [JaCoCo related GitHub Actions plugins][]. A couple of
+promising ones are:
+
+- [Madrapps/jacoco-report](https://github.com/marketplace/actions/jacoco-report)
+- [PavanMudigonda/jacoco-reporter](https://github.com/marketplace/actions/jacoco-reporter)
+
+Note that, though the instructions of neither of the above plugins show it, you
+may need to split the configuration similarly to the [dorny/test-reporter][]
+plugin:
+
+- Use the [actions/upload-artifact GitHub Actions plugin][] at the end of the
+  [.github/workflows/run-tests.yaml](.github/workflows/run-tests.yaml) file to upload
+  `strcalc/build/reports/jacoco/jacocoXmlTestReport/jacocoXmlTestReport.xml`.
+- Set the `checks: write` permission in
+  [.github/workflows/publish-test-results.yaml](.github/workflows/publish-test-results.yaml)
+  so the coverage results can be posted as part of a [check run][].
+- Use the [actions/download-artifact GitHub Actions plugin][] in the
+  [.github/workflows/publish-test-results.yaml](.github/workflows/publish-test-results.yaml)
+  file to download the report.
+- Configure the selected plugin to process the downloaded
+`jacocoXmlTestReport.xml` file.
 
 ## Adding large tests
 
@@ -516,3 +543,5 @@ Coming soon...
 [Re: &#x5b;java code coverage&#x5d; Java 21 supported?]: https://www.mail-archive.com/jacoco@googlegroups.com/msg05287.html
 [Coveralls]: https://coveralls.io/
 [coverallsapp/github-action GitHub Actions plugin]: https://github.com/coverallsapp/github-action
+[GitHub Actions marketplace]: https://github.com/marketplace?type=actions
+[JaCoCo related GitHub Actions plugins]: https://github.com/marketplace?category=&type=actions&verification=&query=jacoco
