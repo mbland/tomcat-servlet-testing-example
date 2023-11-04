@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // Tomcat must be running and the latest build deployed before running this
 // test. Run the Local Tomcat run configuration first.
-class StringCalculatorServletTest {
+class StringCalculatorTomcatContractTest {
     private static final String SERVLET_ROOT = "/strcalc";
 
     private static final LocalServer tomcatServer = new LocalServer(
