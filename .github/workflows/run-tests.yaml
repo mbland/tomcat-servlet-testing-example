@@ -26,6 +26,10 @@ jobs:
         run: ./gradlew merge-test-reports
         if: always()
 
+      - name: Generate coverage report
+        run: ./gradlew jacocoXmlTestReport
+        if: always()
+
       # Per the advice from:
       # - https://github.com/marketplace/actions/test-reporter
       - name: Upload test results
@@ -34,3 +38,10 @@ jobs:
         with:
           name: test-results
           path: '**/build/test-results/test*/TESTS-TestSuites.xml'
+
+      - name: Send test coverage to Coveralls.io
+        uses: coverallsapp/github-action@v2
+        if: always()
+        with:
+          # The .xml file only contains paths relative to this one.
+          base-path: 'strcalc/src/main/java'
