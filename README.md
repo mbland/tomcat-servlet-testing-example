@@ -385,14 +385,21 @@ builtin coverage implementation.
   and run more slowly. While still critically important, these qualities make
   running larger tests frequently while coding impractical. They should be used
   sparingly to validate higher level systemic properties, as using them to
-  validate lower level details renders them brittle. Therefore, code coverage
-  from larger tests does practically nothing to tighten feedback loops and to
-  help resolve coding errors quickly, rendering it far less useful.
+  validate lower level details renders them brittle.
+
+  Therefore, code coverage from larger tests does practically nothing to tighten
+  feedback loops and to help resolve coding errors quickly, rendering it far
+  less useful.
 
 - That said, if you do choose to collect code coverage from all tests, take care
   to partition the reports by test size. Coverage from the larger test suites
   should be less than or equal to that from the smaller test
   suite&mdash;_**not** the other way around!_
+
+  Relying on code coverage percentages inflated by coverage from large tests
+  risks instilling a false sense of security. It could potentially mask gaps in
+  smaller test coverage that could in turn mask serious, yet preventable
+  problems.
 
 ### Enabling the [Gradle JaCoCo Plugin][] and generating HTML and XML reports
 
