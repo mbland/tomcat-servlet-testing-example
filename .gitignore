@@ -5,3 +5,6 @@
 build
 
 tmp
+
+# IDEA coverage report dir
+htmlReport
