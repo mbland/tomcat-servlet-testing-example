@@ -74,8 +74,11 @@ val addCommonTestSuiteConfiguration = { testTask: Test ->
 
     // Based on advice from:
     // - https://docs.gradle.org/current/userguide/upgrading_version_8.html#test_task_default_classpath
-    testTask.testClassesDirs = files(smallTests.map { it.testClassesDirs })
-    testTask.classpath = files(smallTests.map { it.classpath })
+    val test by testing.suites.existing(JvmTestSuite::class)
+    testTask.testClassesDirs = files(test.map {
+        it.sources.output.classesDirs
+    })
+    testTask.classpath = files(test.map { it.sources.runtimeClasspath })
 }
 
 val mediumCoverageTests = tasks.register<Test>("test-medium-coverage") {
