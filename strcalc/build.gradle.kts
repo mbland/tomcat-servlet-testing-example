@@ -53,24 +53,25 @@ jacoco {
 // support includeTags():
 //
 // - https://docs.gradle.org/current/userguide/jvm_test_suite_plugin.html#jvm_test_suite_plugin
-val setJunitXmlOptions = { testTask: Test ->
-    testTask.reports {
-        junitXml.apply { isOutputPerTestCase = true }
+val setCommonTestOptions = { testTask: Test ->
+    testTask.reports { junitXml.apply { isOutputPerTestCase = true } }
+    testTask.testLogging {
+        showStandardStreams = project.hasProperty("testoutput")
     }
 }
 
 val smallTests = tasks.named<Test>("test") {
     description = "Runs small unit tests annotated with @SmallTest."
     useJUnitPlatform { includeTags("small") }
-    setJunitXmlOptions(this)
+    setCommonTestOptions(this)
 }
 val testClasses = tasks.named("testClasses")
 val war = tasks.named("war")
 
-val addCommonTestSuiteConfiguration = { testTask: Test ->
+val setLargerTestOptions = { testTask: Test ->
     testTask.group = "verification"
     testTask.dependsOn(testClasses)
-    setJunitXmlOptions(testTask)
+    setCommonTestOptions(testTask)
 
     // Based on advice from:
     // - https://docs.gradle.org/current/userguide/upgrading_version_8.html#test_task_default_classpath
@@ -90,14 +91,14 @@ val addCommonTestSuiteConfiguration = { testTask: Test ->
 val mediumCoverageTests = tasks.register<Test>("test-medium-coverage") {
     description = "Runs medium integration tests annotated with " +
             "@MediumCoverageTest."
-    addCommonTestSuiteConfiguration(this)
+    setLargerTestOptions(this)
     useJUnitPlatform { includeTags("medium & coverage") }
     shouldRunAfter(smallTests)
 }
 
 val mediumTests = tasks.register<Test>("test-medium") {
     description = "Runs medium integration tests annotated with @MediumTest."
-    addCommonTestSuiteConfiguration(this)
+    setLargerTestOptions(this)
     useJUnitPlatform { includeTags("medium & !coverage") }
     shouldRunAfter(smallTests, mediumCoverageTests)
     extensions.configure(JacocoTaskExtension::class) {
@@ -107,7 +108,7 @@ val mediumTests = tasks.register<Test>("test-medium") {
 
 val largeTests = tasks.register<Test>("test-large") {
     description = "Runs large system tests annotated with @LargeTest."
-    addCommonTestSuiteConfiguration(this)
+    setLargerTestOptions(this)
     dependsOn(war)
     useJUnitPlatform { includeTags("large") }
     shouldRunAfter(mediumCoverageTests, mediumTests)
