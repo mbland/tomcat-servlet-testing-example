@@ -43,9 +43,7 @@ class StringCalculatorTomcatContractTest {
     }
 
     HttpRequest.Builder newRequestBuilder(String relPath) {
-        var uri = tomcat.uri()
-                .resolve("%s/%s".formatted(SERVLET_ROOT, relPath));
-        return HttpRequest.newBuilder().uri(uri);
+        return HttpRequest.newBuilder().uri(tomcat.resolveEndpoint(relPath));
     }
 
     HttpResponse<String> sendRequest(HttpRequest req)

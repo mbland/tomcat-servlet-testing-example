@@ -74,6 +74,11 @@ public class TestTomcat {
         return this.uri;
     }
 
+    public URI resolveEndpoint(String endpoint) {
+        final var pattern = endpoint.startsWith("/") ? "%s%s": "%s/%s";
+        return uri.resolve(pattern.formatted(contextPath, endpoint));
+    }
+
     public synchronized void stop() throws LifecycleException, IOException {
         if (!running) return;
         running = false;
