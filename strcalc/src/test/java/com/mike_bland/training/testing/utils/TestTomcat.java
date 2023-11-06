@@ -37,9 +37,10 @@ public class TestTomcat {
     private Tomcat tomcat;
     private boolean running;
 
-    public TestTomcat(int port, String contextPath) {
+    public TestTomcat(int port, String contextPath)
+            throws IllegalArgumentException {
         this.port = port;
-        this.contextPath = contextPath;
+        this.contextPath = validateContextPath(contextPath);
         this.uri = URI.create(
                 String.format("http://localhost:%d%s", port, contextPath)
         );
@@ -74,9 +75,13 @@ public class TestTomcat {
         return this.uri;
     }
 
-    public URI resolveEndpoint(String endpoint) {
-        final var pattern = endpoint.startsWith("/") ? "%s%s": "%s/%s";
-        return uri.resolve(pattern.formatted(contextPath, endpoint));
+    public URI resolveEndpoint(String endpoint)
+        throws IllegalArgumentException {
+        if (!endpoint.startsWith("/")) {
+            final var msg = "endpoint path should begin with '/', got: \"%s\"";
+            throw new IllegalArgumentException(msg.formatted(endpoint));
+        }
+        return uri.resolve("%s%s".formatted(contextPath, endpoint));
     }
 
     public synchronized void stop() throws LifecycleException, IOException {
@@ -84,6 +89,16 @@ public class TestTomcat {
         running = false;
         tomcat.stop();
         deleteBaseDir(port);
+    }
+
+    private static String validateContextPath(String contextPath)
+        throws IllegalArgumentException {
+        if (!contextPath.startsWith("/") || contextPath.endsWith("/")) {
+            final var msg = "contextPath should start with '/', " +
+                            "but not end with '/', got: \"%s\"";
+            throw new IllegalArgumentException(msg.formatted(contextPath));
+        }
+        return contextPath;
     }
 
     private static void deleteBaseDir(int port) throws IOException {

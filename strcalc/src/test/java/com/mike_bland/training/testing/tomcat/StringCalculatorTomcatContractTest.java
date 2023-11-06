@@ -58,7 +58,7 @@ class StringCalculatorTomcatContractTest {
 
     @MediumTest
     void landingPageHelloWorld() throws Exception {
-        var req = newRequestBuilder("").GET().build();
+        var req = newRequestBuilder("/").GET().build();
 
         var resp = sendRequest(req);
 
@@ -72,7 +72,7 @@ class StringCalculatorTomcatContractTest {
 
     @MediumTest
     void addEndpointPlaceholder() throws Exception {
-        var req = newRequestBuilder("add").GET().build();
+        var req = newRequestBuilder("/add").GET().build();
 
         var resp = sendRequest(req);
 
