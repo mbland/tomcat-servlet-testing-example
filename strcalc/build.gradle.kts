@@ -175,9 +175,19 @@ task("merge-test-reports") {
     }
 }
 
+val emitReportLocation = fun(report: Report) {
+    if (report.required.get()) {
+        val location = report.outputLocation.get().asFile.toPath()
+        logger.quiet("coverage report: " + relativeToRootDir(location))
+    }
+}
+
 tasks.named<JacocoReport>("jacocoTestReport") {
     shouldRunAfter(smallTests, mediumCoverageTests)
     executionData(mediumCoverageTests.get())
+    doLast {
+        reports.forEach { r -> emitReportLocation(r) }
+    }
 }
 
 // Generates:
@@ -189,6 +199,9 @@ tasks.register<JacocoReport>("jacocoXmlTestReport") {
     reports {
         html.required = false
         xml.required = true
+    }
+    doLast {
+        reports.forEach { r -> emitReportLocation(r) }
     }
 }
 
