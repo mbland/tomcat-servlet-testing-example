@@ -7,9 +7,12 @@
 package com.mike_bland.training.testing.utils;
 
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
+import org.apache.tomcat.JarScanFilter;
+import org.apache.tomcat.JarScanType;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,8 +54,11 @@ public class TestTomcat {
         running = true;
         tomcat = new Tomcat();
         tomcat.setPort(port);
+        tomcat.setSilent(true);
 
-        final var ctx = tomcat.addWebapp(contextPath, WEB_APP_DIR);
+        final var ctx = (StandardContext) tomcat.addWebapp(
+                contextPath, WEB_APP_DIR
+        );
         final var root = new StandardRoot(ctx);
         final var resourceSet = new DirResourceSet(
                 root,
@@ -63,12 +69,29 @@ public class TestTomcat {
 
         root.addPreResources(resourceSet);
         ctx.setResources(root);
+        disableChecksAndJarScan(ctx);
 
         // getConnector() is a recent requirement the other examples didn't use.
         // - https://stackoverflow.com/questions/15114892/embedded-tomcat-without-web-inf#comment98210881_15235711
         // - https://stackoverflow.com/a/49011424
         tomcat.getConnector();
         tomcat.start();
+    }
+
+    private static void disableChecksAndJarScan(StandardContext ctx) {
+        ctx.setClearReferencesThreadLocals(false);
+        ctx.setClearReferencesRmiTargets(false);
+        ctx.getJarScanner().setJarScanFilter(new JarScanFilter() {
+            @Override
+            public boolean check(JarScanType jarScanType, String jarName) {
+                return false;
+            }
+
+            @Override
+            public boolean isSkipAll() {
+                return true;
+            }
+        });
     }
 
     public URI uri() {
