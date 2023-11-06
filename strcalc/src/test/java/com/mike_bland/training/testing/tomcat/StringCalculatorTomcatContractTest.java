@@ -7,12 +7,12 @@
 package com.mike_bland.training.testing.tomcat;
 
 import com.mike_bland.training.testing.sizes.MediumTest;
-import com.mike_bland.training.testing.utils.LocalServer;
+import com.mike_bland.training.testing.utils.PortPicker;
+import com.mike_bland.training.testing.utils.TestTomcat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -27,24 +27,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 // test. Run the Local Tomcat run configuration first.
 class StringCalculatorTomcatContractTest {
     private static final String SERVLET_ROOT = "/strcalc";
-
-    private static final LocalServer tomcatServer = new LocalServer(
-            "dockerfiles/Dockerfile.tomcat-test", 8080
-    );
-    private static URI tomcatUri;
+    private static TestTomcat tomcat;
 
     @BeforeAll
     static void setUpClass() throws Exception {
-       tomcatUri = tomcatServer.start(2500);
+       tomcat = new TestTomcat(
+               PortPicker.pickUnusedPort(), SERVLET_ROOT
+       );
+       tomcat.start();
     }
 
     @AfterAll
     static void tearDownClass() throws Exception {
-        tomcatServer.stop(2500);
+        tomcat.stop();
     }
 
     HttpRequest.Builder newRequestBuilder(String relPath) {
-        var uri = tomcatUri.resolve("%s/%s".formatted(SERVLET_ROOT, relPath));
+        var uri = tomcat.uri()
+                .resolve("%s/%s".formatted(SERVLET_ROOT, relPath));
         return HttpRequest.newBuilder().uri(uri);
     }
 

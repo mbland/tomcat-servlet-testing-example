@@ -21,6 +21,7 @@ public class Servlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setContentType("text/plain");
+        resp.setCharacterEncoding("UTF-8");
         resp.getWriter().print("placeholder for /add API endpoint");
     }
 }

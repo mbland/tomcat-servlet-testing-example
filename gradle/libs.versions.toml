@@ -1,5 +1,6 @@
 [versions]
 servletVer = "6.0.0"
+tomcatVer = "10.1.15"
 junitVer = "5.10.0"
 hamcrestVer = "2.2"
 antJunitVer = "1.10.14"
@@ -7,6 +8,14 @@ antJunitVer = "1.10.14"
 [libraries.servlet]
 module = "jakarta.servlet:jakarta.servlet-api"
 version.ref="servletVer"
+
+[libraries.tomcat]
+module = "org.apache.tomcat.embed:tomcat-embed-core"
+version.ref="tomcatVer"
+
+[libraries.jasper]
+module = "org.apache.tomcat.embed:tomcat-embed-jasper"
+version.ref="tomcatVer"
 
 [libraries.junit]
 module = "org.junit.jupiter:junit-jupiter"

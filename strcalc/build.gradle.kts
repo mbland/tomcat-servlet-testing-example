@@ -19,6 +19,8 @@ val antJUnit: Configuration by configurations.creating
 dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.hamcrest)
+    testImplementation(libs.tomcat)
+    testImplementation(libs.jasper)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
@@ -74,9 +76,6 @@ val addCommonTestSuiteConfiguration = { testTask: Test ->
     // - https://docs.gradle.org/current/userguide/upgrading_version_8.html#test_task_default_classpath
     testTask.testClassesDirs = files(smallTests.map { it.testClassesDirs })
     testTask.classpath = files(smallTests.map { it.classpath })
-    testTask.extensions.configure(JacocoTaskExtension::class) {
-        isEnabled = false
-    }
 }
 
 val mediumTests = tasks.register<Test>("test-medium") {
@@ -91,6 +90,9 @@ val largeTests = tasks.register<Test>("test-large") {
     addCommonTestSuiteConfiguration(this)
     useJUnitPlatform { includeTags("large") }
     shouldRunAfter(mediumTests)
+    extensions.configure(JacocoTaskExtension::class) {
+        isEnabled = false
+    }
 }
 
 val allTestSizes = arrayOf(smallTests, mediumTests, largeTests)
@@ -140,14 +142,15 @@ task("merge-test-reports") {
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
-    shouldRunAfter(smallTests)
+    shouldRunAfter(smallTests, mediumTests)
+    executionData(mediumTests.get())
 }
 
 // Generates:
 // - strcalc/build/reports/jacoco/jacocoXmlTestReport/jacocoXmlTestReport.xml
 tasks.register<JacocoReport>("jacocoXmlTestReport") {
-    shouldRunAfter(smallTests)
-    executionData(smallTests.get())
+    shouldRunAfter(smallTests, mediumTests)
+    executionData(smallTests.get(), mediumTests.get())
     sourceSets(sourceSets.main.get())
     reports {
         html.required = false
