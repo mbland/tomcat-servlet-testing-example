@@ -124,15 +124,17 @@ internal val testResultsDir = java.testResultsDir
 internal val aggregatorClass = "org.apache.tools.ant.taskdefs.optional." +
         "junit.XMLResultAggregator"
 
+val relativeToRootDir = fun(absPath: java.nio.file.Path): java.nio.file.Path {
+    return rootDir.toPath().relativize(absPath)
+}
+
 // Based on
 // - https://blog.lehnerpat.com/post/2018-09-10/merging-per-suite-junit-reports-into-single-file-with-gradle-kotlin/
 // - https://docs.gradle.org/current/userguide/ant.html
-val mergeTestReports = fun(taskName: String) {
-    val resultsDir = testResultsDir.dir(taskName).get().asFile
+val mergeTestReports = fun(resultsDir: File) {
+    val taskName = resultsDir.name
+    val relResultsDir = relativeToRootDir(resultsDir.toPath())
     val reportTaskName = "merged-report-$taskName"
-    // logger.quiet(rootDir.toPath().relativize(resultsDir.toPath()).toString())
-
-    if (!resultsDir.exists()) return
 
     ant.withGroovyBuilder {
         "taskdef"(
@@ -146,6 +148,8 @@ val mergeTestReports = fun(taskName: String) {
                     "includes" to "TEST-*.xml")
         }
     }
+    logger.quiet("merged test reports: " + relResultsDir +
+            "/TESTS-TestSuites.xml")
 }
 
 task("merge-test-reports") {
@@ -153,8 +157,15 @@ task("merge-test-reports") {
             " a single file."
     group = "verification"
     shouldRunAfter(allTestSizes)
-    allTestSizes.forEach {
-        suite: TaskProvider<Test> -> mergeTestReports(suite.get().name)
+
+    doLast {
+        val resultsDir = testResultsDir.asFile.get()
+
+        if (resultsDir.exists()) {
+            resultsDir.listFiles().filter{ d: File -> d.isDirectory }.forEach {
+                dir: File -> mergeTestReports(dir)
+            }
+        }
     }
 }
 
