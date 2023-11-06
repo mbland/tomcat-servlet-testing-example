@@ -74,11 +74,17 @@ val addCommonTestSuiteConfiguration = { testTask: Test ->
 
     // Based on advice from:
     // - https://docs.gradle.org/current/userguide/upgrading_version_8.html#test_task_default_classpath
+    @Suppress("UnstableApiUsage")
     val test by testing.suites.existing(JvmTestSuite::class)
+
     testTask.testClassesDirs = files(test.map {
+        @Suppress("UnstableApiUsage")
         it.sources.output.classesDirs
     })
-    testTask.classpath = files(test.map { it.sources.runtimeClasspath })
+    testTask.classpath = files(test.map {
+        @Suppress("UnstableApiUsage")
+        it.sources.runtimeClasspath
+    })
 }
 
 val mediumCoverageTests = tasks.register<Test>("test-medium-coverage") {
