@@ -83,10 +83,10 @@ public class TestTomcat {
         if (!running) return;
         running = false;
         tomcat.stop();
-        deleteBaseDir();
+        deleteBaseDir(port);
     }
 
-    private void deleteBaseDir() throws IOException {
+    private static void deleteBaseDir(int port) throws IOException {
         // The Tomcat.setBaseDir() documentation explains the base dir schema:
         // - https://tomcat.apache.org/tomcat-10.1-doc/api/org/apache/catalina/startup/Tomcat.html#setBaseDir(java.lang.String)
         final var baseDir = new File("tomcat.%d".formatted(port));
