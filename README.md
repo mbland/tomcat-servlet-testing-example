@@ -157,14 +157,14 @@ an existing local instance.
 
 ## Partitioning tests into small, medium, and large test sizes
 
-### Add the `@SmallTest`, `@MediumTest`, and `@LargeTest` annotations
+### Add the `@SmallTest`, `@MediumCoverageTest`, `@MediumTest`, and `@LargeTest` annotations
 
 These are JUnit composed annotations based on the guidance from:
 
 - [JUnit: 2.1.1. Meta-Annotations and Composed
   Annotations](https://junit.org/junit5/docs/current/user-guide/#writing-tests-meta-annotations)
 
-### Add `test-medium`, `test-large`, `test-all` tasks, update `test` and `check`
+### Add `test-medium-coverage`, `test-medium`, `test-large`, `test-all` tasks, update `test` and `check`
 
 These tasks and updates use JUnit composed annotations and the `includeTags`
 config option based on guidance from:

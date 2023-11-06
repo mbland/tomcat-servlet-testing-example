@@ -69,7 +69,7 @@ val war = tasks.named("war")
 
 val addCommonTestSuiteConfiguration = { testTask: Test ->
     testTask.group = "verification"
-    testTask.dependsOn(war, testClasses)
+    testTask.dependsOn(testClasses)
     setJunitXmlOptions(testTask)
 
     // Based on advice from:
@@ -78,24 +78,38 @@ val addCommonTestSuiteConfiguration = { testTask: Test ->
     testTask.classpath = files(smallTests.map { it.classpath })
 }
 
-val mediumTests = tasks.register<Test>("test-medium") {
-    description = "Runs medium integration tests annotated with @MediumTest."
+val mediumCoverageTests = tasks.register<Test>("test-medium-coverage") {
+    description = "Runs medium integration tests annotated with " +
+            "@MediumCoverageTest."
     addCommonTestSuiteConfiguration(this)
-    useJUnitPlatform { includeTags("medium") }
+    useJUnitPlatform { includeTags("medium & coverage") }
     shouldRunAfter(smallTests)
 }
 
-val largeTests = tasks.register<Test>("test-large") {
-    description = "Runs large system tests annotated with @LargeTest."
+val mediumTests = tasks.register<Test>("test-medium") {
+    description = "Runs medium integration tests annotated with @MediumTest."
     addCommonTestSuiteConfiguration(this)
-    useJUnitPlatform { includeTags("large") }
-    shouldRunAfter(mediumTests)
+    useJUnitPlatform { includeTags("medium & !coverage") }
+    shouldRunAfter(smallTests, mediumCoverageTests)
     extensions.configure(JacocoTaskExtension::class) {
         isEnabled = false
     }
 }
 
-val allTestSizes = arrayOf(smallTests, mediumTests, largeTests)
+val largeTests = tasks.register<Test>("test-large") {
+    description = "Runs large system tests annotated with @LargeTest."
+    addCommonTestSuiteConfiguration(this)
+    dependsOn(war)
+    useJUnitPlatform { includeTags("large") }
+    shouldRunAfter(mediumCoverageTests, mediumTests)
+    extensions.configure(JacocoTaskExtension::class) {
+        isEnabled = false
+    }
+}
+
+val allTestSizes = arrayOf(
+        smallTests, mediumCoverageTests, mediumTests, largeTests
+)
 
 val allTests = tasks.register<Task>("test-all") {
     description = "Runs the small, medium, and large test suites in order."
@@ -142,15 +156,15 @@ task("merge-test-reports") {
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
-    shouldRunAfter(smallTests, mediumTests)
-    executionData(mediumTests.get())
+    shouldRunAfter(smallTests, mediumCoverageTests)
+    executionData(mediumCoverageTests.get())
 }
 
 // Generates:
 // - strcalc/build/reports/jacoco/jacocoXmlTestReport/jacocoXmlTestReport.xml
 tasks.register<JacocoReport>("jacocoXmlTestReport") {
-    shouldRunAfter(smallTests, mediumTests)
-    executionData(smallTests.get(), mediumTests.get())
+    shouldRunAfter(smallTests, mediumCoverageTests)
+    executionData(smallTests.get(), mediumCoverageTests.get())
     sourceSets(sourceSets.main.get())
     reports {
         html.required = false
