@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.mike_bland.training.testing.tomcat;
+package com.mike_bland.training.testing.stringcalculator;
 
 import com.mike_bland.training.testing.sizes.MediumTest;
 import com.mike_bland.training.testing.utils.PortPicker;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // Tomcat must be running and the latest build deployed before running this
 // test. Run the Local Tomcat run configuration first.
-class StringCalculatorTomcatContractTest {
+class ServletContractTest {
     private static final String SERVLET_ROOT = "/strcalc";
     private static TestTomcat tomcat;
 
