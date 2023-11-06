@@ -6,7 +6,7 @@
 
 package com.mike_bland.training.testing.stringcalculator;
 
-import com.mike_bland.training.testing.sizes.MediumTest;
+import com.mike_bland.training.testing.annotations.MediumTest;
 import com.mike_bland.training.testing.utils.PortPicker;
 import com.mike_bland.training.testing.utils.TestTomcat;
 import org.junit.jupiter.api.AfterAll;

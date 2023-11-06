@@ -6,7 +6,7 @@
 
 package com.mike_bland.training.testing.stringcalculator;
 
-import com.mike_bland.training.testing.sizes.SmallTest;
+import com.mike_bland.training.testing.annotations.SmallTest;
 
 public class StringCalculatorTest {
     // This placeholder test exists solely to allow the Gradle "test" task to

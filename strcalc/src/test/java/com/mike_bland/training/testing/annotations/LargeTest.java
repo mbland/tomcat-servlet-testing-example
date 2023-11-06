@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.mike_bland.training.testing.sizes;
+package com.mike_bland.training.testing.annotations;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
