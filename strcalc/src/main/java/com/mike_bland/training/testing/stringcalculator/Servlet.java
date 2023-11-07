@@ -15,6 +15,7 @@ import java.io.IOException;
 
 @WebServlet("/add")
 public class Servlet extends HttpServlet {
+    public static final String DEFAULT_ROOT = "/strcalc";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)

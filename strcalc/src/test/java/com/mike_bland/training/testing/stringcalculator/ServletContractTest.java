@@ -20,6 +20,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Optional;
 
+import static com.mike_bland.training.testing.stringcalculator.Servlet.DEFAULT_ROOT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,13 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 // Tomcat must be running and the latest build deployed before running this
 // test. Run the Local Tomcat run configuration first.
 class ServletContractTest {
-    private static final String SERVLET_ROOT = "/strcalc";
     private static TestTomcat tomcat;
 
     @BeforeAll
     static void setUpClass() throws Exception {
        tomcat = new TestTomcat(
-               PortPicker.pickUnusedPort(), SERVLET_ROOT
+               PortPicker.pickUnusedPort(), Servlet.DEFAULT_ROOT
        );
        tomcat.start();
     }
