@@ -116,8 +116,9 @@ public class TestTomcat {
 
     private static String validateContextPath(String contextPath)
         throws IllegalArgumentException {
-        if (!contextPath.startsWith("/") || contextPath.endsWith("/")) {
-            final var msg = "contextPath should start with '/', " +
+        if (contextPath != "/" &&
+                (!contextPath.startsWith("/") || contextPath.endsWith("/"))) {
+            final var msg = "contextPath should be '/' or start with '/', " +
                             "but not end with '/', got: \"%s\"";
             throw new IllegalArgumentException(msg.formatted(contextPath));
         }
