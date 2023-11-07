@@ -25,13 +25,13 @@ public class LocalServer {
     public synchronized URI start(int waitMs)
             throws IOException, InterruptedException {
         if (!running) {
+            running = true;
             Docker.assertIsAvailable();
             imageId = Docker.createTemporaryImage(dockerfile);
             port = PortPicker.pickUnusedPort();
             var portMap = String.format("%1$d:%2$d", port, containerPort);
             runCmd = Docker.runImage(imageId, portMap);
             Thread.sleep(waitMs);
-            running = true;
         }
         return URI.create(String.format("http://localhost:%1$d", port));
     }
@@ -39,10 +39,10 @@ public class LocalServer {
     public synchronized void stop(int waitMs)
             throws IOException, InterruptedException{
         if (running) {
+            running = false;
             runCmd.destroy();
             Thread.sleep(waitMs);
             Docker.destroyImage(imageId);
-            running = false;
         }
     }
 }
