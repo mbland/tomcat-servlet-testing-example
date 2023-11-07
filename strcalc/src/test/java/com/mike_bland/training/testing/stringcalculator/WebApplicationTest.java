@@ -44,6 +44,7 @@ public class WebApplicationTest {
         // - https://peter.sh/experiments/chromium-command-line-switches/
         var options = new ChromeOptions();
         options.addArguments("--headless");
+        options.setImplicitWaitTimeout(Duration.ofMillis(500));
         driver = new ChromeDriver(options);
     }
 
@@ -76,7 +77,6 @@ public class WebApplicationTest {
     @LargeTest
     void testPlaceholder() {
         driver.get(endpoint("/"));
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
 
         WebElement body = driver.findElement(By.cssSelector("p.placeholder"));
 
