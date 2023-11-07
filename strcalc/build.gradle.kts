@@ -21,6 +21,7 @@ dependencies {
     testImplementation(libs.hamcrest)
     testImplementation(libs.tomcat)
     testImplementation(libs.jasper)
+    testImplementation(libs.selenium)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 

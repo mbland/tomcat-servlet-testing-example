@@ -4,6 +4,7 @@ tomcatVer = "10.1.15"
 junitVer = "5.10.0"
 hamcrestVer = "2.2"
 antJunitVer = "1.10.14"
+seleniumVer = "4.15.0"
 
 [libraries.servlet]
 module = "jakarta.servlet:jakarta.servlet-api"
@@ -28,3 +29,7 @@ version.ref = "hamcrestVer"
 [libraries.antJunit]
 module = "org.apache.ant:ant-junit"
 version.ref = "antJunitVer"
+
+[libraries.selenium]
+module = "org.seleniumhq.selenium:selenium-java"
+version.ref = "seleniumVer"
