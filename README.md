@@ -605,6 +605,16 @@ plugin:
 
 Coming soon...
 
+TODO(mbland): Document how the following are configured:
+
+- [Gradle WAR Plugin][] - now writes to/includes files from `strcalc/build/webapp`
+- [Selenium WebDriver][]
+- [TestTomcat](./strcalc/src/test/java/com/mike_bland/training/testing/utils/TestTomcat.java)
+  (for medium tests)
+- [Vite JavaScript development environment][]
+- [pnpm Node.js package manager][]
+- [node-gradle/gradle-node-plugin][]
+
 ## Implementing core logic using Test Driven Development and unit tests
 
 Coming soon...
@@ -678,3 +688,6 @@ Coming soon...
 [coverallsapp/github-action GitHub Actions plugin]: https://github.com/coverallsapp/github-action
 [GitHub Actions marketplace]: https://github.com/marketplace?type=actions
 [JaCoCo related GitHub Actions plugins]: https://github.com/marketplace?category=&type=actions&verification=&query=jacoco
+[Vite JavaScript development environment]: https://vitejs.dev/
+[pnpm Node.js package manager]: https://pnpm.io/
+[node-gradle/gradle-node-plugin]: https://github.com/node-gradle/gradle-node-plugin

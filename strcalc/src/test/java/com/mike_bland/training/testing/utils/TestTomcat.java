@@ -30,7 +30,7 @@ import java.util.List;
 // - https://tomcat.apache.org/tomcat-10.1-doc/api/org/apache/catalina/startup/Tomcat.html
 public class TestTomcat {
     public static final String WEB_APP_DIR =
-            new File("src/main/webapp").getAbsolutePath();
+            new File("build/webapp").getAbsolutePath();
     public static final String WEB_INF_CLASSES =
             new File("build/classes/java/main").getAbsolutePath();
 

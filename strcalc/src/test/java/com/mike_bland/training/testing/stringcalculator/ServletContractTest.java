@@ -60,7 +60,7 @@ class ServletContractTest {
     // This tests that the index.html page is in place, but covers no servlet
     // code. This is why it's a MediumTest, but not a MediumCoverageTest.
     @MediumTest
-    void landingPageHelloWorld() throws Exception {
+    void servesCorrectLandingPage() throws Exception {
         var req = newRequestBuilder("/").GET().build();
 
         var resp = sendRequest(req);
@@ -70,7 +70,10 @@ class ServletContractTest {
                 Optional.of("text/html"),
                 resp.headers().firstValue("Content-Type")
         );
-        assertThat(resp.body(), containsString("Hello, World!"));
+        assertThat(
+                resp.body(),
+                containsString("<title>String Calculator - ")
+        );
     }
 
     // This tests the Servlet handler, which is a thin layer between the

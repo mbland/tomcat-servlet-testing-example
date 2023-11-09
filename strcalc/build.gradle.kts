@@ -7,6 +7,7 @@
 plugins {
     war
     jacoco
+    id("com.github.node-gradle.node") version "7.0.1"
 }
 
 repositories {
@@ -43,6 +44,10 @@ jacoco {
     toolVersion = "0.8.11"
 }
 
+node {
+    nodeProjectDir = file("src/main/frontend")
+}
+
 // The small/medium/large test schema is implemented via JUnit5 composite tags
 // and custom Test tasks. See:
 //
@@ -67,7 +72,13 @@ val smallTests = tasks.named<Test>("test") {
     setCommonTestOptions(this)
 }
 val testClasses = tasks.named("testClasses")
+val pnpmBuild = tasks.named("pnpm_build")
 val war = tasks.named("war")
+
+tasks.war {
+    dependsOn(pnpmBuild)
+    from(project.layout.buildDirectory.dir("webapp").get())
+}
 
 val setLargerTestOptions = { testTask: Test ->
     testTask.group = "verification"
@@ -93,6 +104,7 @@ val mediumCoverageTests = tasks.register<Test>("test-medium-coverage") {
     description = "Runs medium integration tests annotated with " +
             "@MediumCoverageTest."
     setLargerTestOptions(this)
+    dependsOn(pnpmBuild)
     useJUnitPlatform { includeTags("medium & coverage") }
     shouldRunAfter(smallTests)
 }
@@ -100,6 +112,7 @@ val mediumCoverageTests = tasks.register<Test>("test-medium-coverage") {
 val mediumTests = tasks.register<Test>("test-medium") {
     description = "Runs medium integration tests annotated with @MediumTest."
     setLargerTestOptions(this)
+    dependsOn(pnpmBuild)
     useJUnitPlatform { includeTags("medium & !coverage") }
     shouldRunAfter(smallTests, mediumCoverageTests)
     extensions.configure(JacocoTaskExtension::class) {

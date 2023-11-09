@@ -16,8 +16,23 @@ jobs:
           java-version: 21
           check-latest: true
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          cache-dependency-path: 'strcalc/src/main/frontend/pnpm-lock.yaml'
+
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+
+      - name: Install Node packages
+        run: ./gradlew pnpmInstall
 
       - name: Build and test
         run: ./gradlew build
