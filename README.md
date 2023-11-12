@@ -30,8 +30,7 @@ The plan is to develop an exercise comprised of the following steps:
 - Developing the String Calculator using TDD and small unit tests.
 - Adding a medium integration test to ensure the Servlet passes parameters to
   the internal String Calculator logic and passes back the results.
-- Adding unit tests for JavaScript components, likely incorporating the [Mocha
-  testing framework][], [Chai assertion library][], and [Sinon test double framework][].
+- Adding tests for frontend JavaScript components.
 - Using [test doubles][] in unit tests. This may involve extending the String
   Calculator example or adding a completely different one, possibly based on
   [Apache Solr][].
@@ -611,9 +610,41 @@ TODO(mbland): Document how the following are configured:
 - [Selenium WebDriver][]
 - [TestTomcat](./strcalc/src/test/java/com/mike_bland/training/testing/utils/TestTomcat.java)
   (for medium tests)
-- [Vite JavaScript development environment][]
-- [pnpm Node.js package manager][]
 - [node-gradle/gradle-node-plugin][]
+
+## Setup frontend JavaScript environment
+
+[Node.js][] is a JavaScript runtime environment. [pnpm][] is a Node.js package
+manager.
+
+- TODO(mbland): Document usage of [nodenv][], [Homebrew][]
+
+[ESLint][] is a tool for formatting and linting JavaScript code.
+
+[Vite][] is a JavaScript development and deployment platform. [Vitest][] is a
+JavaScript test framework and runner designed to work well with Vite.
+
+Though I've had a great experience testing with Mocha, Chai, and Sinon in the
+past, setting them up involves a bit more work.
+
+- [Mocha test framework][]
+- [Chai test assertion library][]
+- [Sinon test double framework][]
+
+In contrast, Vitest is largely modeled after the popular Jest framework and is a
+breeze to set up, especially for existing Vite projects. Like Jest, it contains
+its own assertion library and test double framework.  For the purpose of a
+teaching example for people who may never have tested JavaScript before, but
+aren't using React, Vitest seems much more accessible.
+
+Suffice it to say, ESLint and Vite have IntelliJ IDEA and Visual Studio
+Code support:
+
+- ESLint in IntelliJ IDEA: _Settings > Languages & Frameworks >
+  JavaScript > Code Quality Tools > ESLint_
+- [ESLint extension for Visual Studio Code][]
+- [Vite IntelliJ plugin][]
+- [Vite extension for Visual Studio Code][]
 
 ## Implementing core logic using Test Driven Development and unit tests
 
@@ -630,9 +661,6 @@ Coming soon...
 [walking skeleton]: https://wiki.c2.com/?WalkingSkeleton
 [Selenium WebDriver]: https://www.selenium.dev/documentation/webdriver/
 [headless Chrome]: https://developer.chrome.com/blog/headless-chrome/
-[Mocha testing framework]: https://mochajs.org/
-[Chai assertion library]: https://www.chaijs.com/
-[Sinon test double framework]: https://sinonjs.org/
 [test doubles]: https://mike-bland.com/2023/09/06/test-doubles.html
 [Apache Solr]: https://solr.apache.org/
 [HTML &lt;form&gt;]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
@@ -688,6 +716,17 @@ Coming soon...
 [coverallsapp/github-action GitHub Actions plugin]: https://github.com/coverallsapp/github-action
 [GitHub Actions marketplace]: https://github.com/marketplace?type=actions
 [JaCoCo related GitHub Actions plugins]: https://github.com/marketplace?category=&type=actions&verification=&query=jacoco
-[Vite JavaScript development environment]: https://vitejs.dev/
-[pnpm Node.js package manager]: https://pnpm.io/
 [node-gradle/gradle-node-plugin]: https://github.com/node-gradle/gradle-node-plugin
+[Node.js]: https://nodejs.org/
+[pnpm]: https://pnpm.io/
+[nodenv]: https://github.com/nodenv/nodenv
+[homebrew]: https://brew.sh/
+[ESLint]: https://eslint.style/
+[Vite]: https://vitejs.dev/
+[Vitest]: https://vitest.dev/
+[Mocha test framework]: https://mochajs.org/
+[Chai test assertion library]: https://www.chaijs.com/
+[Sinon test double framework]: https://sinonjs.org/
+[ESLint extension for Visual Studio Code]: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+[Vite IntelliJ plugin]: https://plugins.jetbrains.com/plugin/20011-vite
+[Vite extension for Visual Studio Code]: https://marketplace.visualstudio.com/items?itemName=antfu.vite

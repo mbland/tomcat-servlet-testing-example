@@ -1,5 +1,5 @@
-import './style.css'
+/* eslint-env browser */
 
-document.querySelector('#app').innerHTML = `
-  <p class="placeholder">Hello, World!</p>
-`
+import initApp from './init.js'
+
+(() => initApp(document))()

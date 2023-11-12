@@ -1,0 +1,4 @@
+**/vendor/*.js
+coverage/*
+tmp/
+node_modules/

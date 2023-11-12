@@ -1,4 +1,6 @@
 export default {
   base: '/strcalc',
-  build: {outDir: '../../../build/webapp'}
+  build: {
+    outDir: '../../../build/webapp'
+  }
 }
