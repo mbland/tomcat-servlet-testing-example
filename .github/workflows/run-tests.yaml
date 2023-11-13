@@ -54,9 +54,18 @@ jobs:
           name: test-results
           path: '**/build/test-results/test*/TESTS-TestSuites.xml'
 
-      - name: Send test coverage to Coveralls.io
+      - name: Send Java backend test coverage to Coveralls.io
         uses: coverallsapp/github-action@v2
         if: always()
         with:
           # The .xml file only contains paths relative to this one.
           base-path: 'strcalc/src/main/java'
+          file: 'strcalc/build/reports/jacoco/jacocoXmlTestReport/jacocoXmlTestReport.xml'
+
+      - name: Send JavaScript frontend test coverage to Coveralls.io
+        uses: coverallsapp/github-action@v2
+        if: always()
+        with:
+          # The lcov file only contains paths relative to this one.
+          base-path: 'strcalc/src/main/frontend'
+          file: 'strcalc/build/reports/frontend/coverage/lcov.info'

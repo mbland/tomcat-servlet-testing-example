@@ -73,6 +73,7 @@ val smallTests = tasks.named<Test>("test") {
 }
 val testClasses = tasks.named("testClasses")
 val pnpmBuild = tasks.named("pnpm_build")
+val pnpmTestCi = tasks.named("pnpm_test-ci")
 val war = tasks.named("war")
 
 tasks.war {
@@ -106,7 +107,7 @@ val mediumCoverageTests = tasks.register<Test>("test-medium-coverage") {
     setLargerTestOptions(this)
     dependsOn(pnpmBuild)
     useJUnitPlatform { includeTags("medium & coverage") }
-    shouldRunAfter(smallTests)
+    shouldRunAfter(smallTests, pnpmTestCi)
 }
 
 val mediumTests = tasks.register<Test>("test-medium") {
@@ -114,7 +115,7 @@ val mediumTests = tasks.register<Test>("test-medium") {
     setLargerTestOptions(this)
     dependsOn(pnpmBuild)
     useJUnitPlatform { includeTags("medium & !coverage") }
-    shouldRunAfter(smallTests, mediumCoverageTests)
+    shouldRunAfter(smallTests, mediumCoverageTests, pnpmTestCi)
     extensions.configure(JacocoTaskExtension::class) {
         isEnabled = false
     }
@@ -125,7 +126,7 @@ val largeTests = tasks.register<Test>("test-large") {
     setLargerTestOptions(this)
     dependsOn(war)
     useJUnitPlatform { includeTags("large") }
-    shouldRunAfter(mediumCoverageTests, mediumTests)
+    shouldRunAfter(mediumCoverageTests, mediumTests, pnpmTestCi)
     extensions.configure(JacocoTaskExtension::class) {
         isEnabled = false
     }
@@ -138,7 +139,7 @@ val allTestSizes = arrayOf(
 val allTests = tasks.register<Task>("test-all") {
     description = "Runs the small, medium, and large test suites in order."
     group = "verification"
-    dependsOn(allTestSizes)
+    dependsOn(pnpmTestCi, allTestSizes)
 }
 
 internal val testResultsDir = java.testResultsDir
@@ -154,6 +155,11 @@ val relativeToRootDir = fun(absPath: java.nio.file.Path): java.nio.file.Path {
 // - https://docs.gradle.org/current/userguide/ant.html
 val mergeTestReports = fun(resultsDir: File) {
     val taskName = resultsDir.name
+
+    // The `pnpm_test-ci` output is already merged. Trying to merge it again
+    // results in an empty file, so skip it.
+    if (taskName == "test-frontend") return
+
     val relResultsDir = relativeToRootDir(resultsDir.toPath())
     val reportTaskName = "merged-report-$taskName"
 
