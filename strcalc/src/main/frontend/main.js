@@ -2,4 +2,4 @@
 
 import initApp from './init.js'
 
-(() => initApp(document))()
+initApp(document)
