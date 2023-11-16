@@ -158,7 +158,7 @@ val mergeTestReports = fun(resultsDir: File) {
 
     // The `pnpm_test-ci` output is already merged. Trying to merge it again
     // results in an empty file, so skip it.
-    if (taskName == "test-frontend") return
+    if (taskName.startsWith("test-frontend")) return
 
     val relResultsDir = relativeToRootDir(resultsDir.toPath())
     val reportTaskName = "merged-report-$taskName"

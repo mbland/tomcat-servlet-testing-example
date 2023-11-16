@@ -1,14 +1,24 @@
-const BUILD_DIR = '../../../build/'
-export default {
+import { defineConfig } from 'vite'
+import path from 'node:path/posix'
+
+const BUILD_DIR = path.resolve('../../../build/')
+
+export function buildDir(relativePath) {
+  return path.resolve(BUILD_DIR, relativePath)
+}
+
+export default defineConfig({
   base: '/strcalc',
   build: {
-    outDir: BUILD_DIR + 'webapp'
+    outDir: buildDir('webapp')
   },
   test: {
-    outputFile: BUILD_DIR + 'test-results/test-frontend/TESTS-TestSuites.xml',
+    outputFile: buildDir('test-results/test-frontend/TESTS-TestSuites.xml'),
     coverage: {
-      reporter: ['text', 'html', 'lcov'],
-      reportsDirectory: BUILD_DIR + 'reports/frontend/coverage'
+      reportsDirectory: buildDir('reports/frontend/coverage')
+    },
+    browser: {
+      name: 'chrome'
     }
   }
-}
+})
