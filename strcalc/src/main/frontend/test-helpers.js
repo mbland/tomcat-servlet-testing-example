@@ -135,9 +135,10 @@ class JsdomPageLoader {
   // All that said, these should prove to be corner cases easily avoided by
   // sound, modular app architecture.
   async load(_, pagePath) {
-    let dom = await this.#JSDOM.fromFile(
+    let { window } = await this.#JSDOM.fromFile(
       pagePath, {resources: 'usable', runScripts: 'dangerously'}
     )
+    let document = window.document
 
     // Originally this function returned the result object directly, not
     // wrapped in the `done` Promise. This was because the 'load' event fires
@@ -239,21 +240,19 @@ class JsdomPageLoader {
     // 'domLoaded' Promise, and return the 'done' Promise directly. (And delete
     // this comment, and maybe the entire comment above.)
     //
-    // We have to register the Promises right away, during the current event
-    // loop tick, then await them.
+    // We have to register both event listeners right away, during the current
+    // event loop tick, then await domLoaded. Otherwise, if we awaited domLoaded
+    // immediately, the load event would fire before we could register its
+    // event listener, causing the test to hang.
     let domLoaded = new Promise(resolve => {
-      dom.window.addEventListener('DOMContentLoaded', async () => {
-        await this.#importModules(dom)
+      document.addEventListener('DOMContentLoaded', async () => {
+        await this.#importModules(window, document)
         resolve()
       })
     })
     let done = new Promise(resolve => {
-      dom.window.addEventListener('load', () => {
-        resolve({
-          window: dom.window,
-          document: dom.window.document,
-          close() { dom.window.close() }
-        })
+      window.addEventListener('load', () => {
+        resolve({ window, document, close() { window.close() } })
       })
     })
     await domLoaded
@@ -269,15 +268,13 @@ class JsdomPageLoader {
 // Remove this function once "jsdom/jsdom: <script type=module> support #2475"
 // has been resolved:
 // - https://github.com/jsdom/jsdom/issues/2475
-async function importModulesDynamically(dom) {
-  let modules = Array.from(
-    dom.window.document.querySelectorAll('script[type="module"]')
-  )
+async function importModulesDynamically(win, doc) {
+  let modules = doc.querySelectorAll('script[type="module"]')
 
   // The JSDOM docs advise against setting global properties, but we don't
   // have another option given the module may access window and/or document.
-  global.window = dom.window
-  global.document = dom.window.document
-  await Promise.all(modules.map(s => import(s.src)))
+  global.window = win
+  global.document = doc
+  await Promise.all(Array.from(modules).map(m => import(m.src)))
   global.window = global.document = undefined
 }
