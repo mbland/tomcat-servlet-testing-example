@@ -60,11 +60,26 @@ class BrowserPageLoader {
     let w = this.#window.open(`${basePath}/${pagePath}`)
     return new Promise(resolve => {
       w.addEventListener('load', () => {
+        this.#setCoverageStore(w)
         resolve({
           window: w, document: w.document, close() { w.close() }
         })
       })
     })
+  }
+
+  // This is an egregious, brittle hack that's very specific to Vitest's
+  // Istanbul coverage provider. It also only collects coverage from the last
+  // page loaded; it loses coverage information for all other pages.
+  //
+  // But as long as a test function calls BrowserPageLoader.load() only once, it
+  // should work pretty well.
+  #setCoverageStore(openedWindow) {
+    const COVERAGE_STORE_KEY = '__VITEST_COVERAGE__'
+
+    if (COVERAGE_STORE_KEY in openedWindow) {
+      this.#window[COVERAGE_STORE_KEY] = openedWindow[COVERAGE_STORE_KEY]
+    }
   }
 }
 
