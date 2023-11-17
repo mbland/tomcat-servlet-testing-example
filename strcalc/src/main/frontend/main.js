@@ -2,4 +2,4 @@
 
 import initApp from './init.js'
 
-initApp(document)
+document.addEventListener('DOMContentLoaded', () => initApp(document))
