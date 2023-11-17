@@ -238,9 +238,7 @@ class JsdomPageLoader {
 
   #importModulesPromise(window, document) {
     return new Promise(resolve => {
-      let importListener = async () => {
-        document.removeEventListener('DOMContentLoaded', importListener)
-
+      let importModules = async () => {
         // The JSDOM docs advise against setting global properties, but we don't
         // have another option given the module may access window and/or
         // document.
@@ -272,12 +270,10 @@ class JsdomPageLoader {
         // For the same reason, we fire the 'load' event again as well. When
         // that listener executes, we can finally reset the global.window and
         // global.document variables.
-        let resetGlobals = () => {
-          window.removeEventListener('load', resetGlobals)
-          resolve(global.window = global.document = undefined)
-        }
-        window.addEventListener('load', resetGlobals)
-
+        let resetGlobals = () => resolve(
+          global.window = global.document = undefined
+        )
+        window.addEventListener('load', resetGlobals, {once: true})
         document.dispatchEvent(new window.Event(
           'DOMContentLoaded', {bubbles: true, cancelable: false}
         ))
@@ -285,7 +281,7 @@ class JsdomPageLoader {
           'load', {bubbles: false, cancelable: false}
         ))
       }
-      document.addEventListener('DOMContentLoaded', importListener)
+      document.addEventListener('DOMContentLoaded', importModules, {once: true})
     })
   }
 }
