@@ -1,7 +1,7 @@
 [versions]
 servletVer = "6.0.0"
 tomcatVer = "10.1.16"
-junitVer = "5.10.0"
+junitVer = "5.10.1"
 hamcrestVer = "2.2"
 antJunitVer = "1.10.14"
 seleniumVer = "4.15.0"
