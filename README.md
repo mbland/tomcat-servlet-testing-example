@@ -61,7 +61,7 @@ Releases][] via [SDKMAN!][].
 ### Install the [Tomcat servlet container][]
 
 I followed the [Tomcat 10.1 Setup instructions][] to install Tomcat locally
-at `/opt/tomcat/apache-tomcat-10.1.15`. I created `bin/tomcat.sh` as a thin
+at `/opt/tomcat/apache-tomcat-10.1.16`. I created `bin/tomcat.sh` as a thin
 wrapper around Tomcat's `bin/catalina.sh` that detects and sets `JAVA_HOME`
 and sets `CATALINA_HOME`. Verified that it was installed correctly via
 `bin/tomcat.sh start` and visiting <http://localhost:8080/>.
