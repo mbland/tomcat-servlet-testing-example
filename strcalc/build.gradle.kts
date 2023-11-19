@@ -3,11 +3,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     war
     jacoco
     id("com.github.node-gradle.node") version "7.0.1"
+    id("com.github.ben-manes.versions")
 }
 
 repositories {
@@ -223,6 +225,24 @@ tasks.register<JacocoReport>("jacocoXmlTestReport") {
     }
     doLast {
         reports.forEach { r -> emitReportLocation(r) }
+    }
+}
+
+// https://github.com/ben-manes/gradle-versions-plugin#rejectversionsif-and-componentselection
+fun isNonStable(version: String): Boolean {
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any {
+        version.uppercase().contains(it)
+    }
+    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+    val isStable = stableKeyword || regex.matches(version)
+    return isStable.not()
+}
+
+tasks.withType<DependencyUpdatesTask> {
+    revision = "release"
+    gradleReleaseChannel = "current"
+    rejectVersionIf {
+        isNonStable(candidate.version) && !isNonStable(currentVersion)
     }
 }
 
