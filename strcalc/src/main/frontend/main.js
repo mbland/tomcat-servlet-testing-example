@@ -5,6 +5,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import initApp from './init.js'
+import initApp from './init'
 
 document.addEventListener('DOMContentLoaded', () => initApp(document))

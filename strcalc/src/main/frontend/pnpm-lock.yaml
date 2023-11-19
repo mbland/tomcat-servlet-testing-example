@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 devDependencies:
+  '@rollup/pluginutils':
+    specifier: ^5.0.5
+    version: 5.0.5
   '@stylistic/eslint-plugin-js':
     specifier: ^1.4.0
     version: 1.4.0
@@ -26,6 +29,9 @@ devDependencies:
   eslint-plugin-vitest:
     specifier: ^0.3.9
     version: 0.3.9(eslint@8.54.0)(typescript@5.2.2)(vitest@1.0.0-beta.4)
+  handlebars:
+    specifier: ^4.7.8
+    version: 4.7.8
   jsdom:
     specifier: ^22.1.0
     version: 22.1.0
@@ -626,6 +632,20 @@ packages:
       yargs: 17.7.2
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@rollup/pluginutils@5.0.5:
+    resolution: {integrity: sha512-6aEYR910NyP73oHiJglti74iRyOwgFU4x3meH/H8OJx6Ry0j6cOVZ5X/wTvub7G7Ao6qaHBEaNsV3GLJkSsF+Q==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@types/estree': 1.0.5
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
     dev: true
 
   /@sinclair/typebox@0.27.8:
@@ -1723,6 +1743,10 @@ packages:
     engines: {node: '>=4.0'}
     dev: true
 
+  /estree-walker@2.0.2:
+    resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
+    dev: true
+
   /estree-walker@3.0.3:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
     dependencies:
@@ -2075,6 +2099,19 @@ packages:
 
   /graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
+    dev: true
+
+  /handlebars@4.7.8:
+    resolution: {integrity: sha512-vafaFqs8MZkRrSX7sFVUdo3ap/eNiLnb4IakshzvP56X5Nr1iGKAIqdX6tMlm6HcNRIkr6AxO5jFEoJzzpT8aQ==}
+    engines: {node: '>=0.4.7'}
+    hasBin: true
+    dependencies:
+      minimist: 1.2.8
+      neo-async: 2.6.2
+      source-map: 0.6.1
+      wordwrap: 1.0.0
+    optionalDependencies:
+      uglify-js: 3.17.4
     dev: true
 
   /has-flag@3.0.0:
@@ -2624,6 +2661,10 @@ packages:
 
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+    dev: true
+
+  /neo-async@2.6.2:
+    resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: true
 
   /netmask@2.0.2:
@@ -3393,6 +3434,14 @@ packages:
     resolution: {integrity: sha512-o+ORpgGwaYQXgqGDwd+hkS4PuZ3QnmqMMxRuajK/a38L6fTpcE5GPIfrf+L/KemFzfUpeUQc1rRS1iDBozvnFA==}
     dev: true
 
+  /uglify-js@3.17.4:
+    resolution: {integrity: sha512-T9q82TJI9e/C1TAxYvfb16xO120tMVFZrGA3f9/P4424DNu6ypK103y0GPFVa17yotwSyZW5iYXgjYHkGrJW/g==}
+    engines: {node: '>=0.8.0'}
+    hasBin: true
+    requiresBuild: true
+    dev: true
+    optional: true
+
   /unbzip2-stream@1.4.3:
     resolution: {integrity: sha512-mlExGW4w71ebDJviH16lQLtZS32VKqsSfk80GCfUlwT/4/hNRFsoscrF/c++9xinkMzECL1uL9DDwXqFWkruPg==}
     dependencies:
@@ -3732,6 +3781,10 @@ packages:
     dependencies:
       siginfo: 2.0.0
       stackback: 0.0.2
+    dev: true
+
+  /wordwrap@1.0.0:
+    resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
     dev: true
 
   /wrap-ansi@7.0.0:

@@ -5,8 +5,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import Placeholder from './components/placeholder'
+
 export default function initApp(document) {
-  document.querySelector('#app').innerHTML = `
-    <p class="placeholder">Hello, World!</p>
-    `
+  new Placeholder(document).init()
 }
