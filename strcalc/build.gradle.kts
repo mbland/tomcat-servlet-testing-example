@@ -72,12 +72,12 @@ val smallTests = tasks.named<Test>("test") {
     setCommonTestOptions(this)
 }
 val testClasses = tasks.named("testClasses")
-val pnpmBuild = tasks.named("pnpm_build")
-val pnpmTestCi = tasks.named("pnpm_test-ci")
+val frontendBuild = tasks.named("pnpm_build")
+val frontendTest = tasks.named("pnpm_test-ci")
 val war = tasks.named("war")
 
 tasks.war {
-    dependsOn(pnpmBuild)
+    dependsOn(frontendBuild)
     from(project.layout.buildDirectory.dir("webapp").get())
 }
 
@@ -105,17 +105,17 @@ val mediumCoverageTests = tasks.register<Test>("test-medium-coverage") {
     description = "Runs medium integration tests annotated with " +
             "@MediumCoverageTest."
     setLargerTestOptions(this)
-    dependsOn(pnpmBuild)
+    dependsOn(frontendBuild)
     useJUnitPlatform { includeTags("medium & coverage") }
-    shouldRunAfter(smallTests, pnpmTestCi)
+    shouldRunAfter(smallTests, frontendTest)
 }
 
 val mediumTests = tasks.register<Test>("test-medium") {
     description = "Runs medium integration tests annotated with @MediumTest."
     setLargerTestOptions(this)
-    dependsOn(pnpmBuild)
+    dependsOn(frontendBuild)
     useJUnitPlatform { includeTags("medium & !coverage") }
-    shouldRunAfter(smallTests, mediumCoverageTests, pnpmTestCi)
+    shouldRunAfter(smallTests, mediumCoverageTests, frontendTest)
     extensions.configure(JacocoTaskExtension::class) {
         isEnabled = false
     }
@@ -126,7 +126,7 @@ val largeTests = tasks.register<Test>("test-large") {
     setLargerTestOptions(this)
     dependsOn(war)
     useJUnitPlatform { includeTags("large") }
-    shouldRunAfter(mediumCoverageTests, mediumTests, pnpmTestCi)
+    shouldRunAfter(mediumCoverageTests, mediumTests, frontendTest)
     extensions.configure(JacocoTaskExtension::class) {
         isEnabled = false
     }
@@ -139,7 +139,7 @@ val allTestSizes = arrayOf(
 val allTests = tasks.register<Task>("test-all") {
     description = "Runs the small, medium, and large test suites in order."
     group = "verification"
-    dependsOn(pnpmTestCi, allTestSizes)
+    dependsOn(frontendTest, allTestSizes)
 }
 
 internal val testResultsDir = java.testResultsDir
