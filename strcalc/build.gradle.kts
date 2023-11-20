@@ -20,6 +20,9 @@ repositories {
 val antJUnit: Configuration by configurations.creating
 
 dependencies {
+    implementation(libs.jandex)
+    implementation(libs.weld)
+
     testImplementation(libs.junit)
     testImplementation(libs.hamcrest)
     testImplementation(libs.tomcat)
@@ -103,11 +106,16 @@ val setLargerTestOptions = { testTask: Test ->
     })
 }
 
+val addWebappInputs = { t: Task ->
+    t.inputs.dir(project.layout.projectDirectory.dir("src/main/webapp"))
+}
+
 val mediumCoverageTests = tasks.register<Test>("test-medium-coverage") {
     description = "Runs medium integration tests annotated with " +
             "@MediumCoverageTest."
     setLargerTestOptions(this)
     dependsOn(frontendBuild)
+    addWebappInputs(this)
     useJUnitPlatform { includeTags("medium & coverage") }
     shouldRunAfter(smallTests, frontendTest)
 }
@@ -116,6 +124,7 @@ val mediumTests = tasks.register<Test>("test-medium") {
     description = "Runs medium integration tests annotated with @MediumTest."
     setLargerTestOptions(this)
     dependsOn(frontendBuild)
+    addWebappInputs(this)
     useJUnitPlatform { includeTags("medium & !coverage") }
     shouldRunAfter(smallTests, mediumCoverageTests, frontendTest)
     extensions.configure(JacocoTaskExtension::class) {

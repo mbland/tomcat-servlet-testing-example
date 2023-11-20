@@ -5,6 +5,8 @@ junitVer = "5.10.1"
 hamcrestVer = "2.2"
 antJunitVer = "1.10.14"
 seleniumVer = "4.15.0"
+weldVer = "5.1.2.Final"
+jandexVer = "3.1.5"
 
 [libraries.servlet]
 module = "jakarta.servlet:jakarta.servlet-api"
@@ -33,3 +35,11 @@ version.ref = "antJunitVer"
 [libraries.selenium]
 module = "org.seleniumhq.selenium:selenium-java"
 version.ref = "seleniumVer"
+
+[libraries.weld]
+module = "org.jboss.weld.servlet:weld-servlet-core"
+version.ref = "weldVer"
+
+[libraries.jandex]
+module = "io.smallrye:jandex"
+version.ref ="jandexVer"

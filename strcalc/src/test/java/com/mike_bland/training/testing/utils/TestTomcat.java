@@ -11,8 +11,6 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
-import org.apache.tomcat.JarScanFilter;
-import org.apache.tomcat.JarScanType;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +27,15 @@ import java.util.List;
 // API doc:
 // - https://tomcat.apache.org/tomcat-10.1-doc/api/org/apache/catalina/startup/Tomcat.html
 public class TestTomcat {
-    public static final String WEB_APP_DIR =
+    // Files copied directly into the WAR, including META-INF and WEB-INF dirs.
+    public static final String WEB_APP_SRC_DIR =
+            new File("src/main/webapp").getAbsolutePath();
+
+    // Files copied directly into the WAR produced by the frontend build.
+    public static final String WEB_APP_BUILD_DIR =
             new File("build/webapp").getAbsolutePath();
+
+    // Compiled classes packaged into the WAR file.
     public static final String WEB_INF_CLASSES =
             new File("build/classes/java/main").getAbsolutePath();
 
@@ -56,20 +61,42 @@ public class TestTomcat {
         tomcat.setPort(port);
         tomcat.setSilent(true);
 
+        // Needed by CDI/Weld; avoids the following warning emitted during
+        // TestTomcat.stop() (where the "/..." in "StandardContext[/...]" is
+        // replaced by the servlet endpoint):
+        //
+        //   org.apache.catalina.deploy.NamingResourcesImpl cleanUp
+        //   WARNING: Failed to retrieve JNDI naming context for container
+        //     [StandardEngine[Tomcat].StandardHost[localhost]
+        //     .StandardContext[/...]] so no cleanup was performed for that
+        //     container
+        //   javax.naming.NamingException: No naming context bound to this
+        //     class loader
+        //     at org.apache.naming.ContextBindings.getClassLoader(...)
+        //     [...snip...]
+        tomcat.enableNaming();
+
         final var ctx = (StandardContext) tomcat.addWebapp(
-                contextPath, WEB_APP_DIR
+                contextPath, WEB_APP_SRC_DIR
         );
         final var root = new StandardRoot(ctx);
-        final var resourceSet = new DirResourceSet(
+        final var appClasses = new DirResourceSet(
                 root,
                 "/WEB-INF/classes",
                 WEB_INF_CLASSES,
                 "/"
         );
+        final var frontendArtifacts = new DirResourceSet(
+                root,
+                "/",
+                WEB_APP_BUILD_DIR,
+                "/"
+        );
 
-        root.addPreResources(resourceSet);
+        root.addPreResources(appClasses);
+        root.addPreResources(frontendArtifacts);
         ctx.setResources(root);
-        disableChecksAndJarScan(ctx);
+        disableChecks(ctx);
 
         // getConnector() is a recent requirement the other examples didn't use.
         // - https://stackoverflow.com/questions/15114892/embedded-tomcat-without-web-inf#comment98210881_15235711
@@ -78,20 +105,9 @@ public class TestTomcat {
         tomcat.start();
     }
 
-    private static void disableChecksAndJarScan(StandardContext ctx) {
+    private static void disableChecks(StandardContext ctx) {
         ctx.setClearReferencesThreadLocals(false);
         ctx.setClearReferencesRmiTargets(false);
-        ctx.getJarScanner().setJarScanFilter(new JarScanFilter() {
-            @Override
-            public boolean check(JarScanType jarScanType, String jarName) {
-                return false;
-            }
-
-            @Override
-            public boolean isSkipAll() {
-                return true;
-            }
-        });
     }
 
     public URI uri() {

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <!--
+    Prevent tag library (TLD) scan on startup to avoid warning.
+    https://tomcat.apache.org/tomcat-10.1-doc/config/jar-scan-filter.html
+    -->
+    <JarScanner>
+        <JarScanFilter tldSkip="*"/>
+    </JarScanner>
+    <!-- https://docs.jboss.org/weld/reference/latest/en-US/html_single/#_binding_beanmanager_to_jndi -->
+    <Resource name="BeanManager"
+              auth="Container"
+              type="jakarta.enterprise.inject.spi.BeanManager"
+              factory="org.jboss.weld.resources.ManagerObjectFactory"/>
+</Context>
