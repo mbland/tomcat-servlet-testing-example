@@ -9,9 +9,5 @@ tmp
 # IDEA coverage report dir
 htmlReport
 
-# The strcalc/main/frontend project will write files to strcalc/src/main/webapp
-# for the War plugin to package into strcalc/build/libs/strcalc.war.
-strcalc/src/main/webapp
-
 node_modules
 coverage
