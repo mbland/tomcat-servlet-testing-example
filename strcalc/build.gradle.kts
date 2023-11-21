@@ -77,13 +77,31 @@ val smallTests = tasks.named<Test>("test") {
     setCommonTestOptions(this)
 }
 val testClasses = tasks.named("testClasses")
-val frontendBuild = tasks.named("pnpm_build")
-val frontendTest = tasks.named("pnpm_test-ci")
-val war = tasks.named("war")
 
+val frontendDir = project.layout.projectDirectory.dir("src/main/frontend")
+val frontendSources = fileTree(frontendDir) {
+    exclude("node_modules", ".*")
+}
+val frontendOutputDir = project.layout.buildDirectory.dir("webapp").get()
+val frontendBuild = tasks.named<Task>("pnpm_build") {
+    description = "Build src/main/frontend JavaScript into build/webapp"
+    inputs.files(frontendSources)
+    outputs.dir(frontendOutputDir)
+}
+val frontendTest = tasks.named<Task>("pnpm_test-ci") {
+    description = "Test frontend JavaScript in src/main/frontend"
+    dependsOn(frontendBuild)
+    inputs.files(frontendSources)
+
+    val buildDir = project.layout.buildDirectory
+    outputs.dir(buildDir.dir("test-results/test-frontend").get())
+    outputs.dir(buildDir.dir("test-results/test-frontend-browser").get())
+}
+
+val war = tasks.named("war")
 tasks.war {
     dependsOn(frontendBuild)
-    from(project.layout.buildDirectory.dir("webapp").get())
+    from(frontendOutputDir)
 }
 
 val setLargerTestOptions = { testTask: Test ->
