@@ -8,7 +8,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 plugins {
     war
     jacoco
-    id("com.github.node-gradle.node") version "7.0.1"
+    id("com.github.node-gradle.node")
     id("com.github.ben-manes.versions")
 }
 
