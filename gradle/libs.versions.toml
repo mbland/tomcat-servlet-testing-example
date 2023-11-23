@@ -7,6 +7,7 @@ antJunitVer = "1.10.14"
 seleniumVer = "4.15.0"
 weldVer = "5.1.2.Final"
 jandexVer = "3.1.5"
+jacksonVer = "2.16.0"
 
 [libraries.servlet]
 module = "jakarta.servlet:jakarta.servlet-api"
@@ -43,3 +44,7 @@ version.ref = "weldVer"
 [libraries.jandex]
 module = "io.smallrye:jandex"
 version.ref ="jandexVer"
+
+[libraries.jackson]
+module = "com.fasterxml.jackson.core:jackson-databind"
+version.ref = "jacksonVer"
