@@ -58,7 +58,11 @@ Public License 2.0][]. For the text of the license, see the
 I installed the latest JDK 21.0.1 from [Eclipse Temurin&trade; Latest
 Releases][] via [SDKMAN!][].
 
-### Install the [Tomcat servlet container][]
+### Optional: Install the [Tomcat servlet container][]
+
+_This step is optional, as the [bin/tomcat-docker.sh][] script will run Tomcat
+locally in a Docker container defined by
+[dockerfiles/Dockerfile.tomcat-test][]._
 
 I followed the [Tomcat 10.1 Setup instructions][] to install Tomcat locally
 at `/opt/tomcat/apache-tomcat-10.1.16`. I created `bin/tomcat.sh` as a thin
@@ -67,6 +71,51 @@ and sets `CATALINA_HOME`. Verified that it was installed correctly via
 `bin/tomcat.sh start` and visiting <http://localhost:8080/>.
 
 - [Introduction to Apache Tomcat](https://www.baeldung.com/tomcat)
+
+### Optional: Configure Tomcat to emit HTTP access logs to standard output
+
+_This step is optional, as the Docker container launched by
+[bin/tomcat-docker.sh][] is already configured to do this by running
+[bin/update-tomcat-config-logging.sh][]._
+
+By default, Tomcat emits its HTTP access logs to
+`$CATALINA_HOME/logs/localhost_access_log.YYYY-MM-DD.txt`. This is configured by
+the following block in `$CATALINA_HOME/conf/server.xml`:
+
+```xml
+        <!-- Access log processes all example.
+             Documentation at: /docs/config/valve.html
+             Note: The pattern used is equivalent to using pattern="common" -->
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+               prefix="localhost_access_log" suffix=".txt"
+               pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+```
+
+When running and experimenting locally, it can be helpful and convenient to emit
+these logs directly to the terminal instead. To emit the HTTP access logs to
+standard output instead, edit or replace this `<Valve>` element with the
+following:
+
+```xml
+        <Valve className="org.apache.catalina.valves.AccessLogValve"
+               directory="/dev" prefix="stdout"
+               suffix="" rotatable="false" buffered="false"
+               pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+```
+
+(The above is based on [the answer to &quot;Stack Overflow: Docker, Tomee,
+Logging, STDOUT, AWS&quot;][so-tomcat-stdout].)
+
+Alternatively, if you're into the YOLO thing, apply this update by running:
+
+```sh
+bin/update-tomcat-config-logging.sh $CATALINA_HOME/conf/server.xml
+```
+
+For more information on Tomcat access logging, see:
+
+- [The Apache Software Foundation Apache Tomcat 10 Configuration Reference > The
+  Valve Component > Access Logging][tomcat-access-logging]
 
 ### Install [Gradle][]
 
@@ -669,7 +718,12 @@ Coming soon...
 [Eclipse Temurin&trade; Latest Releases]: https://adoptium.net/temurin/releases/
 [SDKMAN!]: https://sdkman.io
 [Tomcat servlet container]: https://tomcat.apache.org/
+[bin/tomcat-docker.sh]: bin/tomcat-docker.sh
+[dockerfiles/Dockerfile.tomcat-test]: dockerfiles/Dockerfile.tomcat-test
 [Tomcat 10.1 Setup instructions]: https://tomcat.apache.org/tomcat-10.1-doc/setup.html
+[bin/update-tomcat-config-logging.sh]: bin/update-tomcat-config-logging.sh
+[so-tomcat-stdout]: https://stackoverflow.com/a/62598943
+[tomcat-access-logging]: https://tomcat.apache.org/tomcat-10.1-doc/config/valve.html#Access_Logging
 [Create a Java project with Gradle]: https://docs.gradle.org/current/samples/sample_building_java_libraries.html
 [strcalc/build.gradle.kts]: strcalc/build.gradle.kts
 [Gradle Tutorial]: https://docs.gradle.org/current/userguide/part1_gradle_init.html

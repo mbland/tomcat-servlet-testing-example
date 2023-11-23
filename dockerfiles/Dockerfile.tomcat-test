@@ -1,5 +1,14 @@
 # syntax=docker/dockerfile:1.6.0
-ARG TOMCAT_TAG=10.1.16-jdk21-temurin-jammy
+ARG TOMCAT_TAG=10.1.16-jre21-temurin-jammy
 
 FROM tomcat:${TOMCAT_TAG}
+
+COPY bin/update-tomcat-logging-config.sh /tmp/
+
+RUN <<END_OF_LOGGING_CONFIG_UPDATE
+set -e
+/tmp/update-tomcat-logging-config.sh /usr/local/tomcat/conf/server.xml
+rm /tmp/update-tomcat-logging-config.sh
+END_OF_LOGGING_CONFIG_UPDATE
+
 COPY strcalc/build/libs/strcalc.war /usr/local/tomcat/webapps/
