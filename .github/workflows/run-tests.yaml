@@ -1,12 +1,6 @@
 name: Run Tests
 
-on:
-  push:
-    branches-ignore: [ "wip/**" ]
-    paths-ignore: [ ".*", "**/.*", "**.md", "**.txt" ]
-  pull_request:
-    paths-ignore: [ ".*", "**/.*", "**.md", "**.txt" ]
-  workflow_dispatch:
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build-test:
