@@ -10,6 +10,7 @@ import com.mike_bland.training.testing.annotations.MediumCoverageTest;
 import com.mike_bland.training.testing.annotations.MediumTest;
 import com.mike_bland.training.testing.utils.PortPicker;
 import com.mike_bland.training.testing.utils.TestTomcat;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -20,6 +21,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Optional;
 
+import static com.mike_bland.training.testing.matchers.Matchers.hasContentType;
 import static com.mike_bland.training.testing.stringcalculator.Servlet.DEFAULT_ROOT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -65,11 +67,8 @@ class ServletContractTest {
 
         var resp = sendRequest(req);
 
-        assertEquals(200, resp.statusCode());
-        assertEquals(
-                Optional.of("text/html"),
-                resp.headers().firstValue("Content-Type")
-        );
+        assertEquals(HttpServletResponse.SC_OK, resp.statusCode());
+        assertThat(resp, hasContentType("text/html"));
         assertThat(
                 resp.body(),
                 containsString("<title>String Calculator - ")
@@ -86,11 +85,8 @@ class ServletContractTest {
 
         var resp = sendRequest(req);
 
-        assertEquals(200, resp.statusCode());
-        assertEquals(
-                Optional.of("text/plain;charset=UTF-8"),
-                resp.headers().firstValue("Content-Type")
-        );
+        assertEquals(HttpServletResponse.SC_OK, resp.statusCode());
+        assertThat(resp, hasContentType("text/plain;charset=UTF-8"));
         assertEquals("placeholder for /add API endpoint", resp.body());
     }
 }
