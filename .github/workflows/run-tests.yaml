@@ -2,10 +2,9 @@ name: Run Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches-ignore: [ "wip/**" ]
     paths-ignore: [ ".*", "**/.*", "**.md", "**.txt" ]
   pull_request:
-    branches: [ "main" ]
     paths-ignore: [ ".*", "**/.*", "**.md", "**.txt" ]
   workflow_dispatch:
 
