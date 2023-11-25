@@ -42,6 +42,7 @@ public class TestTomcat {
     private final int port;
     private final String contextPath;
     private final URI uri;
+    private final File baseDir;
     private Tomcat tomcat;
     private boolean running;
 
@@ -52,12 +53,14 @@ public class TestTomcat {
         this.uri = URI.create(
                 String.format("http://localhost:%d%s", port, contextPath)
         );
+        this.baseDir = new File("build/test-tomcat-basedir");
     }
 
     public synchronized void start() throws LifecycleException {
         if (running) return;
         running = true;
         tomcat = new Tomcat();
+        tomcat.setBaseDir(this.baseDir.getAbsolutePath());
         tomcat.setPort(port);
         tomcat.setSilent(true);
 
@@ -127,7 +130,7 @@ public class TestTomcat {
         if (!running) return;
         running = false;
         tomcat.stop();
-        deleteBaseDir(port);
+        deleteBaseDir(this.baseDir);
     }
 
     private static String validateContextPath(String contextPath)
@@ -141,10 +144,7 @@ public class TestTomcat {
         return contextPath;
     }
 
-    private static void deleteBaseDir(int port) throws IOException {
-        // The Tomcat.setBaseDir() documentation explains the base dir schema:
-        // - https://tomcat.apache.org/tomcat-10.1-doc/api/org/apache/catalina/startup/Tomcat.html#setBaseDir(java.lang.String)
-        final var baseDir = new File("tomcat.%d".formatted(port));
+    private static void deleteBaseDir(File baseDir) throws IOException {
         List<String> failed;
 
         try (var fileStream = Files.walk(baseDir.toPath())) {
