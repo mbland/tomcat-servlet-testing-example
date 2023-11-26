@@ -9,6 +9,7 @@ plugins {
     war
     jacoco
     id("com.github.node-gradle.node")
+    id("io.freefair.lombok")
     id("com.github.ben-manes.versions")
 }
 
@@ -21,6 +22,7 @@ val antJUnit: Configuration by configurations.creating
 
 dependencies {
     implementation(libs.jandex)
+    implementation(libs.jackson)
     implementation(libs.weld)
 
     testImplementation(libs.junit)

@@ -68,8 +68,8 @@ public class WebApplicationTest {
                 .toString();
     }
 
-    // This placeholder test exists solely to allow the Gradle "test" task to
-    // pass until actual @SmallTests are present:
+    // This placeholder test exists solely to allow the Gradle "test-large"
+    // task to pass until actual @LargeTests are present:
     //
     // - https://docs.gradle.org/8.4/userguide/upgrading_version_8.html#test_task_fail_on_no_test_executed
     //

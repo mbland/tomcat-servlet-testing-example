@@ -6,6 +6,8 @@
 
 package com.mike_bland.training.testing.utils;
 
+import com.mike_bland.training.testing.stringcalculator.Servlet;
+import jakarta.servlet.annotation.WebServlet;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
@@ -19,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 
 // Based on:
 // - https://www.infoworld.com/article/3510460/what-is-apache-tomcat-the-original-java-servlet-container.amp.html
@@ -56,50 +59,87 @@ public class TestTomcat {
         this.baseDir = new File("build/test-tomcat-basedir");
     }
 
-    public synchronized void start() throws LifecycleException {
+    // Starts Tomcat using the default WEBAPP_CONFIG.
+    //
+    // Note that this will run roughly 30x-40x slower than the start(Servlet)
+    // variant. This is because it:
+    //
+    // - reads configs from WEB_APP_SRC_DIR,
+    // - loads classes from WEB_INF_CLASSES,
+    // - registers artifacts from WEB_APP_BUILD_DIR, and
+    // - starts Weld to inject dependencies.
+    //
+    // The start(Servlet) variant does none of this, because it registers a
+    // fully constructed Servlet directly from memory.
+    public void start() throws LifecycleException {
+        startImpl(() -> {
+            // Needed by CDI/Weld; avoids the following warning emitted during
+            // TestTomcat.stop() (where the "/..." in "StandardContext[/...]" is
+            // replaced by the servlet endpoint):
+            //
+            //   org.apache.catalina.deploy.NamingResourcesImpl cleanUp
+            //   WARNING: Failed to retrieve JNDI naming context for container
+            //     [StandardEngine[Tomcat].StandardHost[localhost]
+            //     .StandardContext[/...]] so no cleanup was performed for that
+            //     container
+            //   javax.naming.NamingException: No naming context bound to this
+            //     class loader
+            //     at org.apache.naming.ContextBindings.getClassLoader(...)
+            //     [...snip...]
+            tomcat.enableNaming();
+
+            final var ctx = (StandardContext) tomcat.addWebapp(
+                    contextPath, WEB_APP_SRC_DIR
+            );
+            final var root = new StandardRoot(ctx);
+            root.addPreResources(new DirResourceSet(
+                    root,
+                    "/WEB-INF/classes",
+                    WEB_INF_CLASSES,
+                    "/"
+            ));
+            final var frontendArtifacts = new DirResourceSet(
+                    root,
+                    "/",
+                    WEB_APP_BUILD_DIR,
+                    "/"
+            );
+
+            root.addPreResources(frontendArtifacts);
+            ctx.setResources(root);
+            return ctx;
+        });
+    }
+
+    // Starts Tomcat using the supplied Servlet.
+    //
+    // Note that this will run roughly 30x-40x faster than the start() variant.
+    // See that variant's comments for an explanation.
+    public void start(Servlet servlet) throws LifecycleException {
+        startImpl(() -> {
+            var ctx = tomcat.addContext(contextPath, WEB_APP_BUILD_DIR);
+            var name = servlet.getClass().getSimpleName();
+
+            // This can be generalized to get other @WebServlet properties.
+            // For now, we're keeping it straightforward for teaching purposes.
+            var annotation = servlet.getClass().getAnnotation(WebServlet.class);
+            var endpoint = annotation.value()[0];
+
+            tomcat.addServlet(contextPath, name, servlet);
+            ctx.addServletMappingDecoded(endpoint, name);
+            return (StandardContext) ctx;
+        });
+    }
+
+    private synchronized void startImpl(Supplier<StandardContext> servletCtx)
+            throws LifecycleException {
         if (running) return;
         running = true;
         tomcat = new Tomcat();
         tomcat.setBaseDir(this.baseDir.getAbsolutePath());
         tomcat.setPort(port);
         tomcat.setSilent(true);
-
-        // Needed by CDI/Weld; avoids the following warning emitted during
-        // TestTomcat.stop() (where the "/..." in "StandardContext[/...]" is
-        // replaced by the servlet endpoint):
-        //
-        //   org.apache.catalina.deploy.NamingResourcesImpl cleanUp
-        //   WARNING: Failed to retrieve JNDI naming context for container
-        //     [StandardEngine[Tomcat].StandardHost[localhost]
-        //     .StandardContext[/...]] so no cleanup was performed for that
-        //     container
-        //   javax.naming.NamingException: No naming context bound to this
-        //     class loader
-        //     at org.apache.naming.ContextBindings.getClassLoader(...)
-        //     [...snip...]
-        tomcat.enableNaming();
-
-        final var ctx = (StandardContext) tomcat.addWebapp(
-                contextPath, WEB_APP_SRC_DIR
-        );
-        final var root = new StandardRoot(ctx);
-        final var appClasses = new DirResourceSet(
-                root,
-                "/WEB-INF/classes",
-                WEB_INF_CLASSES,
-                "/"
-        );
-        final var frontendArtifacts = new DirResourceSet(
-                root,
-                "/",
-                WEB_APP_BUILD_DIR,
-                "/"
-        );
-
-        root.addPreResources(appClasses);
-        root.addPreResources(frontendArtifacts);
-        ctx.setResources(root);
-        disableChecks(ctx);
+        disableChecks(servletCtx.get());
 
         // getConnector() is a recent requirement the other examples didn't use.
         // - https://stackoverflow.com/questions/15114892/embedded-tomcat-without-web-inf#comment98210881_15235711
@@ -111,10 +151,6 @@ public class TestTomcat {
     private static void disableChecks(StandardContext ctx) {
         ctx.setClearReferencesThreadLocals(false);
         ctx.setClearReferencesRmiTargets(false);
-    }
-
-    public URI uri() {
-        return this.uri;
     }
 
     public URI resolveEndpoint(String endpoint)
