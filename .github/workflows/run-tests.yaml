@@ -7,7 +7,7 @@ on:
   pull_request:
     branches: [ "main" ]
     paths-ignore: [ ".*", "**/.*", "**.md", "**.txt" ]
-    types: [ opened, synchronize, edited, reopened, closed ]
+    types: [ opened, synchronize, reopened, closed ]
   workflow_dispatch:
 
 jobs:
@@ -15,6 +15,7 @@ jobs:
     name: "Run Tests"
     if: >-
       github.event_name == 'push' ||
+      github.event.pull_request.state == 'open' ||
       github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
