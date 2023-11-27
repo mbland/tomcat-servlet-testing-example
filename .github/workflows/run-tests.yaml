@@ -39,17 +39,17 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Install Node packages
-        run: ./gradlew pnpmInstall
+        run: ./gradlew --warning-mode=fail pnpmInstall
 
       - name: Build and test
-        run: ./gradlew build
+        run: ./gradlew --warning-mode=fail build
 
       - name: Merge test reports
-        run: ./gradlew merge-test-reports
+        run: ./gradlew --warning-mode=fail merge-test-reports
         if: always()
 
       - name: Generate coverage report
-        run: ./gradlew jacocoXmlTestReport
+        run: ./gradlew --warning-mode=fail jacocoXmlTestReport
         if: always()
 
       # Per the advice from:

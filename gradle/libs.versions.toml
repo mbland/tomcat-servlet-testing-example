@@ -6,7 +6,7 @@ hamcrestVer = "2.2"
 antJunitVer = "1.10.14"
 seleniumVer = "4.15.0"
 weldVer = "5.1.2.Final"
-jandexVer = "3.1.5"
+jandexVer = "3.1.6"
 jacksonVer = "2.16.0"
 
 [libraries.servlet]
