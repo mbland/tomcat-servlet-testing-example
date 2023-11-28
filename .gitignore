@@ -4,10 +4,11 @@
 # Ignore Gradle build output directory
 build
 
-tmp
-
 # IDEA coverage report dir
 htmlReport
 
+.idea
+.vscode
 node_modules
 coverage
+tmp
