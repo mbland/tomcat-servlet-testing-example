@@ -135,7 +135,15 @@ class ServletContractTest {
     @MediumCoverageTest
     void getAddEndpointReturnsPlaceholderString() throws Exception {
         var req = newRequestBuilder("/add").GET().build();
-        tomcat.start();
+        // Inject a Lambda as a StringCalculator test double which won't get
+        // called. In this case, this test double is known as a "dummy", since
+        // it's required for the call but isn't used. In other test methods
+        // below that actually call the Lambda, we call those test doubles
+        // "stubs".
+        //
+        // See the comments for those other test methods below for more
+        // background on using test doubles in general.
+        tomcat.start(new Servlet(numbers -> 0));
 
         var resp = sendRequest(req);
 
