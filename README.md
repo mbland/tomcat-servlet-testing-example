@@ -37,13 +37,38 @@ The plan is to develop an exercise comprised of the following steps:
 
 ## Status
 
-I've got an initial `Hello, World!` servlet running under Tomcat, validated by a
-basic JUnit test. I can do this comfortably from the command line and IntelliJ
-IDEA; VSCode is proving challenging for now.
+I've got an initial `Hello, World!` servlet running under Tomcat, validated by
+straightforward medium tests and an initial Selenium WebDriver test, all running
+under JUnit. Everything runs from the command line, IntelliJ IDEA, and VSCode
+(all on macOS), and in the GitHub Actions continuous integration pipeline.
 
 The next step is to add a proper [HTML &lt;form&gt;][] and WebDriver test to
 complete the walking skeleton (i.e., a complete, minimally functional
 application deployment).
+
+### OS Compatibility
+
+I run Arm64/aarch64 builds of [Ubuntu Linux][] and [Windows 11 Professional][]
+under [Parallels Desktop for Mac][] on Apple Silicon. There's some work to allow
+WebDriver to use [Chromium][] or [Firefox][] on Linux, as no aarch64 build of
+[Google Chrome][] is available. The [node-gradle/gradle-node-plugin][] breaks on
+Windows 11 when it tries to execute `uname`:
+
+```text
+PS C:\Users\msb\src\mbland\tomcat-servlet-testing-example> ./gradlew.bat
+Starting a Gradle Daemon, 1 incompatible and 1 stopped Daemons could not be
+reused, use --status for details
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file 'C:\Users\msb\src\mbland\tomcat-servlet-testing-example\strcalc\build.gradle.kts' line: 8
+
+* What went wrong:
+An exception occurred applying plugin request [id: 'com.github.node-gradle.node']
+> Failed to apply plugin 'com.github.node-gradle.node'.
+   > A problem occurred starting process 'command 'uname''
+```
 
 ## Open Source License
 
@@ -55,8 +80,12 @@ Public License 2.0][]. For the text of the license, see the
 
 ### Install the Java Development Kit
 
-I installed the latest JDK 21.0.1 from [Eclipse Temurin&trade; Latest
-Releases][] via [SDKMAN!][].
+This project uses the [Java® Platform, Standard Edition & Java Development Kit
+Version 21][jdk-21].
+
+On macOS and Linux, I installed the latest JDK 21.0.1 from [Eclipse
+Temurin&trade; Latest Releases][] via [SDKMAN!][]. On Windows, I downloaded it
+from the [Download the Microsoft Build of OpenJDK][] page.
 
 ### Optional: Install the [Tomcat servlet container][]
 
@@ -106,7 +135,7 @@ following:
 (The above is based on [the answer to &quot;Stack Overflow: Docker, Tomee,
 Logging, STDOUT, AWS&quot;][so-tomcat-stdout].)
 
-Alternatively, if you're into the YOLO thing, apply this update by running:
+Alternatively, if you're into the [YOLO][] thing, apply this update by running:
 
 ```sh
 bin/update-tomcat-config-logging.sh $CATALINA_HOME/conf/server.xml
@@ -117,11 +146,18 @@ For more information on Tomcat access logging, see:
 - [The Apache Software Foundation Apache Tomcat 10 Configuration Reference > The
   Valve Component > Access Logging][tomcat-access-logging]
 
-### Install [Gradle][]
+### Optional: Install [Gradle][]
 
-I installed Gradle 8.4 via [SDKMAN!][], which also required installing the
-20.0.2 JDK, since it can _build_ Java 21, but needs Java 20 to run. See the
-[Gradle compatibility matrix for Java][].
+_This step is optional, as the [gradlew and gradlew.bat wrapper
+scripts][gradlew] in the root directory of the repository will install Gradle._
+
+On macOS and Linux, I installed Gradle 8.4 via [SDKMAN!][]. On Windows, I
+followed the [Gradle manual installation steps][].
+
+(When I started the project, this also required installing the 20.0.2 JDK, since
+Gradle 8.4 could _build_ Java 21, but needed Java 20 to run. This no longer
+appears to necessary, though the [Gradle compatibility matrix for Java][] has
+yet to reflect this.)
 
 ### [Create a Java project with Gradle][]
 
@@ -137,36 +173,80 @@ Tutorial][]:
 
 ### Install [IntelliJ IDEA][] and/or [Visual Studio Code][]
 
-The project mainly supports IntelliJ IDEA right now, though I'm starting to play
-with VSCode.
+The project supports both IntelliJ IDEA and VSCode.
 
-I recently used VSCode extensively to develop my [EListMan][] project in
-[Go][], but with Java, I'm having an easier time so far with IntelliJ IDEA.
-(I still prefer to edit this file and other [Markdown][] files in VSCode,
-however.)
+I recently used VSCode extensively to develop my [EListMan][] project in [Go][],
+but this being Java, I primarly use IntelliJ IDEA. (I still prefer to edit this
+file and other [Markdown][] files in VSCode, however.)
 
-Here are some VSCode extensions and other references I'm using to start making
-sense of Java in VSCode:
+#### VSCode Java configuration
+
+I installed all the extensions from the [VSCode: Extension Pack for
+Java][vscode-java-ext] _except_ for Visual Studio IntelliCode.
+
+A lot of VSCode references refer to **Java: Configure Java Runtime** in the
+Command Palette, but I can't find it across macOS, Linux, or Windows. I can't
+seem to find any online resources from anyone else for whom it also doesn't
+exist.
+
+I _did_ eventually find [Managing Java Projects in VS Code: Configure Runtime
+for Projects][vscode-java], which provides guidance on how to configure Java via
+`settings.json`. On macOS and Linux, my config looks like the following
+(replacing `$HOME` with my actual home directory):
+
+```json
+    "java.configuration.runtimes": [
+        {
+          "name": "JavaSE-21",
+          "path": "$HOME/.sdkman/candidates/java/21.0.1-tem",
+          "sources" : "$HOME/.sdkman/candidates/java/21.0.1-tem/lib/src.zip",
+          "javadoc" : "https://docs.oracle.com/en/java/javase/21/docs/api",
+          "default":  true
+        }
+    ],
+```
+
+and on Windows:
+
+```json
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-21",
+            "path": "C:\\Program Files (Arm)\\Microsoft\\jdk-21.0.1.12-hotspot",
+            "sources" : "C:\\Program Files (Arm)\\Microsoft\\jdk-21.0.1.12-hotspot\\lib\\src.zip",
+            "javadoc" : "https://docs.oracle.com/en/java/javase/21/docs/api",
+            "default":  true
+          }
+    ]
+```
+
+#### Additional VSCode extensions and references
 
 - [Getting Started with Java in VS Code](https://code.visualstudio.com/docs/java/java-tutorial)
 - [Java build tools in VS Code](https://code.visualstudio.com/docs/java/java-build)
 - [VSCode: Gradle for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-gradle)
-- [VSCode: Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack)
-- [Managing Java Projects in VS Code](https://code.visualstudio.com/docs/java/java-project)
 - [VSCode: Navigate and edit Java source code](https://code.visualstudio.com/docs/java/java-editing)
 - [Testing Java with Visual Studio Code](https://code.visualstudio.com/docs/java/java-testing)
 
 ## Running Tomcat and adding a Tomcat test helper
 
-### [Create Tomcat > Local run configuration][]
+### Optional: [Create Tomcat > Local run configuration][]
 
-In IntelliJ, I created the "Local Tomcat" run configuration, stored in the repo
-as `.idea/runConfigurations/Local_Tomcat.xml`. In installs the WAR file (as
-described by the [Tomcat deployment][] document) under the `/strcalc` context
-(i.e., Tomcat serves the servlet at <http://localhost:8080/strcalc>).
+_This step is optional, as the [bin/tomcat-docker.sh][] script will run Tomcat
+locally in a Docker container defined by
+[dockerfiles/Dockerfile.tomcat-test][]._
 
-Note that the `CATALINA_HOME` setting matches that from the **Install the Tomcat
-servlet container** section above.
+In IntelliJ, you can run your locally installed Tomcat server via **Run > Edit
+Configurations... > Add New Configuration (+) > Tomcat Server > Local**.
+
+- Under **Server > Before launch**, remove the "Build" item and add a new "Build
+  Artifacts" task.
+- From the popup window for that operation, select: **Build 'Gradle :
+  tomcat-servlet-testing-example : strcalc.war' artifact**.
+
+This installs the WAR file (as described by the [Tomcat deployment][] document)
+under the `/strcalc` context (i.e., Tomcat serves the servlet at
+<http://localhost:8080/strcalc>).
 
 - [How to Deploy a WAR File to
   Tomcat](https://www.baeldung.com/tomcat-deploy-war)
@@ -177,12 +257,12 @@ The initial servlet responds with the classic hardcoded value `Hello, World!`.
 The initial test expects Tomcat to be running and for
 <http://localhost:8080/strcalc> to return this value.
 
-Note that the value of the `@WebServlet` annotation is the empty string. This is
-because Tomcat appends this value to the context path. If this annotation had
-another value, such as `"foo"`, the servlet path would be `/strcalc/foo`
-instead. See: [Stack Overflow: Difference between / and /* in servlet mapping
-url pattern](https://stackoverflow.com/questions/4140448/difference-between-and-in-servlet-mapping-url-pattern).
+Note that the value of the `@WebServlet` annotation is `/add`. Tomcat appends
+this value to the context path (`/strcalc`), creating the servlet path
+`/strcalc/add`.
 
+- [Stack Overflow: Difference between / and /* in servlet mapping url
+  pattern](https://stackoverflow.com/questions/4140448/difference-between-and-in-servlet-mapping-url-pattern)
 - [Introduction to Servlets](https://www.baeldung.com/intro-to-servlets)
 - [Exploring the New HTTP Client in
   Java](https://www.baeldung.com/java-9-http-client)
@@ -350,9 +430,9 @@ Expected: a string containing "Hello, World!"
 ## <a name="ci"></a>Setting up continuous integration using [GitHub Actions][]
 
 Added the [.github/CODEOWNERS](.github/CODEOWNERS) file and
-[.github/workflows/run-tests.yaml](.github/workflows/run-tests.yaml) file
-for [GitHub Actions][]. Configured using the [setup-java GitHub Actions
-plugin][] and the [gradle/gradle-build-action GitHub Actions plugin][].
+[.github/workflows/run-tests.yaml](.github/workflows/run-tests.yaml) file for
+[GitHub Actions][]. Configured using the [setup-java GitHub Actions plugin][]
+and the [gradle/gradle-build-action GitHub Actions plugin][].
 
 ### Publishing JUnit test results
 
@@ -712,22 +792,34 @@ Coming soon...
 [headless Chrome]: https://developer.chrome.com/blog/headless-chrome/
 [test doubles]: https://mike-bland.com/2023/09/06/test-doubles.html
 [Apache Solr]: https://solr.apache.org/
+[node-gradle/gradle-node-plugin]: https://github.com/node-gradle/gradle-node-plugin
+[Ubuntu Linux]: https://ubuntu.com/desktop
+[Windows 11 Professional]: https://kb.parallels.com/125375/
+[Parallels Desktop for Mac]: https://www.parallels.com/products/desktop/
+[Chromium]: https://www.chromium.org/Home/
+[Firefox]: https://www.mozilla.org/firefox/new/
+[Google Chrome]: https://google.com/chrome
 [HTML &lt;form&gt;]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
 [Open Source software]: https://opensource.org/osd-annotated
 [Mozilla Public License 2.0]: https://www.mozilla.org/MPL/
+[jdk-21]: https://docs.oracle.com/en/java/javase/21/docs/api/index.html
 [Eclipse Temurin&trade; Latest Releases]: https://adoptium.net/temurin/releases/
 [SDKMAN!]: https://sdkman.io
+[Download the Microsoft Build of OpenJDK]: https://learn.microsoft.com/java/openjdk/download#openjdk-21
 [Tomcat servlet container]: https://tomcat.apache.org/
 [bin/tomcat-docker.sh]: bin/tomcat-docker.sh
 [dockerfiles/Dockerfile.tomcat-test]: dockerfiles/Dockerfile.tomcat-test
 [Tomcat 10.1 Setup instructions]: https://tomcat.apache.org/tomcat-10.1-doc/setup.html
 [bin/update-tomcat-config-logging.sh]: bin/update-tomcat-config-logging.sh
 [so-tomcat-stdout]: https://stackoverflow.com/a/62598943
+[YOLO]: https://en.wikipedia.org/wiki/YOLO_(aphorism)
 [tomcat-access-logging]: https://tomcat.apache.org/tomcat-10.1-doc/config/valve.html#Access_Logging
 [Create a Java project with Gradle]: https://docs.gradle.org/current/samples/sample_building_java_libraries.html
 [strcalc/build.gradle.kts]: strcalc/build.gradle.kts
 [Gradle Tutorial]: https://docs.gradle.org/current/userguide/part1_gradle_init.html
 [Gradle]: https://gradle.org/
+[gradlew]: https://docs.gradle.org/current/userguide/gradle_wrapper.html
+[Gradle manual installation steps]: https://gradle.org/install/#manually
 [Gradle compatibility matrix for Java]: https://docs.gradle.org/current/userguide/compatibility.html#java
 [Gradle WAR plugin]: https://docs.gradle.org/current/userguide/war_plugin.html
 [Jakarta Servlet Specification]: https://jakarta.ee/specifications/servlet/
@@ -736,6 +828,8 @@ Coming soon...
 [EListMan]: https://github.com/mbland/elistman
 [Go]: https://go.dev/
 [Markdown]: https://daringfireball.net/projects/markdown/
+[vscode-java-ext]: https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
+[vscode-java]: https://code.visualstudio.com/docs/java/java-project#_configure-runtime-for-projects
 [JUnit run configuration]: https://www.jetbrains.com/help/idea/run-debug-configuration-junit.html
 [Create Tomcat > Local run configuration]: https://www.baeldung.com/tomcat-deploy-war#1-local-configuration
 [Tomcat deployment]: https://tomcat.apache.org/tomcat-10.1-doc/appdev/deployment.html
@@ -770,7 +864,6 @@ Coming soon...
 [coverallsapp/github-action GitHub Actions plugin]: https://github.com/coverallsapp/github-action
 [GitHub Actions marketplace]: https://github.com/marketplace?type=actions
 [JaCoCo related GitHub Actions plugins]: https://github.com/marketplace?category=&type=actions&verification=&query=jacoco
-[node-gradle/gradle-node-plugin]: https://github.com/node-gradle/gradle-node-plugin
 [Node.js]: https://nodejs.org/
 [pnpm]: https://pnpm.io/
 [nodenv]: https://github.com/nodenv/nodenv
