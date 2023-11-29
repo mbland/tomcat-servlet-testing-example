@@ -14,7 +14,9 @@ export default class Placeholder {
   }
 
   init() {
-    const d = { message: 'Hello, World!' }
-    this.#document.querySelector('#app').innerHTML = Template(d)
+    this.#document.querySelector('#app').innerHTML = Template({
+      message: 'Hello, World!',
+      url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'
+    })
   }
 }

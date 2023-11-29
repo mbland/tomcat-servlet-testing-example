@@ -36,23 +36,50 @@
 import { createFilter } from '@rollup/pluginutils'
 import Handlebars from 'handlebars'
 
-function compiledModule(compiled) {
+const PLUGIN_NAME = 'handlebars-precompile'
+const DEFAULT_INCLUDE = ['**/*.hbs', '**/*.handlebars', '**/*.mustache']
+const DEFAULT_EXCLUDE = 'node_modules/**'
+
+const PLUGIN_ID = `\0${PLUGIN_NAME}`
+const HANDLEBARS_PATH = 'handlebars/lib/handlebars.runtime'
+const IMPORT_HANDLEBARS = `import Handlebars from '${HANDLEBARS_PATH}'`
+
+function helpersModule(helpers) {
   return [
-    'import Handlebars from \'handlebars/lib/handlebars.runtime\'',
+    IMPORT_HANDLEBARS,
+    ...helpers.map((h, i) => `import helpers${i} from './${h}'`),
+    ...helpers.map((_, i) => `helpers${i}(Handlebars)`)
+  ].join('\n')
+}
+
+function compiledModule(compiled, imports) {
+  return [
+    IMPORT_HANDLEBARS,
+    ...imports,
     `export default Handlebars.template(${compiled.toString()})`
   ].join('\n')
 }
 
 export default function (options = {}) {
-  const filter = createFilter(
-    options.include || ['**/*.hbs', '**/*.handlebars', '**/*.mustache'],
-    options.exclude || 'node_modules/**'
+  const isTemplate = createFilter(
+    options.include || DEFAULT_INCLUDE,
+    options.exclude || DEFAULT_EXCLUDE
   )
+  const helpers = options.helpers || []
+  const isThisPlugin = id => id === PLUGIN_ID && helpers.length
+  const imports = helpers.length ? [`import '${PLUGIN_ID}'`] : []
 
   return {
-    transform (code, id) {
-      if (!filter(id)) return
-      return { code: compiledModule(Handlebars.precompile(code, options)) }
+    name: PLUGIN_NAME,
+
+    resolveId(id) { if (isThisPlugin(id)) return id },
+
+    load(id) { if (isThisPlugin(id)) return helpersModule(helpers) },
+
+    transform(code, id) {
+      if (isTemplate(id)) return {
+        code: compiledModule(Handlebars.precompile(code, options), imports)
+      }
     }
   }
 }
