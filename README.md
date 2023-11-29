@@ -739,18 +739,6 @@ plugin:
 - Configure the selected plugin to process the downloaded
 `jacocoXmlTestReport.xml` file.
 
-## Adding large tests
-
-Coming soon...
-
-TODO(mbland): Document how the following are configured:
-
-- [Gradle WAR Plugin][] - now writes to/includes files from `strcalc/build/webapp`
-- [Selenium WebDriver][]
-- [TestTomcat](./strcalc/src/test/java/com/mike_bland/training/testing/utils/TestTomcat.java)
-  (for medium tests)
-- [node-gradle/gradle-node-plugin][]
-
 ## Setup frontend JavaScript environment
 
 [Node.js][] is a JavaScript runtime environment. [pnpm][] is a Node.js package
@@ -784,6 +772,20 @@ Code support:
 - [ESLint extension for Visual Studio Code][]
 - [Vite IntelliJ plugin][]
 - [Vite extension for Visual Studio Code][]
+
+## Adding large tests
+
+Coming soon...
+
+TODO(mbland): Document how the following are configured:
+
+- [Gradle WAR Plugin][] - now writes to/includes files from `strcalc/build/webapp`
+- [Selenium WebDriver][] - include references to:
+  - [Selenium: Design patterns and development strategies][]
+- [TestTomcat](./strcalc/src/test/java/com/mike_bland/training/testing/utils/TestTomcat.java)
+  (for medium tests)
+- [node-gradle/gradle-node-plugin][]
+
 
 ## Implementing core logic using Test Driven Development and unit tests
 
@@ -890,3 +892,4 @@ Coming soon...
 [ESLint extension for Visual Studio Code]: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
 [Vite IntelliJ plugin]: https://plugins.jetbrains.com/plugin/20011-vite
 [Vite extension for Visual Studio Code]: https://marketplace.visualstudio.com/items?itemName=antfu.vite
+[Selenium: Design patterns and development strategies]: https://www.selenium.dev/documentation/test_practices/design_strategies/

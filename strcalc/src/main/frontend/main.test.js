@@ -12,9 +12,10 @@ describe('String Calculator UI', () => {
     test('contains the "Hello, World!" placeholder', async () => {
       let { document } = await loader.load('index.html')
 
-      let e = document.querySelector('#app .placeholder')
+      let e = document.querySelector('#app .placeholder a')
 
       expect(e.textContent).toContain('Hello, World!')
+      expect(e.href).toContain('%22Hello,_World!%22')
     })
   })
 })
