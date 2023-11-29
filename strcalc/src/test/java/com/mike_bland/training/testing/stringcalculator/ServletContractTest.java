@@ -135,7 +135,11 @@ class ServletContractTest {
     @MediumCoverageTest
     void getAddEndpointReturnsPlaceholderString() throws Exception {
         var req = newRequestBuilder("/add").GET().build();
-        tomcat.start();
+        // We're covering the zero argument Servlet constructor while injecting
+        // a Servlet directly into the TestTomcat, which will leave the
+        // Servlet's calculator member uninitialized. In this case it's OK,
+        // since we aren't exercising a code path that uses it.
+        tomcat.start(new Servlet());
 
         var resp = sendRequest(req);
 
