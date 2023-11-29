@@ -11,7 +11,9 @@ export function buildDir(relativePath) {
 
 export default defineConfig({
   base: '/strcalc',
-  plugins: [ handlebarsPrecompiler() ],
+  plugins: [
+    handlebarsPrecompiler({ helpers: ['components/helpers.js'] })
+  ],
   build: {
     outDir: buildDir('webapp')
   },
