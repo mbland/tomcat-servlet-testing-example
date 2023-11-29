@@ -52,7 +52,10 @@ function helpersModule(helpers) {
   ].join('\n')
 }
 
-function compiledModule(compiled, imports) {
+function compiledModule(code, options, helpers) {
+  const compiled = Handlebars.precompile(code, options)
+  let imports = helpers.length ? [`import '${PLUGIN_ID}'`] : []
+
   return [
     IMPORT_HANDLEBARS,
     ...imports,
@@ -67,7 +70,6 @@ export default function (options = {}) {
   )
   const helpers = options.helpers || []
   const shouldEmitHelpersModule = id => id === PLUGIN_ID && helpers.length
-  const imports = helpers.length ? [`import '${PLUGIN_ID}'`] : []
 
   return {
     name: PLUGIN_NAME,
@@ -80,7 +82,7 @@ export default function (options = {}) {
 
     transform(code, id) {
       if (isTemplate(id)) return {
-        code: compiledModule(Handlebars.precompile(code, options), imports)
+        code: compiledModule(code, options, helpers)
       }
     }
   }
