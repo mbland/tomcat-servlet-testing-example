@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebApplicationTest {
@@ -78,8 +80,12 @@ public class WebApplicationTest {
     void testPlaceholder() {
         driver.get(endpoint("/"));
 
-        WebElement body = driver.findElement(By.cssSelector("p.placeholder"));
+        WebElement elem = driver.findElement(By.cssSelector("p.placeholder a"));
 
-        assertEquals("Hello, World!", body.getText());
+        assertEquals("Hello, World!", elem.getText());
+        assertThat(
+                elem.getAttribute("href"),
+                containsString("%22Hello,_World!%22")
+        );
     }
 }
