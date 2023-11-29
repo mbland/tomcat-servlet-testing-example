@@ -70,6 +70,14 @@ An exception occurred applying plugin request [id: 'com.github.node-gradle.node'
    > A problem occurred starting process 'command 'uname''
 ```
 
+Also, [it doesn't appear as though nested virtualzation will ever be supported by
+the aarch 64 Windows 11 on an Apple M1][no-vm-nesting]. This means the
+Docker-based tests won't work in this situation.
+
+FWIW, [Windows Subsystem for Linux 2 also requires nested
+virtualization][wsl2-nesting]. WSL 1 will work fine, but it appears [prospects
+to run Docker in WSL 1 are rather dim][wsl1-docker].
+
 ## Open Source License
 
 This software is made available as [Open Source software][] under the [Mozilla
@@ -155,9 +163,11 @@ On macOS and Linux, I installed Gradle 8.4 via [SDKMAN!][]. On Windows, I
 followed the [Gradle manual installation steps][].
 
 (When I started the project, this also required installing the 20.0.2 JDK, since
-Gradle 8.4 could _build_ Java 21, but needed Java 20 to run. This no longer
-appears to necessary, though the [Gradle compatibility matrix for Java][] has
-yet to reflect this.)
+Gradle 8.4 could _build_ Java 21, but needed Java 20 to run. At some point this
+no longer appeared necessary, though the [Gradle compatibility matrix for
+Java][] has yet to reflect this. The project now uses Gradle 8.5, which is
+explicitly supported on Java 21, but it's still important to know about this
+potential mismatch.)
 
 ### [Create a Java project with Gradle][]
 
@@ -800,6 +810,9 @@ Coming soon...
 [Firefox]: https://www.mozilla.org/firefox/new/
 [Google Chrome]: https://google.com/chrome
 [HTML &lt;form&gt;]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+[no-vm-nesting]: https://kb.parallels.com/en/128914
+[wsl2-nesting]: https://support.microsoft.com/windows/options-for-using-windows-11-with-mac-computers-with-apple-m1-and-m2-chips-cd15fd62-9b34-4b78-b0bc-121baa3c568c
+[wsl1-docker]: https://stackoverflow.com/a/72398035
 [Open Source software]: https://opensource.org/osd-annotated
 [Mozilla Public License 2.0]: https://www.mozilla.org/MPL/
 [jdk-21]: https://docs.oracle.com/en/java/javase/21/docs/api/index.html
