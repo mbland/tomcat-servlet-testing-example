@@ -90,6 +90,11 @@ class PluginImpl {
     this.#isPartial = createFilter(options.partials || DEFAULT_PARTIALS)
     this.#partialName = options.partialName || DEFAULT_PARTIAL_NAME
     this.#partialPath = options.partialPath || DEFAULT_PARTIAL_PATH
+
+    if (this.#options.compiler) {
+      delete this.#options.compiler.srcName
+      delete this.#options.compiler.destName
+    }
   }
 
   hasHelpers() { return this.#helpers.length }
@@ -112,16 +117,14 @@ class PluginImpl {
     const collector = new PartialCollector()
     collector.accept(ast)
 
-    return {
-      code: [
-        IMPORT_HANDLEBARS,
-        ...(this.hasHelpers() ? [ IMPORT_HELPERS ] : []),
-        ...collector.partials.map(p => `import '${this.#partialPath(p, id)}'`),
-        `const Template = Handlebars.template(${tmpl})`,
-        'export default Template',
-        ...(this.#isPartial(id) ? [ this.partialRegistration(id) ] : [])
-      ].join('\n')
-    }
+    return [
+      IMPORT_HANDLEBARS,
+      ...(this.hasHelpers() ? [ IMPORT_HELPERS ] : []),
+      ...collector.partials.map(p => `import '${this.#partialPath(p, id)}'`),
+      `const Template = Handlebars.template(${tmpl})`,
+      'export default Template',
+      ...(this.#isPartial(id) ? [ this.partialRegistration(id) ] : [])
+    ].join('\n')
   }
 
   partialRegistration(id) {
