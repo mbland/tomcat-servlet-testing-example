@@ -36,7 +36,7 @@
 import { createFilter } from '@rollup/pluginutils'
 import Handlebars from 'handlebars'
 
-const PLUGIN_NAME = 'handlebars-precompile'
+const PLUGIN_NAME = 'handlebars-precompiler'
 const DEFAULT_INCLUDE = ['**/*.hbs', '**/*.handlebars', '**/*.mustache']
 const DEFAULT_EXCLUDE = 'node_modules/**'
 const DEFAULT_PARTIALS = '**/_*'
@@ -59,22 +59,17 @@ const IMPORT_HELPERS = `import '${PLUGIN_ID}'`
 class PartialCollector extends Handlebars.Visitor {
   partials = []
 
-  constructor() { super() }
-
   PartialStatement(partial) {
-    return super.PartialStatement(this.collect(partial))
+    this.collect(partial.name)
+    return super.PartialStatement(partial)
   }
 
   PartialBlockStatement(partial) {
-    return super.PartialBlockStatement(this.collect(partial))
+    this.collect(partial.name)
+    return super.PartialBlockStatement(partial)
   }
 
-  collect(partial) {
-    if (partial.name.type === 'PathExpression') {
-      this.partials.push(partial.name.original)
-    }
-    return partial
-  }
+  collect(n) { if (n.type === 'PathExpression') this.partials.push(n.original) }
 }
 
 class PluginImpl {
@@ -97,9 +92,9 @@ class PluginImpl {
     this.#partialPath = options.partialPath || DEFAULT_PARTIAL_PATH
   }
 
-  shouldEmitHelpersModule(id) {
-    return id === PLUGIN_ID && this.#helpers.length
-  }
+  hasHelpers() { return this.#helpers.length }
+  shouldEmitHelpersModule(id) { return id === PLUGIN_ID && this.hasHelpers() }
+  isTemplate(id) { return this.#isTemplate(id) }
 
   helpersModule() {
     const helpers = this.#helpers
@@ -110,21 +105,19 @@ class PluginImpl {
     ].join('\n')
   }
 
-  isTemplate(id) { return this.#isTemplate(id) }
-
-  compiledModule(code, id) {
-    const compOpts = this.#options.compiler
-    const ast = Handlebars.parse(code, compOpts)
-    const tmpl = Handlebars.precompile(ast, compOpts)
+  compile(code, id) {
+    const opts = this.#options.compiler
+    const ast = Handlebars.parse(code, opts)
+    const tmpl = Handlebars.precompile(ast, opts)
     const collector = new PartialCollector()
     collector.accept(ast)
 
     return {
       code: [
         IMPORT_HANDLEBARS,
-        ...(this.#helpers.length ? [ IMPORT_HELPERS ] : []),
+        ...(this.hasHelpers() ? [ IMPORT_HELPERS ] : []),
         ...collector.partials.map(p => `import '${this.#partialPath(p, id)}'`),
-        `const Template = Handlebars.template(${tmpl.toString()})`,
+        `const Template = Handlebars.template(${tmpl})`,
         'export default Template',
         ...(this.#isPartial(id) ? [ this.partialRegistration(id) ] : [])
       ].join('\n')
@@ -138,13 +131,10 @@ class PluginImpl {
 
 export default function(options) {
   const p = new PluginImpl(options)
-
   return {
     name: PLUGIN_NAME,
     resolveId(id) { if (p.shouldEmitHelpersModule(id)) return id },
     load(id) { if (p.shouldEmitHelpersModule(id)) return p.helpersModule() },
-    transform(code, id) {
-      if (p.isTemplate(id)) return p.compiledModule(code, id)
-    }
+    transform(code, id) { if (p.isTemplate(id)) return p.compile(code, id) }
   }
 }
