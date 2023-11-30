@@ -39,16 +39,51 @@ import Handlebars from 'handlebars'
 const PLUGIN_NAME = 'handlebars-precompile'
 const DEFAULT_INCLUDE = ['**/*.hbs', '**/*.handlebars', '**/*.mustache']
 const DEFAULT_EXCLUDE = 'node_modules/**'
+const DEFAULT_PARTIALS = '**/_*'
+const DEFAULT_PARTIAL_NAME = id => {
+  return id.replace(/.*\//, '')    // extract the basename
+    .replace(/\.[^.]*$/, '')       // remove the file extension, if present
+    .replace(/^[^[:alnum:]]*/, '') // strip leading non-alphanumeric characters
+}
+const DEFAULT_PARTIAL_PATH = (partialName, importerPath) => {
+  return `./_${partialName}.${importerPath.replace(/.*\./, '')}`
+}
 
 const PLUGIN_ID = `\0${PLUGIN_NAME}`
 const HANDLEBARS_PATH = 'handlebars/lib/handlebars.runtime'
 const IMPORT_HANDLEBARS = `import Handlebars from '${HANDLEBARS_PATH}'`
 const IMPORT_HELPERS = `import '${PLUGIN_ID}'`
 
+// eslint-disable-next-line @stylistic/js/max-len
+// https://github.com/handlebars-lang/handlebars.js/blob/master/docs/compiler-api.md
+class PartialCollector extends Handlebars.Visitor {
+  partials = []
+
+  constructor() { super() }
+
+  PartialStatement(partial) {
+    return super.PartialStatement(this.collect(partial))
+  }
+
+  PartialBlockStatement(partial) {
+    return super.PartialBlockStatement(this.collect(partial))
+  }
+
+  collect(partial) {
+    if (partial.name.type === 'PathExpression') {
+      this.partials.push(partial.name.original)
+    }
+    return partial
+  }
+}
+
 class PluginImpl {
   #options
   #helpers
   #isTemplate
+  #isPartial
+  #partialName
+  #partialPath
 
   constructor(options = {}) {
     this.#options = options
@@ -57,6 +92,9 @@ class PluginImpl {
       options.include || DEFAULT_INCLUDE,
       options.exclude || DEFAULT_EXCLUDE
     )
+    this.#isPartial = createFilter(options.partials || DEFAULT_PARTIALS)
+    this.#partialName = options.partialName || DEFAULT_PARTIAL_NAME
+    this.#partialPath = options.partialPath || DEFAULT_PARTIAL_PATH
   }
 
   shouldEmitHelpersModule(id) {
@@ -74,19 +112,27 @@ class PluginImpl {
 
   isTemplate(id) { return this.#isTemplate(id) }
 
-  compiledModule(code) {
+  compiledModule(code, id) {
     const compOpts = this.#options.compiler
     const ast = Handlebars.parse(code, compOpts)
     const tmpl = Handlebars.precompile(ast, compOpts)
+    const collector = new PartialCollector()
+    collector.accept(ast)
 
     return {
       code: [
         IMPORT_HANDLEBARS,
         ...(this.#helpers.length ? [ IMPORT_HELPERS ] : []),
+        ...collector.partials.map(p => `import '${this.#partialPath(p, id)}'`),
         `const Template = Handlebars.template(${tmpl.toString()})`,
-        'export default Template'
+        'export default Template',
+        ...(this.#isPartial(id) ? [ this.partialRegistration(id) ] : [])
       ].join('\n')
     }
+  }
+
+  partialRegistration(id) {
+    return `Handlebars.registerPartial('${this.#partialName(id)}', Template)`
   }
 }
 
@@ -97,6 +143,8 @@ export default function(options) {
     name: PLUGIN_NAME,
     resolveId(id) { if (p.shouldEmitHelpersModule(id)) return id },
     load(id) { if (p.shouldEmitHelpersModule(id)) return p.helpersModule() },
-    transform(code, id) { if (p.isTemplate(id)) return p.compiledModule(code) }
+    transform(code, id) {
+      if (p.isTemplate(id)) return p.compiledModule(code, id)
+    }
   }
 }
