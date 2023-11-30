@@ -43,6 +43,7 @@ const DEFAULT_EXCLUDE = 'node_modules/**'
 const PLUGIN_ID = `\0${PLUGIN_NAME}`
 const HANDLEBARS_PATH = 'handlebars/lib/handlebars.runtime'
 const IMPORT_HANDLEBARS = `import Handlebars from '${HANDLEBARS_PATH}'`
+const IMPORT_HELPERS = `import '${PLUGIN_ID}'`
 
 class PluginImpl {
   #options
@@ -74,14 +75,16 @@ class PluginImpl {
   isTemplate(id) { return this.#isTemplate(id) }
 
   compiledModule(code) {
-    const precompiled = Handlebars.precompile(code, this.#options)
-    let imports = this.#helpers.length ? [`import '${PLUGIN_ID}'`] : []
+    const compOpts = this.#options.compiler
+    const ast = Handlebars.parse(code, compOpts)
+    const tmpl = Handlebars.precompile(ast, compOpts)
 
     return {
       code: [
         IMPORT_HANDLEBARS,
-        ...imports,
-        `export default Handlebars.template(${precompiled.toString()})`
+        ...(this.#helpers.length ? [ IMPORT_HELPERS ] : []),
+        `const Template = Handlebars.template(${tmpl.toString()})`,
+        'export default Template'
       ].join('\n')
     }
   }
