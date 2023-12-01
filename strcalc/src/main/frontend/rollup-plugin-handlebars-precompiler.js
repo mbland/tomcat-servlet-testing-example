@@ -79,9 +79,9 @@ class PluginImpl {
   #isPartial
   #partialName
   #partialPath
+  #compilerOpts
 
   constructor(options = {}) {
-    this.#options = options
     this.#helpers = options.helpers || []
     this.#isTemplate = createFilter(
       options.include || DEFAULT_INCLUDE,
@@ -91,10 +91,13 @@ class PluginImpl {
     this.#partialName = options.partialName || DEFAULT_PARTIAL_NAME
     this.#partialPath = options.partialPath || DEFAULT_PARTIAL_PATH
 
-    if (this.#options.compiler) {
-      delete this.#options.compiler.srcName
-      delete this.#options.compiler.destName
+    if (options.compiler) {
+      delete options.compiler.srcName
+      delete options.compiler.destName
     }
+    this.#compilerOpts = options.sourcemap ?
+      (id) => Object.assign({ srcName: id }, options.compiler) :
+      () => options.compiler
   }
 
   hasHelpers() { return this.#helpers.length }
@@ -111,20 +114,35 @@ class PluginImpl {
   }
 
   compile(code, id) {
-    const opts = this.#options.compiler
+    const opts = this.#compilerOpts(id)
     const ast = Handlebars.parse(code, opts)
-    const tmpl = Handlebars.precompile(ast, opts)
+    const compiled = Handlebars.precompile(ast, opts)
+    const { code: tmpl = compiled, map: srcMap = null } = compiled
     const collector = new PartialCollector()
     collector.accept(ast)
 
-    return [
+    const preTmpl = [
       IMPORT_HANDLEBARS,
       ...(this.hasHelpers() ? [ IMPORT_HELPERS ] : []),
       ...collector.partials.map(p => `import '${this.#partialPath(p, id)}'`),
-      `const Template = Handlebars.template(${tmpl})`,
-      'export default Template',
-      ...(this.#isPartial(id) ? [ this.partialRegistration(id) ] : [])
-    ].join('\n')
+      'const Template = Handlebars.template('
+    ]
+    const postTmpl = [
+      ')',
+      // The trailing ';' prevents source map loss if it's the last line.
+      'export default Template;',
+      ...(this.#isPartial(id) ? [this.partialRegistration(id)] : [])
+    ]
+    return {
+      code: [ ...preTmpl, tmpl, ...postTmpl ].join('\n'),
+      map: srcMap ? this.#adjustSourceMap(srcMap, preTmpl.length) : null
+    }
+  }
+
+  #adjustSourceMap(map, preTmplLen) {
+    const result = JSON.parse(map)
+    result.mappings = `${';'.repeat(preTmplLen)}${result.mappings}`
+    return JSON.stringify(result)
   }
 
   partialRegistration(id) {
