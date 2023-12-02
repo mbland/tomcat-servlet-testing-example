@@ -73,7 +73,6 @@ class PartialCollector extends Handlebars.Visitor {
 }
 
 class PluginImpl {
-  #options
   #helpers
   #isTemplate
   #isPartial
@@ -100,8 +99,7 @@ class PluginImpl {
       () => options.compiler
   }
 
-  hasHelpers() { return this.#helpers.length }
-  shouldEmitHelpersModule(id) { return id === PLUGIN_ID && this.hasHelpers() }
+  shouldEmitHelpersModule(id) { return id === PLUGIN_ID && this.#hasHelpers() }
   isTemplate(id) { return this.#isTemplate(id) }
 
   helpersModule() {
@@ -123,7 +121,7 @@ class PluginImpl {
 
     const preTmpl = [
       IMPORT_HANDLEBARS,
-      ...(this.hasHelpers() ? [ IMPORT_HELPERS ] : []),
+      ...(this.#hasHelpers() ? [ IMPORT_HELPERS ] : []),
       ...collector.partials.map(p => `import '${this.#partialPath(p, id)}'`),
       'const Template = Handlebars.template('
     ]
@@ -131,7 +129,7 @@ class PluginImpl {
       ')',
       // The trailing ';' prevents source map loss if it's the last line.
       'export default Template;',
-      ...(this.#isPartial(id) ? [this.partialRegistration(id)] : [])
+      ...(this.#isPartial(id) ? [ this.#partialRegistration(id) ] : [])
     ]
     return {
       code: [ ...preTmpl, tmpl, ...postTmpl ].join('\n'),
@@ -139,13 +137,15 @@ class PluginImpl {
     }
   }
 
+  #hasHelpers() { return this.#helpers.length }
+
   #adjustSourceMap(map, preTmplLen) {
     const result = JSON.parse(map)
     result.mappings = `${';'.repeat(preTmplLen)}${result.mappings}`
-    return JSON.stringify(result)
+    return result
   }
 
-  partialRegistration(id) {
+  #partialRegistration(id) {
     return `Handlebars.registerPartial('${this.#partialName(id)}', Template)`
   }
 }
