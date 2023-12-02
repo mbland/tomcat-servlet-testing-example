@@ -73,6 +73,7 @@ class PartialCollector extends Handlebars.Visitor {
 
 class PluginImpl {
   #helpers
+  #importHelpers
   #isTemplate
   #isPartial
   #partialName
@@ -81,6 +82,7 @@ class PluginImpl {
 
   constructor(options = {}) {
     this.#helpers = options.helpers || []
+    this.#importHelpers = this.#helpers.length ? [ IMPORT_HELPERS ] : []
     this.#isTemplate = createFilter(
       options.include || DEFAULT_INCLUDE,
       options.exclude || DEFAULT_EXCLUDE
@@ -105,8 +107,9 @@ class PluginImpl {
       () => options.compiler
   }
 
-  shouldEmitHelpersModule(id) { return id === PLUGIN_ID && this.#hasHelpers() }
-  isTemplate(id) { return this.#isTemplate(id) }
+  shouldEmitHelpersModule(id) {
+    return id === PLUGIN_ID && this.#helpers.length
+  }
 
   helpersModule() {
     const helpers = this.#helpers
@@ -116,6 +119,8 @@ class PluginImpl {
       ...helpers.map((_, i) => `registerHelpers${i}(Handlebars)`)
     ].join('\n')
   }
+
+  isTemplate(id) { return this.#isTemplate(id) }
 
   compile(code, id) {
     const opts = this.#compilerOpts(id)
@@ -127,7 +132,7 @@ class PluginImpl {
 
     const preTmpl = [
       IMPORT_HANDLEBARS,
-      ...(this.#hasHelpers() ? [ IMPORT_HELPERS ] : []),
+      ...this.#importHelpers,
       ...collector.partials.map(p => `import '${this.#partialPath(p, id)}'`),
       'const Template = Handlebars.template('
     ]
@@ -142,8 +147,6 @@ class PluginImpl {
       map: srcMap ? this.#adjustSourceMap(srcMap, preTmpl.length) : undefined
     }
   }
-
-  #hasHelpers() { return this.#helpers.length }
 
   #adjustSourceMap(map, preTmplLen) {
     const result = JSON.parse(map)
