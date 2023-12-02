@@ -79,6 +79,7 @@ class PluginImpl {
   #partialName
   #partialPath
   #compilerOpts
+  #adjustSourceMap
 
   constructor(options = {}) {
     this.#helpers = options.helpers || []
@@ -91,9 +92,14 @@ class PluginImpl {
     this.#partialName = options.partialName || DEFAULT_PARTIAL_NAME
     this.#partialPath = options.partialPath || DEFAULT_PARTIAL_PATH
 
-    if (options.compiler) {
-      delete options.compiler.srcName
-      delete options.compiler.destName
+    const compilerOpts = { ...options.compiler }
+    delete compilerOpts.srcName
+    delete compilerOpts.destName
+    this.#compilerOpts = (id) => ({ srcName: id, ...compilerOpts })
+    this.#adjustSourceMap = function adjustSourceMap(map, numLinesBeforeTmpl) {
+      const result = JSON.parse(map)
+      result.mappings = `${';'.repeat(numLinesBeforeTmpl)}${result.mappings}`
+      return result
     }
 
     // This specifies that source maps can be disabled via "sourceMap: false":
@@ -101,10 +107,10 @@ class PluginImpl {
     //
     // This specifies that source maps can be disabled via "sourcemap: false":
     // - https://rollupjs.org/troubleshooting/#warning-sourcemap-is-likely-to-be-incorrect
-    const sourcemap = options.sourceMap !== false && options.sourcemap !== false
-    this.#compilerOpts = sourcemap ?
-      (id) => Object.assign({ srcName: id }, options.compiler) :
-      () => options.compiler
+    if (options.sourceMap === false || options.sourcemap === false) {
+      this.#compilerOpts = () => compilerOpts
+      this.#adjustSourceMap = () => undefined
+    }
   }
 
   shouldEmitHelpersModule(id) {
@@ -130,28 +136,21 @@ class PluginImpl {
     const collector = new PartialCollector()
     collector.accept(ast)
 
-    const preTmpl = [
+    const beforeTmpl = [
       IMPORT_HANDLEBARS,
       ...this.#importHelpers,
       ...collector.partials.map(p => `import '${this.#partialPath(p, id)}'`),
       'const Template = Handlebars.template('
     ]
-    const postTmpl = [
+    const afterTmpl = [
       ')',
-      // The trailing ';' prevents source map loss if it's the last line.
-      'export default Template;',
+      'export default Template;', // ';' prevents source map loss if last line
       ...(this.#isPartial(id) ? [ this.#partialRegistration(id) ] : [])
     ]
     return {
-      code: [ ...preTmpl, tmpl, ...postTmpl ].join('\n'),
-      map: srcMap ? this.#adjustSourceMap(srcMap, preTmpl.length) : undefined
+      code: [ ...beforeTmpl, tmpl, ...afterTmpl ].join('\n'),
+      map: this.#adjustSourceMap(srcMap, beforeTmpl.length)
     }
-  }
-
-  #adjustSourceMap(map, preTmplLen) {
-    const result = JSON.parse(map)
-    result.mappings = `${';'.repeat(preTmplLen)}${result.mappings}`
-    return result
   }
 
   #partialRegistration(id) {
