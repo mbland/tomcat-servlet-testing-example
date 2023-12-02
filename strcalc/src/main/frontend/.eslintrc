@@ -27,7 +27,7 @@
       "error"
     ],
     "@stylistic/js/max-len": [
-      "error", 80, 2
+      "error", 80, 2, { "ignoreUrls": true }
     ],
     "@stylistic/js/quotes": [
       "error", "single"

@@ -54,7 +54,6 @@ const HANDLEBARS_PATH = 'handlebars/lib/handlebars.runtime'
 const IMPORT_HANDLEBARS = `import Handlebars from '${HANDLEBARS_PATH}'`
 const IMPORT_HELPERS = `import '${PLUGIN_ID}'`
 
-// eslint-disable-next-line @stylistic/js/max-len
 // https://github.com/handlebars-lang/handlebars.js/blob/master/docs/compiler-api.md
 class PartialCollector extends Handlebars.Visitor {
   partials = []
