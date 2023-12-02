@@ -12,10 +12,17 @@ export function buildDir(relativePath) {
 export default defineConfig({
   base: '/strcalc',
   plugins: [
-    handlebarsPrecompiler({ helpers: ['components/helpers.js'] })
+    handlebarsPrecompiler({
+      helpers: ['components/helpers.js'],
+      sourcemap: true
+    })
   ],
   build: {
-    outDir: buildDir('webapp')
+    outDir: buildDir('webapp'),
+    sourcemap: true
+  },
+  css: {
+    devSourcemap: true
   },
   test: {
     outputFile: buildDir('test-results/test-frontend/TESTS-TestSuites.xml'),
