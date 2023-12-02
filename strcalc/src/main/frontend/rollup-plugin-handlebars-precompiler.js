@@ -94,7 +94,14 @@ class PluginImpl {
       delete options.compiler.srcName
       delete options.compiler.destName
     }
-    this.#compilerOpts = options.sourcemap ?
+
+    // This specifies that source maps can be disabled via "sourceMap: false":
+    // - https://rollupjs.org/plugin-development/#source-code-transformations
+    //
+    // This specifies that source maps can be disabled via "sourcemap: false":
+    // - https://rollupjs.org/troubleshooting/#warning-sourcemap-is-likely-to-be-incorrect
+    const sourcemap = options.sourceMap !== false && options.sourcemap !== false
+    this.#compilerOpts = sourcemap ?
       (id) => Object.assign({ srcName: id }, options.compiler) :
       () => options.compiler
   }
@@ -115,7 +122,7 @@ class PluginImpl {
     const opts = this.#compilerOpts(id)
     const ast = Handlebars.parse(code, opts)
     const compiled = Handlebars.precompile(ast, opts)
-    const { code: tmpl = compiled, map: srcMap = null } = compiled
+    const { code: tmpl = compiled, map: srcMap } = compiled
     const collector = new PartialCollector()
     collector.accept(ast)
 
@@ -133,7 +140,7 @@ class PluginImpl {
     ]
     return {
       code: [ ...preTmpl, tmpl, ...postTmpl ].join('\n'),
-      map: srcMap ? this.#adjustSourceMap(srcMap, preTmpl.length) : null
+      map: srcMap ? this.#adjustSourceMap(srcMap, preTmpl.length) : undefined
     }
   }
 
