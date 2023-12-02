@@ -12,14 +12,10 @@ export function buildDir(relativePath) {
 export default defineConfig({
   base: '/strcalc',
   plugins: [
-    handlebarsPrecompiler({
-      helpers: ['components/helpers.js'],
-      sourcemap: true
-    })
+    handlebarsPrecompiler({ helpers: ['components/helpers.js'] })
   ],
   build: {
-    outDir: buildDir('webapp'),
-    sourcemap: true
+    outDir: buildDir('webapp')
   },
   css: {
     devSourcemap: true
