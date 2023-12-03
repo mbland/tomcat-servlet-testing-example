@@ -7,6 +7,19 @@
  * - https://handlebarsjs.com/guide/expressions.html#helpers
  */
 
+/**
+ * Exports a function to register Handlebars helpers.
+ *
+ * Passed to rollup-plugin-handlebars-precompiler via options.helpers.
+ * @see https://handlebarsjs.com/api-reference/runtime.html#handlebars-registerhelper-name-helper
+ * @module components/helpers
+ */
+
+/**
+ * Registers helper functions via Handlebars.registerHelper().
+ * @function default
+ * @param {module} Handlebars The Handlebars runtime module
+ */
 export default function(Handlebars) {
   Handlebars.registerHelper('link', function(text, options) {
     const attrs = Object.keys(options.hash).map(key => {

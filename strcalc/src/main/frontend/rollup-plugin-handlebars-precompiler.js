@@ -33,6 +33,11 @@
 // v. 2.0. If a copy of the MPL was not distributed with this file, You can
 // obtain one at https://mozilla.org/MPL/2.0/.
 
+/**
+ * A Rollup plugin object for precompiling Handlebars templates.
+ * @module rollup-plugin-handlebars-precompiler
+ */
+
 import { createFilter } from '@rollup/pluginutils'
 import Handlebars from 'handlebars'
 
@@ -71,6 +76,9 @@ class PartialCollector extends Handlebars.Visitor {
   collect(n) { if (n.type === 'PathExpression') this.partials.push(n.original) }
 }
 
+/**
+ * Rollup Handlebars precompiler implementation
+ */
 class PluginImpl {
   #helpers
   #importHelpers
@@ -158,6 +166,12 @@ class PluginImpl {
   }
 }
 
+/**
+ * Returns a Rollup plugin object for precompiling Handlebars templates.
+ * @function default
+ * @param {object} options object containing Handlebars compiler API options
+ * @returns {object} a Rollup plugin that precompiles Handlebars templates
+ */
 export default function(options) {
   const p = new PluginImpl(options)
   return {

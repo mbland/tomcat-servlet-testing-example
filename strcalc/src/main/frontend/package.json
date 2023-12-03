@@ -1,8 +1,23 @@
 {
-  "name": "strcalc-frontend",
+  "name": "tomcat-servlet-testing-example-frontend",
+  "description": "Frontend component of mbland/tomcat-servlet-testing-example",
   "private": true,
   "version": "0.0.0",
+  "author": "Mike Bland <mbland@acm.org> (https://mike-bland.com/)",
+  "license": "MPL-2.0",
   "type": "module",
+  "browser": "main.js",
+  "engines": {
+    "node": ">=20.10.0",
+    "pnpm": ">=8.11.0"
+  },
+  "homepage": "https://github.com/mbland/tomcat-servlet-testing-example",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mbland/tomcat-servlet-testing-example",
+    "directory": "strcalc/src/main/frontend"
+  },
+  "bugs": "https://github.com/mbland/tomcat-servlet-testing-example/issues",
   "scripts": {
     "dev": "vite",
     "build": "vite build --emptyOutDir",
@@ -13,7 +28,8 @@
     "test-run": "vitest run",
     "test-ui": "vitest --ui --coverage",
     "test-ci": "eslint --color --max-warnings 0 . && vitest run --config vitest.config.ci-jsdom.js && vitest run --config vitest.config.ci-browser.js",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "jsdoc": "bin/jsdoc -c ./jsdoc.json ."
   },
   "devDependencies": {
     "@rollup/pluginutils": "^5.1.0",
@@ -23,6 +39,7 @@
     "@vitest/coverage-v8": "1.0.0-beta.4",
     "@vitest/ui": "1.0.0-beta.4",
     "eslint": "^8.54.0",
+    "eslint-plugin-jsdoc": "^46.9.0",
     "eslint-plugin-vitest": "^0.3.10",
     "handlebars": "^4.7.8",
     "jsdom": "^22.1.0",
