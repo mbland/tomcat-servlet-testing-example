@@ -1,5 +1,18 @@
 /* eslint-env browser, node */
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 
+/**
+ * Exports test helper utilities for this project.
+ * @module test-helpers
+ */
+
+/**
+ * Enables tests to load page URLs both in the browser and in Node using JSDom.
+ */
 export class PageLoader {
   static #impl
 
@@ -255,7 +268,7 @@ class JsdomPageLoader {
         // load event.
         global.window = window
         global.document = document
-        await this.#importModules(window, document)
+        await this.#importModules(document)
 
         // The DOMContentLoaded and load events registered by JSDOM.fromFile()
         // will already have fired by this point.
@@ -286,11 +299,16 @@ class JsdomPageLoader {
   }
 }
 
-// Imports <script type="module"> elements parsed, but not executed, by JSDOM.
-//
-// Only works with scripts with a `src` attribute; it will not execute inline
-// code.
-function importModulesDynamically(win, doc) {
+/**
+ * Imports <script type="module"> elements parsed, but not executed, by JSDOM.
+ *
+ * Only works with scripts with a `src` attribute; it will not execute inline
+ * code.
+ * @private
+ * @param {Document} doc  the JSDOM window.document object
+ * @returns {Promise}  a Promise resolved after importing all JS modules in doc
+ */
+function importModulesDynamically(doc) {
   let modules = doc.querySelectorAll('script[type="module"]')
   return Promise.all(Array.from(modules).map(m => import(m.src)))
 }

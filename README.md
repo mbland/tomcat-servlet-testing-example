@@ -95,6 +95,19 @@ On macOS and Linux, I installed the latest JDK 21.0.1 from [Eclipse
 Temurin&trade; Latest Releases][] via [SDKMAN!][]. On Windows, I downloaded it
 from the [Download the Microsoft Build of OpenJDK][] page.
 
+### Setup the frontend JavaScript environment
+
+See [strcalc/src/main/frontend/README.md](strcalc/src/main/frontend/README.md)
+for guidance on setting up the frontend development and build environment.
+
+The frontend environment isn't required for `./gradlew test`, which runs the
+small Java unit tests from the exercise. Conversely, the Java environment isn't
+strictly required to develop, build, and test the frontend in isolation.
+
+However, you will need to have both environments installed to build most of the
+Gradle targets. This includes the medium integration and large system tests in
+`strcalc/src/test/java`, which also depend on the frontend build.
+
 ### Optional: Install the [Tomcat servlet container][]
 
 _This step is optional, as the [bin/tomcat-docker.sh][] script will run Tomcat
@@ -739,40 +752,6 @@ plugin:
 - Configure the selected plugin to process the downloaded
 `jacocoXmlTestReport.xml` file.
 
-## Setup frontend JavaScript environment
-
-[Node.js][] is a JavaScript runtime environment. [pnpm][] is a Node.js package
-manager.
-
-- TODO(mbland): Document usage of [nodenv][], [Homebrew][]
-
-[ESLint][] is a tool for formatting and linting JavaScript code.
-
-[Vite][] is a JavaScript development and deployment platform. [Vitest][] is a
-JavaScript test framework and runner designed to work well with Vite.
-
-Though I've had a great experience testing with Mocha, Chai, and Sinon in the
-past, setting them up involves a bit more work.
-
-- [Mocha test framework][]
-- [Chai test assertion library][]
-- [Sinon test double framework][]
-
-In contrast, Vitest is largely modeled after the popular Jest framework and is a
-breeze to set up, especially for existing Vite projects. Like Jest, it contains
-its own assertion library and test double framework.  For the purpose of a
-teaching example for people who may never have tested JavaScript before, but
-aren't using React, Vitest seems much more accessible.
-
-Suffice it to say, ESLint and Vite have IntelliJ IDEA and Visual Studio
-Code support:
-
-- ESLint in IntelliJ IDEA: _Settings > Languages & Frameworks >
-  JavaScript > Code Quality Tools > ESLint_
-- [ESLint extension for Visual Studio Code][]
-- [Vite IntelliJ plugin][]
-- [Vite extension for Visual Studio Code][]
-
 ## Adding large tests
 
 Coming soon...
@@ -785,7 +764,6 @@ TODO(mbland): Document how the following are configured:
 - [TestTomcat](./strcalc/src/test/java/com/mike_bland/training/testing/utils/TestTomcat.java)
   (for medium tests)
 - [node-gradle/gradle-node-plugin][]
-
 
 ## Implementing core logic using Test Driven Development and unit tests
 
@@ -879,17 +857,4 @@ Coming soon...
 [coverallsapp/github-action GitHub Actions plugin]: https://github.com/coverallsapp/github-action
 [GitHub Actions marketplace]: https://github.com/marketplace?type=actions
 [JaCoCo related GitHub Actions plugins]: https://github.com/marketplace?category=&type=actions&verification=&query=jacoco
-[Node.js]: https://nodejs.org/
-[pnpm]: https://pnpm.io/
-[nodenv]: https://github.com/nodenv/nodenv
-[homebrew]: https://brew.sh/
-[ESLint]: https://eslint.style/
-[Vite]: https://vitejs.dev/
-[Vitest]: https://vitest.dev/
-[Mocha test framework]: https://mochajs.org/
-[Chai test assertion library]: https://www.chaijs.com/
-[Sinon test double framework]: https://sinonjs.org/
-[ESLint extension for Visual Studio Code]: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
-[Vite IntelliJ plugin]: https://plugins.jetbrains.com/plugin/20011-vite
-[Vite extension for Visual Studio Code]: https://marketplace.visualstudio.com/items?itemName=antfu.vite
 [Selenium: Design patterns and development strategies]: https://www.selenium.dev/documentation/test_practices/design_strategies/

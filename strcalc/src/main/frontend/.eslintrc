@@ -1,4 +1,4 @@
-{ "extends": "eslint:recommended",
+{
   "env" : {
     "browser" : true,
     "node": true,
@@ -8,12 +8,22 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": [ "@stylistic/js", "vitest" ],
+  "plugins": [
+    "@stylistic/js",
+    "vitest",
+    "jsdoc"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:jsdoc/recommended"
+  ],
   "overrides": [
     {
       "files": ["**/*.test.js"],
       "plugins": ["vitest"],
-      "extends": ["plugin:vitest/recommended"]
+      "extends": [
+        "plugin:vitest/recommended"
+      ]
     }
   ],
   "rules" : {
