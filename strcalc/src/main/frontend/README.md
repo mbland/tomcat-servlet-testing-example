@@ -113,6 +113,73 @@ without the `@function` tag:
 When that bug gets fixed, I'll remove this comment and the explicit `@function`
 decorators.
 
+## Optional: Use local repo for Vitest packages
+
+The current version of Vitest breaks on this project because `config.base` is
+specified in `vite.config.js`. See:
+
+- https://github.com/vitest-dev/vitest/issues/4686
+
+Once the following pull request is merged and released, we can release the
+revlock and upgrade both Vite and Vitest:
+
+- https://github.com/vitest-dev/vitest/pull/4692
+
+In the meanwhile, I'm publishing this fix in my **mbland/vitest** fork using
+tags of the format `v1.0.2-mbland.0`:
+
+- https://github.com/mbland/vitest/tree/v1.0.2-mbland.0
+
+To use this package, first clone it and build it in the same parent directory
+containing this repository, replacing `v1.0.2-mbland.0` with the latest tag:
+
+```sh
+git clone git@github.com:mbland/vitest.git
+cd vitest
+git reset --hard v1.0.2-mbland.0
+pnpm i
+pnpm build
+cd packages/browser
+pnpm pack
+```
+
+Then apply changes like the following to `package.json`, followed by `pnpm i`:
+
+```diff
+diff --git a/strcalc/src/main/frontend/package.json b/strcalc/src/main/frontend/package.json
+index be373d8..7039359 100644
+--- a/strcalc/src/main/frontend/package.json
++++ b/strcalc/src/main/frontend/package.json
+@@ -34,17 +34,17 @@
+   "devDependencies": {
+     "@rollup/pluginutils": "^5.1.0",
+     "@stylistic/eslint-plugin-js": "^1.5.0",
+-    "@vitest/browser": "1.0.0-beta.4",
+-    "@vitest/coverage-istanbul": "1.0.0-beta.4",
+-    "@vitest/coverage-v8": "1.0.0-beta.4",
+-    "@vitest/ui": "1.0.0-beta.4",
++    "@vitest/browser": "file:../../../../../vitest/packages/browser/vitest-browser-1.0.2.tgz",
++    "@vitest/coverage-istanbul": "1.0.2",
++    "@vitest/coverage-v8": "1.0.2",
++    "@vitest/ui": "1.0.2",
+     "eslint": "^8.55.0",
+     "eslint-plugin-jsdoc": "^46.9.0",
+     "eslint-plugin-vitest": "^0.3.10",
+     "handlebars": "^4.7.8",
+     "jsdom": "^23.0.1",
+-    "vite": "^4.5.1",
+-    "vitest": "1.0.0-beta.4",
++    "vite": "^5.0.7",
++    "vitest": "1.0.2",
+     "webdriverio": "^8.26.0"
+   }
+ }
+```
+
+You'll need to be careful not to commit these changes. You can `git stash` them
+or run `git reset --hard head`, followed by `pnpm i` to match the CI build
+again.
+
 [mbland/tomcat-servlet-testing-example]: https://github.com/mbland/tomcat-servlet-testing-example
 [top level README.md]: ../../../../README.md
 [Node.js]: https://nodejs.org/
