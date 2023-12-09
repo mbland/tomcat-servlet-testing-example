@@ -139,15 +139,13 @@ cd vitest
 git reset --hard v1.0.2-mbland.0
 pnpm i
 pnpm build
-cd packages/browser
-pnpm pack
 ```
 
 Then apply changes like the following to `package.json`, followed by `pnpm i`:
 
 ```diff
 diff --git a/strcalc/src/main/frontend/package.json b/strcalc/src/main/frontend/package.json
-index be373d8..7039359 100644
+index be373d8..0153711 100644
 --- a/strcalc/src/main/frontend/package.json
 +++ b/strcalc/src/main/frontend/package.json
 @@ -34,17 +34,17 @@
@@ -158,7 +156,7 @@ index be373d8..7039359 100644
 -    "@vitest/coverage-istanbul": "1.0.0-beta.4",
 -    "@vitest/coverage-v8": "1.0.0-beta.4",
 -    "@vitest/ui": "1.0.0-beta.4",
-+    "@vitest/browser": "file:../../../../../vitest/packages/browser/vitest-browser-1.0.2.tgz",
++    "@vitest/browser": "file:../../../../../vitest/packages/browser",
 +    "@vitest/coverage-istanbul": "1.0.2",
 +    "@vitest/coverage-v8": "1.0.2",
 +    "@vitest/ui": "1.0.2",
@@ -177,7 +175,7 @@ index be373d8..7039359 100644
 ```
 
 You'll need to be careful not to commit these changes. You can `git stash` them
-or run `git reset --hard head`, followed by `pnpm i` to match the CI build
+or run `git restore package.json`, followed by `pnpm i` to match the CI build
 again.
 
 [mbland/tomcat-servlet-testing-example]: https://github.com/mbland/tomcat-servlet-testing-example
