@@ -72,12 +72,11 @@ class BrowserPageLoader {
   async load(basePath, pagePath) {
     const w = this.#window.open(`${basePath}/${pagePath}`)
     return new Promise(resolve => {
-      w.addEventListener('load', () => {
+      const listener = () => {
         this.#setCoverageStore(w)
-        resolve({
-          window: w, document: w.document, close() { w.close() }
-        })
-      })
+        resolve({window: w, document: w.document, close() {w.close()}})
+      }
+      w.addEventListener('load', listener, {once: true})
     })
   }
 
