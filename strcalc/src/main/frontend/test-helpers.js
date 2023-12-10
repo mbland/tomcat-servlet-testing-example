@@ -35,8 +35,8 @@ export class PageLoader {
       throw new Error(`${msg}"${pagePath}"`)
     }
 
-    let impl = await PageLoader.getImpl()
-    let page = await impl.load(this.#basePath, pagePath)
+    const impl = await PageLoader.getImpl()
+    const page = await impl.load(this.#basePath, pagePath)
 
     this.#loaded.push(page)
     return page
@@ -56,7 +56,7 @@ export class PageLoader {
       return this.#impl = new BrowserPageLoader(globalThis.window)
     }
 
-    let {JSDOM} = await import('jsdom')
+    const {JSDOM} = await import('jsdom')
     return this.#impl = new JsdomPageLoader(JSDOM, importModulesDynamically)
   }
 }
@@ -70,14 +70,13 @@ class BrowserPageLoader {
 
   // Loads a page and returns {window, document, close() } using the browser.
   async load(basePath, pagePath) {
-    let w = this.#window.open(`${basePath}/${pagePath}`)
+    const w = this.#window.open(`${basePath}/${pagePath}`)
     return new Promise(resolve => {
-      w.addEventListener('load', () => {
+      const listener = () => {
         this.#setCoverageStore(w)
-        resolve({
-          window: w, document: w.document, close() { w.close() }
-        })
-      })
+        resolve({window: w, document: w.document, close() {w.close()}})
+      }
+      w.addEventListener('load', listener, {once: true})
     })
   }
 
@@ -137,10 +136,10 @@ class JsdomPageLoader {
   // again. This enables (most) modules that register listeners for those
   // events to behave as expected in JSDOM based tests.
   async load(_, pagePath) {
-    let { window } = await this.#JSDOM.fromFile(
+    const { window } = await this.#JSDOM.fromFile(
       pagePath, {resources: 'usable', runScripts: 'dangerously'}
     )
-    let document = window.document
+    const document = window.document
 
     // Originally this function returned the result object directly, not
     // wrapped in the `done` Promise. This was because, for the original
@@ -251,7 +250,7 @@ class JsdomPageLoader {
 
   #importModulesPromise(window, document) {
     return new Promise(resolve => {
-      let importModules = async () => {
+      const importModules = async () => {
         // The JSDOM docs advise against setting global properties, but we don't
         // have another option given the module may access window and/or
         // document.
@@ -283,7 +282,7 @@ class JsdomPageLoader {
         // For the same reason, we fire the 'load' event again as well. When
         // that listener executes, we can finally reset the global.window and
         // global.document variables.
-        let resetGlobals = () => resolve(
+        const resetGlobals = () => resolve(
           global.window = global.document = undefined
         )
         window.addEventListener('load', resetGlobals, {once: true})
@@ -309,6 +308,6 @@ class JsdomPageLoader {
  * @returns {Promise}  a Promise resolved after importing all JS modules in doc
  */
 function importModulesDynamically(doc) {
-  let modules = doc.querySelectorAll('script[type="module"]')
+  const modules = doc.querySelectorAll('script[type="module"]')
   return Promise.all(Array.from(modules).map(m => import(m.src)))
 }
