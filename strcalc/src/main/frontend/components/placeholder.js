@@ -18,14 +18,8 @@
 import Template from './placeholder.hbs'
 
 export default class Placeholder {
-  #document
-
-  constructor(document) {
-    this.#document = document
-  }
-
   init() {
-    this.#document.querySelector('#app').innerHTML = Template({
+    document.querySelector('#app').innerHTML = Template({
       message: 'Hello, World!',
       url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'
     })
