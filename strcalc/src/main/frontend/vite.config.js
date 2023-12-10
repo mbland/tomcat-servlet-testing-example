@@ -21,7 +21,8 @@ export default defineConfig({
     handlebarsPrecompiler({ helpers: ['components/helpers.js'] })
   ],
   build: {
-    outDir: buildDir('webapp')
+    outDir: buildDir('webapp'),
+    sourcemap: true
   },
   css: {
     devSourcemap: true
