@@ -105,9 +105,8 @@ class PluginImpl {
     delete compilerOpts.destName
     this.#compilerOpts = (id) => ({ srcName: id, ...compilerOpts })
     this.#adjustSourceMap = function adjustSourceMap(map, numLinesBeforeTmpl) {
-      const result = JSON.parse(map)
-      result.mappings = `${';'.repeat(numLinesBeforeTmpl)}${result.mappings}`
-      return result
+      const parsed = JSON.parse(map)
+      return { mappings: `${';'.repeat(numLinesBeforeTmpl)}${parsed.mappings}` }
     }
 
     // This specifies that source maps can be disabled via "sourceMap: false":
@@ -117,7 +116,7 @@ class PluginImpl {
     // - https://rollupjs.org/troubleshooting/#warning-sourcemap-is-likely-to-be-incorrect
     if (options.sourceMap === false || options.sourcemap === false) {
       this.#compilerOpts = () => compilerOpts
-      this.#adjustSourceMap = () => undefined
+      this.#adjustSourceMap = () => ({ mappings: '' })
     }
   }
 
