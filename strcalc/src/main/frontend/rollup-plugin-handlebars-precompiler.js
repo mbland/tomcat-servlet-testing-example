@@ -106,7 +106,8 @@ class PluginImpl {
     this.#compilerOpts = (id) => ({ srcName: id, ...compilerOpts })
     this.#adjustSourceMap = function adjustSourceMap(map, numLinesBeforeTmpl) {
       const parsed = JSON.parse(map)
-      return { mappings: `${';'.repeat(numLinesBeforeTmpl)}${parsed.mappings}` }
+      parsed.mappings = `${';'.repeat(numLinesBeforeTmpl)}${parsed.mappings}`
+      return parsed
     }
 
     // This specifies that source maps can be disabled via "sourceMap: false":
