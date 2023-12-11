@@ -57,7 +57,7 @@ const DEFAULT_PARTIAL_PATH = (partialName, importerPath) => {
 const PLUGIN_ID = `\0${PLUGIN_NAME}`
 const HANDLEBARS_PATH = 'handlebars/lib/handlebars.runtime'
 const IMPORT_HANDLEBARS = `import Handlebars from '${HANDLEBARS_PATH}'`
-const IMPORT_HELPERS = `import '${PLUGIN_ID}'`
+const IMPORT_HELPERS = `import TemplateElements from '${PLUGIN_ID}'`
 
 // https://github.com/handlebars-lang/handlebars.js/blob/master/docs/compiler-api.md
 class PartialCollector extends Handlebars.Visitor {
@@ -81,7 +81,6 @@ class PartialCollector extends Handlebars.Visitor {
  */
 class PluginImpl {
   #helpers
-  #importHelpers
   #isTemplate
   #isPartial
   #partialName
@@ -91,7 +90,6 @@ class PluginImpl {
 
   constructor(options = {}) {
     this.#helpers = options.helpers || []
-    this.#importHelpers = this.#helpers.length ? [ IMPORT_HELPERS ] : []
     this.#isTemplate = createFilter(
       options.include || DEFAULT_INCLUDE,
       options.exclude || DEFAULT_EXCLUDE
@@ -121,16 +119,20 @@ class PluginImpl {
     }
   }
 
-  shouldEmitHelpersModule(id) {
-    return id === PLUGIN_ID && this.#helpers.length
-  }
+  shouldEmitHelpersModule(id) { return id === PLUGIN_ID }
 
   helpersModule() {
     const helpers = this.#helpers
     return [
       IMPORT_HANDLEBARS,
       ...helpers.map((h, i) => `import registerHelpers${i} from './${h}'`),
-      ...helpers.map((_, i) => `registerHelpers${i}(Handlebars)`)
+      ...helpers.map((_, i) => `registerHelpers${i}(Handlebars)`),
+      // Inspired by: https://stackoverflow.com/a/35385518
+      'export default function TemplateElements(renderedTemplate) {',
+      '  const t = document.createElement(\'template\')',
+      '  t.innerHTML = renderedTemplate',
+      '  return t.content.children',
+      '}'
     ].join('\n')
   }
 
@@ -146,13 +148,15 @@ class PluginImpl {
 
     const beforeTmpl = [
       IMPORT_HANDLEBARS,
-      ...this.#importHelpers,
+      IMPORT_HELPERS,
       ...collector.partials.map(p => `import '${this.#partialPath(p, id)}'`),
-      'const Template = Handlebars.template('
+      'export const RawTemplate = Handlebars.template('
     ]
     const afterTmpl = [
       ')',
-      'export default Template;', // ';' prevents source map loss if last line
+      'export default function Template(context, options) {',
+      '  return TemplateElements(RawTemplate(context, options))',
+      '}',
       ...(this.#isPartial(id) ? [ this.#partialRegistration(id) ] : [])
     ]
     return {
@@ -162,7 +166,7 @@ class PluginImpl {
   }
 
   #partialRegistration(id) {
-    return `Handlebars.registerPartial('${this.#partialName(id)}', Template)`
+    return `Handlebars.registerPartial('${this.#partialName(id)}', RawTemplate)`
   }
 }
 
