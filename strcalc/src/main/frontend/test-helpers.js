@@ -136,10 +136,11 @@ class JsdomPageLoader {
   // again. This enables (most) modules that register listeners for those
   // events to behave as expected in JSDOM based tests.
   async load(_, pagePath) {
-    const { window } = await this.#JSDOM.fromFile(
+    const dom = await this.#JSDOM.fromFile(
       pagePath, {resources: 'usable', runScripts: 'dangerously'}
     )
-    const document = window.document
+    const { window } = dom
+    const { document } = window
 
     // Originally this function returned the result object directly, not
     // wrapped in the `done` Promise. This was because, for the original
@@ -244,12 +245,14 @@ class JsdomPageLoader {
 
     // Upon resolution of jsdom/jsdom#2475, delete this #importModulesPromise
     // call. (And delete this comment, and maybe the entire comment above.)
-    await this.#importModulesPromise(window, document)
+    await this.#importModulesPromise(dom)
     return { window, document, close() { window.close() } }
   }
 
-  #importModulesPromise(window, document) {
+  #importModulesPromise(dom) {
     return new Promise(resolve => {
+      const { window } = dom
+      const { document } = window
       const importModules = async () => {
         // The JSDOM docs advise against setting global properties, but we don't
         // have another option given the module may access window and/or
@@ -267,7 +270,7 @@ class JsdomPageLoader {
         // load event.
         global.window = window
         global.document = document
-        await this.#importModules(document)
+        await this.#importModules(dom)
 
         // The DOMContentLoaded and load events registered by JSDOM.fromFile()
         // will already have fired by this point.
@@ -304,10 +307,12 @@ class JsdomPageLoader {
  * Only works with scripts with a `src` attribute; it will not execute inline
  * code.
  * @private
+ * @param dom
  * @param {Document} doc  the JSDOM window.document object
  * @returns {Promise}  a Promise resolved after importing all JS modules in doc
  */
-function importModulesDynamically(doc) {
-  const modules = doc.querySelectorAll('script[type="module"]')
+function importModulesDynamically(dom) {
+  const document = dom.window.document
+  const modules = document.querySelectorAll('script[type="module"]')
   return Promise.all(Array.from(modules).map(m => import(m.src)))
 }
