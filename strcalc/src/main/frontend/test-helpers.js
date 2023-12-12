@@ -5,6 +5,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import vm from 'node:vm'
+
 /**
  * Exports test helper utilities for this project.
  * @module test-helpers
@@ -139,8 +144,7 @@ class JsdomPageLoader {
     const dom = await this.#JSDOM.fromFile(
       pagePath, {resources: 'usable', runScripts: 'dangerously'}
     )
-    const { window } = dom
-    const { document } = window
+    const { window } = dom, { document } = window
 
     // Originally this function returned the result object directly, not
     // wrapped in the `done` Promise. This was because, for the original
@@ -251,25 +255,8 @@ class JsdomPageLoader {
 
   #importModulesPromise(dom) {
     return new Promise(resolve => {
-      const { window } = dom
-      const { document } = window
+      const { window } = dom, { document } = window
       const importModules = async () => {
-        // The JSDOM docs advise against setting global properties, but we don't
-        // have another option given the module may access window and/or
-        // document.
-        //
-        // Also, unless the module takes care to close over window or document,
-        // they may still reference the global.window and global.document
-        // attributes. This isn't a common cause for concern in a browser,
-        // but resetting these global properties before a listener fires can
-        // cause it to error. This, in turn, can potentially cause the
-        // program to hang or fail.
-        //
-        // This is why we keep global.window and global.document set until
-        // the load event handler below fires after the manually dispatched
-        // load event.
-        global.window = window
-        global.document = document
         await this.#importModules(dom)
 
         // The DOMContentLoaded and load events registered by JSDOM.fromFile()
@@ -282,13 +269,8 @@ class JsdomPageLoader {
         // code shouldn't really be sensitive to the fact that
         // DOMContentLoaded fired earlier, but it's a possibility.
         //
-        // For the same reason, we fire the 'load' event again as well. When
-        // that listener executes, we can finally reset the global.window and
-        // global.document variables.
-        const resetGlobals = () => resolve(
-          global.window = global.document = undefined
-        )
-        window.addEventListener('load', resetGlobals, {once: true})
+        // For the same reason, we fire the 'load' event again as well.
+        window.addEventListener('load', resolve, {once: true})
         document.dispatchEvent(new window.Event(
           'DOMContentLoaded', {bubbles: true, cancelable: false}
         ))
@@ -307,12 +289,58 @@ class JsdomPageLoader {
  * Only works with scripts with a `src` attribute; it will not execute inline
  * code.
  * @private
- * @param dom
- * @param {Document} doc  the JSDOM window.document object
+ * @param {JSDOM} dom the JSDOM object representing the window and document
  * @returns {Promise}  a Promise resolved after importing all JS modules in doc
  */
 function importModulesDynamically(dom) {
-  const document = dom.window.document
-  const modules = document.querySelectorAll('script[type="module"]')
-  return Promise.all(Array.from(modules).map(m => import(m.src)))
+  const modules = dom.window.document.querySelectorAll('script[type="module"]')
+  const context = dom.getInternalVMContext()
+  const cache = {}
+
+  return Promise.all(Array.from(modules).map(m => vmImport(m, context, cache)))
+}
+
+/**
+ * Imports a single ECMAScript module from the document
+ * @param {HTMLScriptElement} element - the <script> element defining the module
+ * @param {object} context - a contextified object from vm.createContext()
+ * @param {object} cache - cache for previously imported modules
+ * @returns {vm.SourceTextModule} - an imported ECMAScript module
+ */
+async function vmImport(element, context, cache) {
+  const src = fileURLToPath(element.src)
+  let code = element.innerHTML
+
+  if (src !== undefined) {
+    code = await readFile(src, { encoding: 'utf8' })
+  }
+  return (await importImpl(src, code, context, cache)).evaluate()
+}
+
+/**
+ * Imports a single ECMAScript module
+ * @param {string} specifier - specifier for the module
+ * @param {string} code - code for the module
+ * @param {object} context - a contextified object from vm.createContext()
+ * @param {object} cache - cache for previously imported modules
+ * @returns {vm.SourceTextModule} - an imported ECMAScript module
+ */
+async function importImpl(specifier, code, context, cache) {
+  const mod = new vm.SourceTextModule(
+    code, { identifier: specifier, context }
+  )
+  cache[specifier] = mod
+
+  await mod.link(async (specifier, referencingModule) => {
+    const fullSpec = path.resolve(
+      path.dirname(referencingModule.identifier), specifier
+    )
+
+    if (!(fullSpec in cache)) {
+      const code = await readFile(`${fullSpec}.js`, {encoding: 'utf8'})
+      cache[fullSpec] = importImpl(fullSpec, code, context, cache)
+    }
+    return cache[fullSpec]
+  })
+  return mod
 }
