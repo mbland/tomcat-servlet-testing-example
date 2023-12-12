@@ -18,7 +18,13 @@
 import Template from './placeholder.hbs'
 
 export default class Placeholder {
-  init() {
+
+  /**
+   * Initializes the Placeholder within the document.
+   * @param {Window} window - the browser window object
+   * @param {Document} document - a Document or DocumentFragment
+   */
+  init(window, document) {
     document.querySelector('#app').append(...Template({
       message: 'Hello, World!',
       url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'

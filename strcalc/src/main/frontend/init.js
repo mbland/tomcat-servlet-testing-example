@@ -17,8 +17,9 @@ import Placeholder from './components/placeholder'
  *
  * This is a teaching example that contains minimal business logic in order to
  * demonstrate how to design much larger applications for testability.
- * @param {Document} document The DOM window.document object
+ * @param {Window} window - the browser window object
+ * @param {Document} document - a Document or DocumentFragment
  */
-export default function initApp(document) {
-  new Placeholder(document).init()
+export default function initApp(window, document) {
+  new Placeholder().init(window, document)
 }
