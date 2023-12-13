@@ -248,26 +248,45 @@ class JsdomPageLoader {
     return { window, document, close() { window.close() } }
   }
 
+  /**
+   * Dynamically imports ECMAScript modules after the DOMContentLoaded event.
+   * @param {Window} window - the JSDOM window object
+   * @param {Document} document - the JSDOM window.document object
+   * @returns {Promise} - a Promise resolved after importing all ES modules
+   */
   #importModulesPromise(window, document) {
     return new Promise(resolve => {
       const importModules = async () => {
         // The JSDOM docs advise against setting global properties, but we don't
-        // have another option given the module may access window and/or
+        // really have another option given any module may access window and/or
         // document.
+        //
+        // (I tried to explore invoking ES modules properly inside the JSDOM,
+        // and realized that way lies madness. At least, I couldn't yet figure
+        // out how to access the Vite/Vitest module path resolver or Rollup
+        // plugins. Then there's the matter of importmaps. I may still pick at
+        // it, but staring directly at it right now isn't productive.)
         //
         // Also, unless the module takes care to close over window or document,
         // they may still reference the global.window and global.document
-        // attributes. This isn't a common cause for concern in a browser,
-        // but resetting these global properties before a listener fires can
-        // cause it to error. This, in turn, can potentially cause the
-        // program to hang or fail.
+        // attributes. This isn't a common cause for concern in a browser, but
+        // resetting these global properties before a JSDOM listener fires can
+        // cause it to error. This, in turn, can potentially cause a test to
+        // hang or fail.
         //
         // This is why we keep global.window and global.document set until
         // the load event handler below fires after the manually dispatched
-        // load event.
-        global.window = window
-        global.document = document
-        await this.#importModules(document)
+        // load event. This is best-effort, of course, as we can't know if any
+        // async ops dispatched by those listeners will register a 'load' event
+        // later. In that case, window and document may be undefined for those
+        // listeners.
+        //
+        // The best defense against this problem would be to design the app to
+        // register closures over window and document. That would ensure they
+        // remain defined even after removal from globalThis.
+        globalThis.window = window
+        globalThis.document = document
+        await this.#importModules(window, document)
 
         // The DOMContentLoaded and load events registered by JSDOM.fromFile()
         // will already have fired by this point.
@@ -282,13 +301,20 @@ class JsdomPageLoader {
         // For the same reason, we fire the 'load' event again as well. When
         // that listener executes, we can finally reset the global.window and
         // global.document variables.
-        const resetGlobals = () => resolve(
-          global.window = global.document = undefined
-        )
-        window.addEventListener('load', resetGlobals, {once: true})
+        const resetGlobals = () => {
+          delete globalThis.document
+          delete globalThis.window
+          resolve()
+        }
         document.dispatchEvent(new window.Event(
           'DOMContentLoaded', {bubbles: true, cancelable: false}
         ))
+
+        // Register our 'load' listener after any DOMContentLoaded listeners
+        // have fired. This attempts to ensure (but cannot guarantee) that the
+        // global window and document objects remain valid for any 'load'
+        // listeners registered by the DOMContentLoaded listeners.
+        window.addEventListener('load', resetGlobals, {once: true})
         window.dispatchEvent(new window.Event(
           'load', {bubbles: false, cancelable: false}
         ))
@@ -303,11 +329,19 @@ class JsdomPageLoader {
  *
  * Only works with scripts with a `src` attribute; it will not execute inline
  * code.
+ *
+ * If a module exports a default function(window, document), this will invoke
+ * that function with the JSDOM window and document.
  * @private
- * @param {Document} doc  the JSDOM window.document object
- * @returns {Promise}  a Promise resolved after importing all JS modules in doc
+ * @param {Window} window - the JSDOM window object
+ * @param {Document} doc - the JSDOM window.document object
+ * @returns {Promise} - a Promise resolved after importing all JS modules in doc
  */
-function importModulesDynamically(doc) {
+function importModulesDynamically(window, doc) {
   const modules = doc.querySelectorAll('script[type="module"]')
-  return Promise.all(Array.from(modules).map(m => import(m.src)))
+  return Promise.all(Array.from(modules).map(async m => {
+    if (m.src === undefined) return
+    const { default: start } = await import(m.src)
+    return typeof start === 'function' ? start(window, doc) : start
+  }))
 }
