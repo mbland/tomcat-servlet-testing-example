@@ -5,6 +5,7 @@
  */
 
 import { VitestTestRunner } from 'vitest/runners'
+import vm from 'node:vm'
 
 export default class VitestEsmRunner extends VitestTestRunner {
   constructor(...args) {
@@ -13,8 +14,15 @@ export default class VitestEsmRunner extends VitestTestRunner {
 
   extendTaskContext(context) {
     const ctx = super.extendTaskContext(context)
-    ctx.resolveUrl = async id => this.__vitest_executor.resolveUrl(id)
-    ctx.fetchModule = async id => this.__vitest_executor.options.fetchModule(id)
+    ctx.executeId = async (id, vmCtx) => {
+      const executor = this.__vitest_executor
+      const origCtx = executor.options.context
+      executor.options.context = vmCtx
+
+      const mod = await executor.executeId(id)
+      executor.options.context = origCtx
+      return mod
+    }
     return ctx
   }
 }

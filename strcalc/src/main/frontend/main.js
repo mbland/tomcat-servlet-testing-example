@@ -27,10 +27,4 @@ import initApp from './init'
  * @param {Window} window - the browser window object
  * @param {Document} document - a Document or DocumentFragment
  */
-export default function start(window, document) {
-  document.addEventListener('DOMContentLoaded', () => initApp(window, document))
-}
-
-if (globalThis.window !== undefined) {
-  start(globalThis.window, globalThis.window.document)
-}
+document.addEventListener('DOMContentLoaded', () => initApp(window, document))

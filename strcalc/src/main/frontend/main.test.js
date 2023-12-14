@@ -23,12 +23,10 @@ describe('String Calculator UI', () => {
     })
 
     test.skip('trying out ctx.fetchModule', async ctx => {
-      const ctxProps = Object.getOwnPropertyNames(ctx)
-      expect(ctxProps).toContain('fetchModule')
       expect(typeof ctx.fetchModule).toBe('function')
 
-      //const { code } = await ctx.fetchModule('./init')
-      //console.log('CODE:', code)
+      const { code } = await ctx.fetchModule('./init')
+      console.log('CODE:', code)
     })
   })
 })

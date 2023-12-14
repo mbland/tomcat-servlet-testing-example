@@ -289,8 +289,8 @@ class JsdomPageLoader {
         // The best defense against this problem would be to design the app to
         // register closures over window and document. That would ensure they
         // remain defined even after removal from globalThis.
-        globalThis.window = window
-        globalThis.document = document
+        // globalThis.window = window
+        // globalThis.document = document
         await this.#importModules(window, document, vmCtx, ctx)
 
         // The DOMContentLoaded and load events registered by JSDOM.fromFile()
@@ -307,8 +307,8 @@ class JsdomPageLoader {
         // that listener executes, we can finally reset the global.window and
         // global.document variables.
         const resetGlobals = () => {
-          delete globalThis.document
-          delete globalThis.window
+          // delete globalThis.document
+          // delete globalThis.window
           resolve()
         }
         document.dispatchEvent(new window.Event(
@@ -346,44 +346,7 @@ class JsdomPageLoader {
  */
 function importModulesDynamically(window, doc, vmCtx, ctx) {
   const modules = doc.querySelectorAll('script[type="module"]')
-  const cache = {}
   return Promise.all(Array.from(modules).map(async m => {
-    if (m.src === undefined) return
-    const { default: start } = await vmImport(m.src, vmCtx, ctx, cache)
-    return typeof start === 'function' ? start(window, doc) : start
+    return (m.src === undefined) ? undefined : ctx.executeId(m.src, vmCtx)
   }))
-}
-
-/**
- * Imports an ES Module by evaluating it in the JSDOM internal context.
- * @param srcPath
- * @param vmCtx
- * @param ctx
- * @param cache
- */
-async function vmImport(srcPath, vmCtx, ctx, cache) {
-  const resolvedIds = await ctx.resolveUrl(srcPath)
-  const resolvedId = resolvedIds[0]
-
-  if (resolvedId in cache) {
-    return cache[resolvedId]
-  }
-
-  // This currently gets the code after Vite has transpiled it from an ES
-  // Module to an IIFE. So the mod.link() step will never invoke
-  // the callback, and mod.evaluate() step will choke.
-  //
-  // If only we could apply all the transforms _except_ that one.
-  const { code } = await ctx.fetchModule(resolvedId)
-
-  const mod = new vm.SourceTextModule(
-    code, { identifier: resolvedId, context: vmCtx }
-  )
-  cache[resolvedId] = mod
-
-  await mod.link(async (specifier) => {
-    return vmImport(specifier, vmCtx, ctx, cache)
-  })
-  await mod.evaluate() // Currently chokes.
-  return mod
 }
