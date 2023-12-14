@@ -13,13 +13,22 @@ describe('String Calculator UI', () => {
   afterEach(() => loader.closeAll())
 
   describe('initial state', () => {
-    test('contains the "Hello, World!" placeholder', async () => {
-      const { document } = await loader.load('index.html')
+    test('contains the "Hello, World!" placeholder', async (ctx) => {
+      const { document } = await loader.load('index.html', ctx)
 
       const e = document.querySelector('#app .placeholder a')
 
       expect(e.textContent).toContain('Hello, World!')
       expect(e.href).toContain('%22Hello,_World!%22')
+    })
+
+    test.skip('trying out ctx.fetchModule', async ctx => {
+      const ctxProps = Object.getOwnPropertyNames(ctx)
+      expect(ctxProps).toContain('fetchModule')
+      expect(typeof ctx.fetchModule).toBe('function')
+
+      //const { code } = await ctx.fetchModule('./init')
+      //console.log('CODE:', code)
     })
   })
 })

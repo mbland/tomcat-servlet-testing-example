@@ -5,6 +5,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import vm from 'node:vm'
+
 /**
  * Exports test helper utilities for this project.
  * @module test-helpers
@@ -29,14 +31,14 @@ export class PageLoader {
     this.#loaded = []
   }
 
-  async load(pagePath) {
+  async load(pagePath, ctx) {
     if (pagePath.startsWith('/')) {
       const msg = 'page path should not start with \'/\', got: '
       throw new Error(`${msg}"${pagePath}"`)
     }
 
     const impl = await PageLoader.getImpl()
-    const page = await impl.load(this.#basePath, pagePath)
+    const page = await impl.load(this.#basePath, pagePath, ctx)
 
     this.#loaded.push(page)
     return page
@@ -135,11 +137,12 @@ class JsdomPageLoader {
   // import() operations, and then manually fires DOMContentLoaded and load
   // again. This enables (most) modules that register listeners for those
   // events to behave as expected in JSDOM based tests.
-  async load(_, pagePath) {
-    const { window } = await this.#JSDOM.fromFile(
+  async load(_, pagePath, ctx) {
+    const dom = await this.#JSDOM.fromFile(
       pagePath, {resources: 'usable', runScripts: 'dangerously'}
     )
-    const document = window.document
+    const { window } = dom, { document } = window
+    const vmCtx = dom.getInternalVMContext()
 
     // Originally this function returned the result object directly, not
     // wrapped in the `done` Promise. This was because, for the original
@@ -244,7 +247,7 @@ class JsdomPageLoader {
 
     // Upon resolution of jsdom/jsdom#2475, delete this #importModulesPromise
     // call. (And delete this comment, and maybe the entire comment above.)
-    await this.#importModulesPromise(window, document)
+    await this.#importModulesPromise(window, document, vmCtx, ctx)
     return { window, document, close() { window.close() } }
   }
 
@@ -252,9 +255,11 @@ class JsdomPageLoader {
    * Dynamically imports ECMAScript modules after the DOMContentLoaded event.
    * @param {Window} window - the JSDOM window object
    * @param {Document} document - the JSDOM window.document object
+   * @param vmCtx
+   * @param ctx
    * @returns {Promise} - a Promise resolved after importing all ES modules
    */
-  #importModulesPromise(window, document) {
+  #importModulesPromise(window, document, vmCtx, ctx) {
     return new Promise(resolve => {
       const importModules = async () => {
         // The JSDOM docs advise against setting global properties, but we don't
@@ -286,7 +291,7 @@ class JsdomPageLoader {
         // remain defined even after removal from globalThis.
         globalThis.window = window
         globalThis.document = document
-        await this.#importModules(window, document)
+        await this.#importModules(window, document, vmCtx, ctx)
 
         // The DOMContentLoaded and load events registered by JSDOM.fromFile()
         // will already have fired by this point.
@@ -335,13 +340,50 @@ class JsdomPageLoader {
  * @private
  * @param {Window} window - the JSDOM window object
  * @param {Document} doc - the JSDOM window.document object
+ * @param vmCtx
+ * @param ctx
  * @returns {Promise} - a Promise resolved after importing all JS modules in doc
  */
-function importModulesDynamically(window, doc) {
+function importModulesDynamically(window, doc, vmCtx, ctx) {
   const modules = doc.querySelectorAll('script[type="module"]')
+  const cache = {}
   return Promise.all(Array.from(modules).map(async m => {
     if (m.src === undefined) return
-    const { default: start } = await import(m.src)
+    const { default: start } = await vmImport(m.src, vmCtx, ctx, cache)
     return typeof start === 'function' ? start(window, doc) : start
   }))
+}
+
+/**
+ * Imports an ES Module by evaluating it in the JSDOM internal context.
+ * @param srcPath
+ * @param vmCtx
+ * @param ctx
+ * @param cache
+ */
+async function vmImport(srcPath, vmCtx, ctx, cache) {
+  const resolvedIds = await ctx.resolveUrl(srcPath)
+  const resolvedId = resolvedIds[0]
+
+  if (resolvedId in cache) {
+    return cache[resolvedId]
+  }
+
+  // This currently gets the code after Vite has transpiled it from an ES
+  // Module to an IIFE. So the mod.link() step will never invoke
+  // the callback, and mod.evaluate() step will choke.
+  //
+  // If only we could apply all the transforms _except_ that one.
+  const { code } = await ctx.fetchModule(resolvedId)
+
+  const mod = new vm.SourceTextModule(
+    code, { identifier: resolvedId, context: vmCtx }
+  )
+  cache[resolvedId] = mod
+
+  await mod.link(async (specifier) => {
+    return vmImport(specifier, vmCtx, ctx, cache)
+  })
+  await mod.evaluate() // Currently chokes.
+  return mod
 }

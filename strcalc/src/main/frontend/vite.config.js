@@ -32,12 +32,14 @@ export default defineConfig({
   },
   test: {
     outputFile: buildDir('test-results/test-frontend/TESTS-TestSuites.xml'),
+    runner: './vitest-esm-runner.js',
     coverage: {
       reportsDirectory: buildDir('reports/frontend/coverage'),
       // Remove 'exclude:' once rollup-plugin-handlebars-precompile moves
       // into its own repository.
       exclude: [
         ...configDefaults.coverage.exclude,
+        'vitest-esm-runner.js',
         'rollup-plugin-handlebars-precompiler.js'
       ]
     },
