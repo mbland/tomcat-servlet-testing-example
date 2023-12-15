@@ -1,4 +1,5 @@
-import handlebarsPrecompiler from './rollup-plugin-handlebars-precompiler.js'
+import handlebarsPrecompiler from
+  './plugins/rollup-plugin-handlebars-precompiler.js'
 import { defineConfig } from 'vite'
 import { configDefaults } from 'vitest/config'
 import path from 'node:path/posix'
@@ -36,10 +37,7 @@ export default defineConfig({
       reportsDirectory: buildDir('reports/frontend/coverage'),
       // Remove 'exclude:' once rollup-plugin-handlebars-precompile moves
       // into its own repository.
-      exclude: [
-        ...configDefaults.coverage.exclude,
-        'rollup-plugin-handlebars-precompiler.js'
-      ]
+      exclude: [ ...configDefaults.coverage.exclude, 'plugins/*' ]
     },
     browser: {
       name: 'chrome'

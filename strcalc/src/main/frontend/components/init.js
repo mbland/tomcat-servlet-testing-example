@@ -10,7 +10,7 @@
  * @module init
  */
 
-import Placeholder from './components/placeholder'
+import Placeholder from './placeholder'
 
 /**
  * Instantiates the top level objects and calls the `init()` method on each.

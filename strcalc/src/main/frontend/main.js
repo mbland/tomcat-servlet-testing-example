@@ -15,7 +15,7 @@
  * demonstrate how to design much larger applications for testability.
  * @module main
  */
-import initApp from './init'
+import initApp from './components/init'
 
 /**
  * Calls the application initializer with the global window and document.

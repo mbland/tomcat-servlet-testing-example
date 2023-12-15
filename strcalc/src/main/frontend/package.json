@@ -27,7 +27,7 @@
     "test": "vitest",
     "test-run": "vitest run",
     "test-ui": "vitest --ui --coverage",
-    "test-ci": "eslint --color --max-warnings 0 . && vitest run --config vitest.config.ci-jsdom.js && vitest run --config vitest.config.ci-browser.js",
+    "test-ci": "eslint --color --max-warnings 0 . && vitest run --config ci/vitest.config.js && vitest run --config ci/vitest.config.js",
     "coverage": "vitest run --coverage",
     "jsdoc": "bin/jsdoc -c ./jsdoc.json ."
   },
