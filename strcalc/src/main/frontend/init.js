@@ -21,5 +21,5 @@ import Placeholder from './components/placeholder'
  * @param {Document} document - a Document or DocumentFragment
  */
 export default function initApp(window, document) {
-  new Placeholder().init(window, document)
+  Placeholder.init(window, document)
 }

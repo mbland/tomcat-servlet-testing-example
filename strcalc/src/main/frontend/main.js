@@ -20,17 +20,11 @@ import initApp from './init'
 /**
  * Calls the application initializer with the global window and document.
  *
- * In addition to demonstrating how ECMAScript modules are linked together,
- * this shows how to introduce a shim between globalThis and the initApp()
- * function. Most tests can then call initApp() directly, and only two tests are
- * needed to validate that start() is or isn't called.
+ * Wraps the initApp() call in a DOMContentLoaded event listener.
+ * - main.test.js uses PageLoader to validate that initApp() fires on
+ *   DOMContentLoaded.
+ * - init.test.js tests the initApp() method directly.
  * @param {Window} window - the browser window object
  * @param {Document} document - a Document or DocumentFragment
  */
-export default function start(window, document) {
-  document.addEventListener('DOMContentLoaded', () => initApp(window, document))
-}
-
-if (globalThis.window !== undefined) {
-  start(globalThis.window, globalThis.window.document)
-}
+document.addEventListener('DOMContentLoaded', () => initApp(window, document))
