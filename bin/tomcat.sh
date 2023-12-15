@@ -6,7 +6,7 @@ get_java_home() {
     grep 'java\.home' | awk '{print $3}'
 }
 
-CATALINA_HOME="${CATALINA_HOME:-/opt/tomcat/apache-tomcat-10.1.16}"
+CATALINA_HOME="${CATALINA_HOME:-/opt/tomcat/apache-tomcat-10.1.17}"
 JAVA_HOME="${JAVA_HOME:-$(get_java_home)}"
 
 for envvar in 'CATALINA_HOME' 'JAVA_HOME'; do
