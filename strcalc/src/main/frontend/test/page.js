@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { fragment } from './test-helpers'
+import { fragment } from './helpers'
 
 /**
  * Represents the StringCalculator web page.

@@ -5,8 +5,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 import { describe, afterEach, expect, test } from 'vitest'
-import { PageLoader } from './test-helpers'
-import StringCalculatorPage from './test-page'
+import { PageLoader } from './test/helpers'
+import StringCalculatorPage from './test/page'
 
 describe('String Calculator UI on initial page load', () => {
   const loader = new PageLoader('/strcalc')

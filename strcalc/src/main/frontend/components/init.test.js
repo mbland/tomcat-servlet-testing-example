@@ -6,7 +6,7 @@
  */
 import initApp from './init'
 import { describe, expect, test } from 'vitest'
-import StringCalculatorPage from './test-page'
+import StringCalculatorPage from '../test/page'
 
 // @vitest-environment jsdom
 describe('initial state after calling initApp', () => {
