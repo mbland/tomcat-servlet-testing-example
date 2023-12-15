@@ -339,9 +339,8 @@ class JsdomPageLoader {
  */
 function importModulesDynamically(window, doc) {
   const modules = doc.querySelectorAll('script[type="module"]')
-  return Promise.all(Array.from(modules).map(async m => {
-    if (m.src === undefined) return
-    const { default: start } = await import(m.src)
-    return typeof start === 'function' ? start(window, doc) : start
-  }))
+  return Promise.all(Array.from(modules)
+    .filter(m => m.src !== undefined)
+    .map(async m => await import(m.src))
+  )
 }
