@@ -6,17 +6,16 @@
  */
 import initApp from './init'
 import { describe, expect, test } from 'vitest'
-import { fragment } from './test-helpers.js'
-import StringCalculatorPage from './test-page.js'
+import StringCalculatorPage from './test-page'
 
 // @vitest-environment jsdom
 describe('initial state after calling initApp', () => {
   test('contains the "Hello, World!" placeholder', async () => {
-    const document = fragment('<div id="app"></div>')
+    const page = new StringCalculatorPage()
 
-    initApp(window, document)
+    initApp(window, page.document)
 
-    const e = new StringCalculatorPage(document).getPlaceholder()
+    const e = page.placeholder()
     expect(e.textContent).toContain('Hello, World!')
     expect(e.href).toContain('%22Hello,_World!%22')
   })

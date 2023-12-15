@@ -5,8 +5,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 import { describe, afterEach, expect, test } from 'vitest'
-import { PageLoader } from './test-helpers.js'
-import StringCalculatorPage from './test-page.js'
+import { PageLoader } from './test-helpers'
+import StringCalculatorPage from './test-page'
 
 describe('String Calculator UI on initial page load', () => {
   const loader = new PageLoader('/strcalc')
@@ -15,7 +15,7 @@ describe('String Calculator UI on initial page load', () => {
   test('contains the "Hello, World!" placeholder', async () => {
     const { document } = await loader.load('index.html')
 
-    const e = new StringCalculatorPage(document).getPlaceholder()
+    const e = new StringCalculatorPage(document).placeholder()
     expect(e.textContent).toContain('Hello, World!')
     expect(e.href).toContain('%22Hello,_World!%22')
   })
