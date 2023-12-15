@@ -5,6 +5,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { fragment } from './test-helpers'
+
 /**
  * Represents the StringCalculator web page.
  *
@@ -14,12 +16,12 @@
  */
 export default class StringCalculatorPage {
   document
+  #select
 
   constructor(doc) {
-    this.document = doc
+    this.document = doc !== undefined ? doc : fragment('<div id="app"></div>')
+    this.#select = selector => this.document.querySelector(`#app ${selector}`)
   }
 
-  getPlaceholder() {
-    return this.document.querySelector('#app .placeholder a')
-  }
+  placeholder() { return this.#select('.placeholder a') }
 }
