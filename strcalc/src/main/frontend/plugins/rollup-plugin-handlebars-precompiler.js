@@ -131,7 +131,7 @@ class PluginImpl {
       'export default (rawTemplate) => ((context, options) => {',
       '  const t = document.createElement(\'template\')',
       '  t.innerHTML = rawTemplate(context, options)',
-      '  return t.content.children',
+      '  return t.content',
       '})'
     ].join('\n')
   }
