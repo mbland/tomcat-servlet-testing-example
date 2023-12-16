@@ -25,7 +25,7 @@ export default class Placeholder {
    * @param {Document} document - a Document or DocumentFragment
    */
   static init(window, document) {
-    document.querySelector('#app').append(...Template({
+    document.querySelector('#app').appendChild(Template({
       message: 'Hello, World!',
       url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'
     }))
