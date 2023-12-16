@@ -18,7 +18,6 @@
 import Template from './placeholder.hbs'
 
 export default class Placeholder {
-
   /**
    * Initializes the Placeholder within the document.
    * @param {Window} window - the browser window object

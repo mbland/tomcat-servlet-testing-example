@@ -5,8 +5,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { fragment } from './helpers'
-
 /**
  * Represents the StringCalculator web page.
  *
@@ -15,15 +13,27 @@ import { fragment } from './helpers'
  * @see https://www.selenium.dev/documentation/test_practices/design_strategies/
  */
 export default class StringCalculatorPage {
-  document
+  static #pages = []
+
   appElem
   #select
 
-  constructor(doc) {
-    this.document = doc !== undefined ? doc : fragment('<div id="app"></div>')
-    this.appElem = this.document.querySelector('#app')
-    this.#select = s => this.document.querySelector(`#${this.appElem.id} ${s}`)
+  constructor(appElem, doc = document) {
+    this.appElem = appElem
+    this.#select = sel => doc.querySelector(`#${appElem.id} ${sel}`)
   }
+
+  static new(appElemId) {
+    const appElem = document.createElement('div')
+    appElem.id = appElemId
+    document.body.appendChild(appElem)
+
+    const page = new StringCalculatorPage(appElem)
+    this.#pages.push(page)
+    return page
+  }
+
+  static cleanup() { this.#pages.forEach(p => p.appElem.remove()) }
 
   placeholder() { return this.#select('.placeholder a') }
 }

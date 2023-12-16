@@ -5,15 +5,17 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 import initApp from './init'
-import { describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test } from 'vitest'
 import StringCalculatorPage from '../test/page'
 
 // @vitest-environment jsdom
 describe('initial state after calling initApp', () => {
-  test('contains the "Hello, World!" placeholder', async () => {
-    const page = new StringCalculatorPage()
+  afterEach(() => StringCalculatorPage.cleanup())
 
-    initApp(window, page.document, page.appElem)
+  test('contains the "Hello, World!" placeholder', async () => {
+    const page = StringCalculatorPage.new('app-init')
+
+    initApp(window, document, page.appElem, {})
 
     const e = page.placeholder()
     expect(e.textContent).toContain('Hello, World!')
