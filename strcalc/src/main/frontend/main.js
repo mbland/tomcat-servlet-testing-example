@@ -24,7 +24,7 @@ import initApp from './components/init'
  * - main.test.js uses PageLoader to validate that initApp() fires on
  *   DOMContentLoaded.
  * - init.test.js tests the initApp() method directly.
- * @param {Window} window - the browser window object
- * @param {Document} document - a Document or DocumentFragment
  */
-document.addEventListener('DOMContentLoaded', () => initApp(window, document))
+document.addEventListener('DOMContentLoaded', () => {
+  initApp(window, document, document.querySelector('#app'))
+})

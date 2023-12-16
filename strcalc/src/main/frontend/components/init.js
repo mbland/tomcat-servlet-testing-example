@@ -19,7 +19,8 @@ import Placeholder from './placeholder'
  * demonstrate how to design much larger applications for testability.
  * @param {Window} window - the browser window object
  * @param {Document} document - a Document or DocumentFragment
+ * @param {Element} appElem - the parent Element containing all app components
  */
-export default function initApp(window, document) {
-  Placeholder.init(window, document)
+export default function initApp(window, document, appElem) {
+  Placeholder.init(window, document, appElem)
 }
