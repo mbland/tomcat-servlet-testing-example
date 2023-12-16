@@ -16,11 +16,13 @@ import { fragment } from './helpers'
  */
 export default class StringCalculatorPage {
   document
+  appElem
   #select
 
   constructor(doc) {
     this.document = doc !== undefined ? doc : fragment('<div id="app"></div>')
-    this.#select = selector => this.document.querySelector(`#app ${selector}`)
+    this.appElem = this.document.querySelector('#app')
+    this.#select = s => this.document.querySelector(`#${this.appElem.id} ${s}`)
   }
 
   placeholder() { return this.#select('.placeholder a') }

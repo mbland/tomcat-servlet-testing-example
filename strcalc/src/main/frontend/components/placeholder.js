@@ -23,9 +23,10 @@ export default class Placeholder {
    * Initializes the Placeholder within the document.
    * @param {Window} window - the browser window object
    * @param {Document} document - a Document or DocumentFragment
+   * @param {Element} appElem - the parent Element containing all app components
    */
-  static init(window, document) {
-    document.querySelector('#app').appendChild(Template({
+  static init(window, document, appElem) {
+    appElem.appendChild(Template({
       message: 'Hello, World!',
       url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'
     }))
