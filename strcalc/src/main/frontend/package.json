@@ -38,13 +38,13 @@
     "@vitest/coverage-istanbul": "^1.0.4",
     "@vitest/coverage-v8": "^1.0.4",
     "@vitest/ui": "^1.0.4",
-    "eslint": "^8.55.0",
+    "eslint": "^8.56.0",
     "eslint-plugin-jsdoc": "^46.9.1",
     "eslint-plugin-vitest": "^0.3.17",
     "handlebars": "^4.7.8",
     "jsdom": "^23.0.1",
-    "vite": "^5.0.8",
+    "vite": "^5.0.10",
     "vitest": "^1.0.4",
-    "webdriverio": "^8.26.1"
+    "webdriverio": "^8.26.2"
   }
 }
