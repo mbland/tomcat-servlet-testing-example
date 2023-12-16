@@ -11,6 +11,7 @@
  */
 
 import Placeholder from './placeholder'
+import Calculator from './calculator'
 
 /**
  * Instantiates the top level objects and calls the `init()` method on each.
@@ -19,7 +20,9 @@ import Placeholder from './placeholder'
  * demonstrate how to design much larger applications for testability.
  * @param {object} params - parameters made available to all initializers
  * @param {Element} params.appElem - parent Element containing all components
+ * @param {string} params.apiUrl - API backend server URL
+ * @param {Function} params.postForm - posts form data to API
  */
 export default function initApp(params) {
-  [Placeholder].forEach(c => c.init(params))
+  [Placeholder, Calculator].forEach(c => c.init(params))
 }

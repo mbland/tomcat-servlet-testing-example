@@ -31,8 +31,30 @@ export default class StringCalculatorPage {
   }
 
   clear() { this.appElem.replaceChildren() }
-
   remove() { this.appElem.remove() }
 
   placeholder() { return this.#select('.placeholder a') }
+  form() { return this.#select('form') }
+  input() { return this.#select('form input[name="numbers"]') }
+  submit() { return this.#select('form input[type="submit"]') }
+  result() { return this.#select('.result p') }
+
+  enterValueAndSubmit(value) {
+    const orig = this.result().textContent
+
+    this.input().value = value
+
+    // You would _think_ that this.submit().click() would submit the form...
+    // Nope:
+    // - https://developer.mozilla.org/docs/Web/API/HTMLFormElement/requestSubmit
+    this.form().requestSubmit(this.submit())
+
+    return async () => {
+      const result = this.result().textContent
+      if (result === orig) {
+        return Promise.reject(`Result field hasn't changed: ${orig}`)
+      }
+      return Promise.resolve(result)
+    }
+  }
 }
