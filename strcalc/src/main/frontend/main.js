@@ -16,9 +16,10 @@
  * @module main
  */
 import initApp from './components/init'
+import { postForm } from './components/request'
 
 /**
- * Calls the application initializer with the global window and document.
+ * Calls the app initializer with production parameters.
  *
  * Wraps the initApp() call in a DOMContentLoaded event listener.
  * - main.test.js uses PageLoader to validate that initApp() fires on
@@ -29,7 +30,7 @@ document.addEventListener(
   'DOMContentLoaded',
   () => {
     const appElem = document.querySelector('#app')
-    initApp({ appElem })
+    initApp({ appElem, apiUrl: './add', postForm })
   },
   { once: true }
 )

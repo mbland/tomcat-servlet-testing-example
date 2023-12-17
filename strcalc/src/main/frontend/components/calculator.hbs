@@ -1,0 +1,13 @@
+{{!--
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at https://mozilla.org/MPL/2.0/.
+--}}
+<form action="{{ apiUrl }}" method="post">
+  <label for="numbers" name="numbersLabel" id="numbersLabel">
+      Enter the string of numbers to add:
+  </label>
+  <input type="text" name="numbers" id="numbers" required />
+  <input type="submit" name="numbersSubmit" id="numbersSubmit" value="Add" />
+</form>
+<div class="result"><p>The result will appear here.</p></div>
