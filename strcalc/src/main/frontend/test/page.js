@@ -13,7 +13,7 @@
  * @see https://www.selenium.dev/documentation/test_practices/design_strategies/
  */
 export default class StringCalculatorPage {
-  static #pages = []
+  static #nextId = 0
 
   appElem
   #select
@@ -23,17 +23,16 @@ export default class StringCalculatorPage {
     this.#select = sel => doc.querySelector(`#${appElem.id} ${sel}`)
   }
 
-  static new(appElemId) {
+  static new() {
     const appElem = document.createElement('div')
-    appElem.id = appElemId
+    appElem.id = `test-app-${this.#nextId++}`
     document.body.appendChild(appElem)
-
-    const page = new StringCalculatorPage(appElem)
-    this.#pages.push(page)
-    return page
+    return new StringCalculatorPage(appElem)
   }
 
-  static cleanup() { this.#pages.forEach(p => p.appElem.remove()) }
+  clear() { this.appElem.replaceChildren() }
+
+  remove() { this.appElem.remove() }
 
   placeholder() { return this.#select('.placeholder a') }
 }
