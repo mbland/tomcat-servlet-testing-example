@@ -17,10 +17,9 @@ import Placeholder from './placeholder'
  *
  * This is a teaching example that contains minimal business logic in order to
  * demonstrate how to design much larger applications for testability.
- * @param {Window} window - the browser window object
- * @param {Document} document - a Document or DocumentFragment
- * @param {Element} appElem - the parent Element containing all app components
+ * @param {object} params - parameters made available to all initializers
+ * @param {Element} params.appElem - parent Element containing all components
  */
-export default function initApp(window, document, appElem) {
-  Placeholder.init(window, document, appElem)
+export default function initApp(params) {
+  [Placeholder].forEach(c => c.init(params))
 }

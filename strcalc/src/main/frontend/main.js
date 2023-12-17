@@ -25,6 +25,11 @@ import initApp from './components/init'
  *   DOMContentLoaded.
  * - init.test.js tests the initApp() method directly.
  */
-document.addEventListener('DOMContentLoaded', () => {
-  initApp(window, document, document.querySelector('#app'))
-})
+document.addEventListener(
+  'DOMContentLoaded',
+  () => {
+    const appElem = document.querySelector('#app')
+    initApp({ appElem })
+  },
+  { once: true }
+)
