@@ -15,7 +15,7 @@
  * demonstrate how to design much larger applications for testability.
  * @module main
  */
-import initApp from './components/init'
+import App from './components/app.js'
 import { postForm } from './components/request'
 
 /**
@@ -24,13 +24,13 @@ import { postForm } from './components/request'
  * Wraps the initApp() call in a DOMContentLoaded event listener.
  * - main.test.js uses PageLoader to validate that initApp() fires on
  *   DOMContentLoaded.
- * - init.test.js tests the initApp() method directly.
+ * - app.test.js tests the initApp() method directly.
  */
 document.addEventListener(
   'DOMContentLoaded',
   () => {
     const appElem = document.querySelector('#app')
-    initApp({ appElem, apiUrl: './add', postForm })
+    new App().init({ appElem, apiUrl: './add', postForm })
   },
   { once: true }
 )

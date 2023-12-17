@@ -16,7 +16,7 @@ describe('Calculator', () => {
 
   const setup = () => {
     const postForm = vi.fn()
-    Calculator.init({ appElem: page.appElem, apiUrl: './add', postForm })
+    new Calculator().init({ appElem: page.appElem, apiUrl: './add', postForm })
     return { page, postForm }
   }
 
