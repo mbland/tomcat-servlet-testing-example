@@ -11,6 +11,15 @@
  */
 
 /**
+ * Resolves URL path against the current document location
+ * @param {string} path - path to resolve
+ * @returns {string} - the result of resolving path against document.location
+ */
+export function resolvedUrl(path) {
+  return new URL(path, document.location.href).toString()
+}
+
+/**
  * Enables tests to load page URLs both in the browser and in Node using JSDom.
  */
 export class PageLoader {

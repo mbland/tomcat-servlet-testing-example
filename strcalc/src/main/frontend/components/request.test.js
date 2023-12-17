@@ -6,6 +6,7 @@
  */
 import { post, postForm, postOptions } from './request'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+import { resolvedUrl } from '../test/helpers'
 
 // @vitest-environment jsdom
 describe('Request', () => {
@@ -70,7 +71,7 @@ describe('Request', () => {
       // causes form.action to become `#{document.location.origin}/fetch` in
       // every environment.
       const form = document.createElement('form')
-      const resolvedAction = `${document.location.origin}/fetch`
+      const resolvedAction = resolvedUrl('./fetch')
       const res = { foo: 'bar' }
       const fetchStub = setupFetchStub(JSON.stringify(res))
 
