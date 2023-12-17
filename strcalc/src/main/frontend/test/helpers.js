@@ -11,20 +11,6 @@
  */
 
 /**
- * Produces a DocumentFragment from an HTML string.
- *
- * Useful for running tests on Document-like objects that don't impact the
- * actual global Document.
- * @param {string} innerHtml - HTML from which to produce a DocumentFragment
- * @returns {DocumentFragment} - DocumentFragment containing innerHtml elements
- */
-export function fragment(innerHtml) {
-  const t = document.createElement('template')
-  t.innerHTML = innerHtml
-  return t.content
-}
-
-/**
  * Enables tests to load page URLs both in the browser and in Node using JSDom.
  */
 export class PageLoader {

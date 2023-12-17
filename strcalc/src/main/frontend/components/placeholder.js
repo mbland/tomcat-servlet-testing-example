@@ -20,11 +20,10 @@ import Template from './placeholder.hbs'
 export default class Placeholder {
   /**
    * Initializes the Placeholder within the document.
-   * @param {Window} window - the browser window object
-   * @param {Document} document - a Document or DocumentFragment
-   * @param {Element} appElem - the parent Element containing all app components
+   * @param {object} params - parameters made available to all initializers
+   * @param {Element} params.appElem - parent Element containing all components
    */
-  static init(window, document, appElem) {
+  static init({ appElem }) {
     appElem.appendChild(Template({
       message: 'Hello, World!',
       url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'

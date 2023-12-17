@@ -15,7 +15,7 @@ describe('initial state after calling initApp', () => {
   test('contains the "Hello, World!" placeholder', async () => {
     const page = StringCalculatorPage.new('app-init')
 
-    initApp(window, document, page.appElem, {})
+    initApp({ window, document, appElem: page.appElem })
 
     const e = page.placeholder()
     expect(e.textContent).toContain('Hello, World!')
