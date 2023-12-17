@@ -14,13 +14,13 @@ export default class Calculator {
    * @param {string} params.apiUrl - API backend server URL
    * @param {Function} params.postForm - posts form data to API
    */
-  static init({ appElem, apiUrl, postForm }) {
+  init({ appElem, apiUrl, postForm }) {
     const t = Template({ apiUrl })
     const [ form, resultElem ] = t.children
 
     appElem.appendChild(t)
     form.addEventListener(
-      'submit', e => this.#submitRequest(e, resultElem, postForm)
+      'submit', e => Calculator.#submitRequest(e, resultElem, postForm)
     )
   }
 

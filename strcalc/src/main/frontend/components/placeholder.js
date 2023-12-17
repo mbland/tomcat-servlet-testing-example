@@ -23,7 +23,7 @@ export default class Placeholder {
    * @param {object} params - parameters made available to all initializers
    * @param {Element} params.appElem - parent Element containing all components
    */
-  static init({ appElem }) {
+  init({ appElem }) {
     appElem.appendChild(Template({
       message: 'Hello, World!',
       url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'
