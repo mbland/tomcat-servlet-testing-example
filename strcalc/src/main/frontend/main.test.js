@@ -9,7 +9,7 @@ import { PageLoader } from './test/helpers'
 import StringCalculatorPage from './test/page'
 
 describe('String Calculator UI on initial page load', () => {
-  const loader = new PageLoader('/strcalc')
+  const loader = new PageLoader('/strcalc/')
   afterEach(() => loader.closeAll())
 
   test('contains the "Hello, World!" placeholder', async () => {

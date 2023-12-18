@@ -29,9 +29,9 @@ export class PageLoader {
   #loaded
 
   constructor(basePath) {
-    if (!basePath.startsWith('/') || basePath.endsWith('/')) {
+    if (!basePath.startsWith('/') || !basePath.endsWith('/')) {
       const msg = 'basePath should start with \'/\' and ' +
-        'not end with \'/\', got: '
+        'end with \'/\', got: '
       throw new Error(`${msg}"${basePath}"`)
     }
     this.#basePath = basePath
@@ -79,7 +79,7 @@ class BrowserPageLoader {
 
   // Loads a page and returns {window, document, close() } using the browser.
   async load(basePath, pagePath) {
-    const w = this.#window.open(`${basePath}/${pagePath}`)
+    const w = this.#window.open(`${basePath}${pagePath}`)
     return new Promise(resolve => {
       const listener = () => {
         this.#setCoverageStore(w)
