@@ -4,10 +4,16 @@
   file, You can obtain one at https://mozilla.org/MPL/2.0/.
 --}}
 <form action="{{ apiUrl }}" method="post">
-  <label for="numbers" name="numbersLabel" id="numbersLabel">
-      Enter the string of numbers to add:
-  </label>
+  <label for="numbers">Enter the string of numbers to add:</label>
   <input type="text" name="numbers" id="numbers" required />
+  <fieldset class="impl">
+    <p>Select which implementation to use:</p>
+    {{#each implementations}}{{#with this}}
+      <label for="impl-{{ value }}">{{ label }}</label>
+      <input type="radio" id="impl-{{ value }}" name="impl" value="{{ value }}"
+       {{#if @first}}checked{{/if}}/>{{#unless @last}}<br/>{{/unless}}
+    {{/with}}{{/each}}
+  </fieldset>
   <input type="submit" name="numbersSubmit" id="numbersSubmit" value="Add" />
 </form>
 <div class="result"><p>The result will appear here.</p></div>

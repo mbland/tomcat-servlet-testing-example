@@ -15,10 +15,15 @@ export default class Calculator {
    * @param {Function} params.postForm - posts form data to API
    */
   init({ appElem, apiUrl, postForm }) {
-    const t = Template({ apiUrl })
+    const implementations = [
+      { label: 'Tomcat backend (Java)', value: 'java' },
+      { label: 'In-browser frontend (JavaScript)', value: 'javascript' }
+    ]
+    const t = Template({ apiUrl, implementations })
     const [ form, resultElem ] = t.children
 
     appElem.appendChild(t)
+    document.querySelector('#numbers').focus()
     form.addEventListener(
       'submit', e => Calculator.#submitRequest(e, resultElem, postForm)
     )
