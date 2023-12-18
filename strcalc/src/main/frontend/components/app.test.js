@@ -18,7 +18,7 @@ describe('initial state after calling App.init()', () => {
   test('contains the "Hello, World!" placeholder', async () => {
     new App().init({ appElem: page.appElem })
 
-    const e = page.placeholder()
+    const e = page.title()
     expect(e.textContent).toContain('Hello, World!')
     expect(e.href).toContain('%22Hello,_World!%22')
   })

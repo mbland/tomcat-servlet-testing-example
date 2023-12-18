@@ -10,7 +10,7 @@
  * @module init
  */
 
-import Placeholder from './placeholder'
+import Introduction from './introduction'
 import Calculator from './calculator'
 
 export default class App {
@@ -39,7 +39,7 @@ export default class App {
     // - Call init() on each object to do the actual work of setting up its
     //   initial application state within the document.
     const components = [
-      new Placeholder(),
+      new Introduction(),
       new Calculator()
     ]
     components.forEach(c => c.init(params))

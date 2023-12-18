@@ -10,11 +10,9 @@ Source: <https://github.com/mbland/tomcat-servlet-testing-example>
 [![Test results](https://github.com/mbland/tomcat-servlet-testing-example/actions/workflows/publish-test-results.yaml/badge.svg)](https://github.com/mbland/tomcat-servlet-testing-example/actions/workflows/publish-test-results.yaml?branch=main)
 [![Coverage Status](https://coveralls.io/repos/github/mbland/tomcat-servlet-testing-example/badge.svg?branch=main)][coveralls-tste]
 
-This project will eventually incorporate the [String Calculator kata][] to
-demonstrate Test-Driven Development and small unit tests in general. However, it
-will illustrate a full, balanced, [Test Pyramid][] based testing strategy
-incorporating developer written automated tests of all sizes (small, medium, and
-large).
+This project incorporates the [String Calculator kata][] to
+demonstrate Test-Driven Development in the context of a [Test
+Pyramid][]-based testing strategy.
 
 Though I've been a programmer for years across many other programming languages,
 I'm learning a lot about the Java ecosystem for the first time. It will take

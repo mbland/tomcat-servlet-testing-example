@@ -33,7 +33,7 @@ export default class StringCalculatorPage {
   clear() { this.appElem.replaceChildren() }
   remove() { this.appElem.remove() }
 
-  placeholder() { return this.#select('.placeholder a') }
+  title() { return this.#select('.title a') }
   form() { return this.#select('form') }
   input() { return this.#select('form input[name="numbers"]') }
   submit() { return this.#select('form input[type="submit"]') }

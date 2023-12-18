@@ -16,7 +16,7 @@ describe('String Calculator UI on initial page load', () => {
     const { document } = await loader.load('index.html')
     const appElem = document.querySelector('#app')
 
-    const e = new StringCalculatorPage(appElem, document).placeholder()
+    const e = new StringCalculatorPage(appElem, document).title()
     expect(e.textContent).toContain('Hello, World!')
     expect(e.href).toContain('%22Hello,_World!%22')
   })
