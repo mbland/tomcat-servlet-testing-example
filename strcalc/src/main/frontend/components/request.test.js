@@ -4,21 +4,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-import { post, postForm, postOptions } from './request'
+import { post, postFormData, postOptions } from './request'
 import { afterEach, describe, expect, test, vi } from 'vitest'
-import { resolvedUrl } from '../test/helpers'
+import setupFetchStub from '../test/fetch-stub'
 
 // @vitest-environment jsdom
 describe('Request', () => {
   const req = { want: 'foo' }
-
-  const setupFetchStub = (body, options) => {
-    const fetchStub = vi.fn()
-
-    fetchStub.mockReturnValueOnce(Promise.resolve(new Response(body, options)))
-    vi.stubGlobal('fetch', fetchStub)
-    return fetchStub
-  }
 
   afterEach(() => { vi.unstubAllGlobals() })
 
@@ -53,34 +45,15 @@ describe('Request', () => {
     })
   })
 
-  describe('postForm', () => {
+  describe('postFormData', () => {
     test('succeeds', async () => {
-      // We have to be careful creating the <form>, because form.action resolves
-      // differently depending on how we created it.
-      //
-      // Originally I tried creating it using fragment() from '../test/helpers',
-      // which creates elements using a new <template> containing a
-      // DocumentFragment. However, the elements in that DocumentFragment are in
-      // a separate DOM. This caused the <form action="/fetch"> attribute to be:
-      //
-      // - '/fetch' in jsdom
-      // - '' in Chrome
-      // - `#{document.location.origin}/fetch` in Firefox
-      //
-      // Creating a <form> element via document.createElement() as below
-      // causes form.action to become `#{document.location.origin}/fetch` in
-      // every environment.
-      const form = document.createElement('form')
-      const resolvedAction = resolvedUrl('./fetch')
+      const fd = new FormData()
       const res = { foo: 'bar' }
       const fetchStub = setupFetchStub(JSON.stringify(res))
+      Object.entries(req).forEach(([k,v]) => fd.append(k,v))
 
-      form.action = '/fetch'
-      form.innerHTML = '<input type="text" name="want" id="want" value="foo" />'
-
-      expect(form.action).toBe(resolvedAction)
-      await expect(postForm(form)).resolves.toEqual(res)
-      expect(fetchStub).toHaveBeenCalledWith(resolvedAction, postOptions(req))
+      await expect(postFormData('/fetch', fd)).resolves.toEqual(res)
+      expect(fetchStub).toHaveBeenCalledWith('/fetch', postOptions(req))
     })
   })
 })

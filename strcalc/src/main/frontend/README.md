@@ -178,6 +178,30 @@ You'll need to be careful not to commit these changes. You can `git stash` them
 or run `git restore package.json`, followed by `pnpm i` to match the CI build
 again.
 
+## Notes
+
+Some implementation notes I may want to work into documentation or blog
+posts one day.
+
+### Document vs. DocumentFragment and &lt;form&gt; behavior
+
+Originally I tried using [DocumentFragment][] objects in the tests as much
+as I could to avoid polluting the main [Document][]. However, differences in
+[&lt;form&gt;][] behavior led me to implement a different scheme, adding and
+removing unique [&lt;div&gt;][]s to and from the main Document instead.
+
+Specifically, `form.action` resolves differently depending on how it's created.
+Elements in a DocumentFragment are in a separate DOM, causing the &lt;form
+action="/fetch"&gt; attribute to be:
+
+- '/fetch' in jsdom
+- '' in Chrome
+- `${document.location.href}/fetch` in Firefox
+
+Creating a &lt;form&gt; element via `document.createElement()` causes
+`form.action` to become `${document.location.href}/fetch` in every
+environment.
+
 [mbland/tomcat-servlet-testing-example]: https://github.com/mbland/tomcat-servlet-testing-example
 [top level README.md]: ../../../../README.md
 [Node.js]: https://nodejs.org/
@@ -204,3 +228,7 @@ again.
 [PowerShell]: https://learn.microsoft.com/powershell/
 [`start`]: https://learn.microsoft.com/windows-server/administration/windows-commands/start
 [eslint-plugin-jsdoc]: https://www.npmjs.com/package/eslint-plugin-jsdoc
+[DocumentFragment]: https://developer.mozilla.org/docs/Web/API/DocumentFragment
+[Document]: https://developer.mozilla.org/docs/Web/API/Document
+[&lt;form&gt;]: https://developer.mozilla.org/docs/Web/HTML/Element/form
+[&lt;div&gt;]: https://developer.mozilla.org/docs/Web/HTML/Element/div

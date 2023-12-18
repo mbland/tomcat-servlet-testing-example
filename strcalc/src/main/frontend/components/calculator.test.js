@@ -7,7 +7,6 @@
 
 import Calculator from './calculator'
 import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
-import { resolvedUrl } from '../test/helpers'
 import StringCalculatorPage from '../test/page'
 
 // @vitest-environment jsdom
@@ -15,16 +14,20 @@ describe('Calculator', () => {
   const page = StringCalculatorPage.new()
 
   const setup = () => {
-    const postForm = vi.fn()
+    const postFormData = vi.fn()
     const calculators = {
-      'api': { label: 'API', impl: postForm },
+      'api': { label: 'API', impl: postFormData },
       'browser': { label: 'Browser', impl: () => {} }
     }
 
-    new Calculator().init({
-      appElem: page.appElem, apiUrl: './add', calculators
-    })
-    return { page, postForm }
+    new Calculator().init({ appElem: page.appElem, calculators })
+    return { page, postFormData }
+  }
+
+  const expectedFormData = (numbersString) => {
+    const data = new FormData()
+    data.append('numbers', numbersString)
+    return data
   }
 
   afterEach(() => page.clear())
@@ -34,25 +37,26 @@ describe('Calculator', () => {
     const { page } = setup()
 
     expect(page.form()).not.toBeNull()
-    expect(page.form().action).toBe(resolvedUrl('./add'))
+    expect(page.result()).not.toBeNull()
   })
 
   test('updates result placeholder with successful result', async () => {
-    const { page, postForm } = setup()
-    postForm.mockResolvedValueOnce({ result: 5 })
+    const { page, postFormData } = setup()
+    postFormData.mockResolvedValueOnce({ result: 5 })
 
     const result = vi.waitFor(page.enterValueAndSubmit('2,2'))
 
     await expect(result).resolves.toBe('Result: 5')
-    expect(postForm).toHaveBeenCalledWith(page.form())
+    expect(postFormData).toHaveBeenCalledWith(expectedFormData('2,2'))
   })
 
   test('updates result placeholder with error message', async () => {
-    const { page, postForm } = setup()
-    postForm.mockRejectedValueOnce(new Error('D\'oh!'))
+    const { page, postFormData } = setup()
+    postFormData.mockRejectedValueOnce(new Error('D\'oh!'))
 
     const result = vi.waitFor(page.enterValueAndSubmit('2,2'))
 
     await expect(result).resolves.toBe('Error: D\'oh!')
+    expect(postFormData).toHaveBeenCalledWith(expectedFormData('2,2'))
   })
 })
