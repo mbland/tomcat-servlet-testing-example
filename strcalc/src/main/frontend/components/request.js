@@ -7,11 +7,12 @@
 /**
  * Posts the data from a <form> via fetch() and returns the response object
  * @see https://simonplend.com/how-to-use-fetch-to-post-form-data-as-json-to-your-api/
- * @param {FormData} form - form containing data to POST
+ * @param {string} url - address of server request
+ * @param {FormData} formData - data to include in the POST request
  * @returns {Promise<any>} - response from the server
  */
-export async function postForm(form) {
-  return post(form.action, Object.fromEntries(new FormData(form).entries()))
+export async function postFormData(url, formData) {
+  return post(url, Object.fromEntries(formData.entries()))
 }
 
 /**

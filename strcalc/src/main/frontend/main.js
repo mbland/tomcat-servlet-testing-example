@@ -30,7 +30,7 @@ document.addEventListener(
   'DOMContentLoaded',
   () => {
     const appElem = document.querySelector('#app')
-    new App().init({ appElem, apiUrl: './add', calculators })
+    new App().init({ appElem, calculators })
   },
   { once: true }
 )

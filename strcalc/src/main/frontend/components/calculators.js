@@ -4,12 +4,16 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { postForm } from './request'
+import { postFormData } from './request'
+
+export const DEFAULT_ENDPOINT = './add'
+
+const defaultPost = async (data)=> postFormData(DEFAULT_ENDPOINT, data)
 
 /**
  * Collection of production String Calculator implementations
  */
 export default {
-  'api': { label: 'Tomcat backend API (Java)', impl: postForm },
-  'browser': { label: 'In-browser (JavaScript)', impl: postForm }
+  'api': { label: 'Tomcat backend API (Java)', impl: defaultPost },
+  'browser': { label: 'In-browser (JavaScript)', impl: defaultPost }
 }

@@ -11,13 +11,12 @@ export default class Calculator {
    * Initializes the Calculator within the document.
    * @param {object} params - parameters made available to all initializers
    * @param {Element} params.appElem - parent Element containing all components
-   * @param {string} params.apiUrl - API backend server URL
    * @param {object} params.calculators - calculator implementations
    */
-  init({ appElem, apiUrl, calculators }) {
+  init({ appElem, calculators }) {
     const calcOptions = Object.entries(calculators)
       .map(([k, v]) => ({ value: k, label: v.label }))
-    const t = Template({ apiUrl, calcOptions })
+    const t = Template({ calcOptions })
     const [ form, resultElem ] = t.children
 
     appElem.appendChild(t)
@@ -32,11 +31,16 @@ export default class Calculator {
     event.preventDefault()
 
     const form = event.currentTarget
+    const data = new FormData(form)
     const selected = form.querySelector('input[name="impl"]:checked').value
     const result = resultElem.querySelector('p')
 
+    // None of the backends need the 'impl' parameter, and the Java backend
+    // will return a 500 if we send it.
+    data.delete('impl')
+
     try {
-      const response = await calculators[selected].impl(form)
+      const response = await calculators[selected].impl(data)
       result.textContent = `Result: ${response.result}`
     } catch (err) {
       result.textContent = err
