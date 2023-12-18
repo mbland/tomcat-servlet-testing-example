@@ -11,12 +11,17 @@ import StringCalculatorPage from '../test/page'
 // @vitest-environment jsdom
 describe('initial state after calling App.init()', () => {
   const page = StringCalculatorPage.new()
+  const calculators = {
+    'first': { label: 'First calculator', impl: null },
+    'second': { label: 'Second calculator', impl: null },
+    'third': { label: 'Third calculator', impl: null }
+  }
 
   afterEach(() => page.clear())
   afterAll(() => page.remove())
 
-  test('contains the "Hello, World!" placeholder', async () => {
-    new App().init({ appElem: page.appElem })
+  test('contains the "Hello, World!" title', async () => {
+    new App().init({ appElem: page.appElem, calculators })
 
     const e = page.title()
     expect(e.textContent).toContain('Hello, World!')

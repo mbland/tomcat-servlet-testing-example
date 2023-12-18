@@ -16,7 +16,7 @@
  * @module main
  */
 import App from './components/app.js'
-import { postForm } from './components/request'
+import calculators from './components/calculators'
 
 /**
  * Calls the app initializer with production parameters.
@@ -30,7 +30,7 @@ document.addEventListener(
   'DOMContentLoaded',
   () => {
     const appElem = document.querySelector('#app')
-    new App().init({ appElem, apiUrl: './add', postForm })
+    new App().init({ appElem, apiUrl: './add', calculators })
   },
   { once: true }
 )
