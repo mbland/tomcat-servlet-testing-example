@@ -8,7 +8,7 @@
   <input type="text" name="numbers" id="numbers" required />
   <fieldset class="impl">
     <p>Select which implementation to use:</p>
-    {{#each implementations}}{{#with this}}
+    {{#each calcOptions}}{{#with this}}
       <label for="impl-{{ value }}">{{ label }}</label>
       <input type="radio" id="impl-{{ value }}" name="impl" value="{{ value }}"
        {{#if @first}}checked{{/if}}/>{{#unless @last}}<br/>{{/unless}}

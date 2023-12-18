@@ -7,7 +7,7 @@
 
 import Calculator from './calculator'
 import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
-import { resolvedUrl } from '../test/helpers.js'
+import { resolvedUrl } from '../test/helpers'
 import StringCalculatorPage from '../test/page'
 
 // @vitest-environment jsdom
@@ -16,7 +16,14 @@ describe('Calculator', () => {
 
   const setup = () => {
     const postForm = vi.fn()
-    new Calculator().init({ appElem: page.appElem, apiUrl: './add', postForm })
+    const calculators = {
+      'api': { label: 'API', impl: postForm },
+      'browser': { label: 'Browser', impl: () => {} }
+    }
+
+    new Calculator().init({
+      appElem: page.appElem, apiUrl: './add', calculators
+    })
     return { page, postForm }
   }
 

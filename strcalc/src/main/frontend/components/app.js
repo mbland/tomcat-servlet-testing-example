@@ -22,7 +22,7 @@ export default class App {
    * @param {object} params - parameters made available to all initializers
    * @param {Element} params.appElem - parent Element containing all components
    * @param {string} params.apiUrl - API backend server URL
-   * @param {Function} params.postForm - posts form data to API
+   * @param {object} params.calculators - calculator implementations
    */
   init(params) {
     // In this example application, none of the components depend on one
