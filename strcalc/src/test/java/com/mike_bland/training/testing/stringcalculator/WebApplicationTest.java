@@ -70,17 +70,17 @@ public class WebApplicationTest {
                 .toString();
     }
 
-    // This placeholder test exists solely to allow the Gradle "test-large"
-    // task to pass until actual @LargeTests are present:
+    // This title test exists solely to allow the Gradle "test-large" task to
+    // pass until actual @LargeTests are present:
     //
     // - https://docs.gradle.org/8.4/userguide/upgrading_version_8.html#test_task_fail_on_no_test_executed
     //
     //  Please replace or delete it when you're ready to add actual tests.
     @LargeTest
-    void testPlaceholder() {
+    void testTitle() {
         driver.get(endpoint("/"));
 
-        WebElement elem = driver.findElement(By.cssSelector("p.placeholder a"));
+        WebElement elem = driver.findElement(By.cssSelector("h1.title a"));
 
         assertEquals("Hello, World!", elem.getText());
         assertThat(

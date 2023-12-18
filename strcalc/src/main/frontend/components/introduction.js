@@ -15,11 +15,11 @@
  * @module placeholder
  */
 
-import Template from './placeholder.hbs'
+import Template from './introduction.hbs'
 
-export default class Placeholder {
+export default class Introduction {
   /**
-   * Initializes the Placeholder within the document.
+   * Initializes the Introduction within the document.
    * @param {object} params - parameters made available to all initializers
    * @param {Element} params.appElem - parent Element containing all components
    */
