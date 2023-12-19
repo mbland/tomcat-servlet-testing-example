@@ -24,6 +24,9 @@ export default defineConfig({
   plugins: [
     handlebarsPrecompiler({ helpers: ['components/helpers.js'] })
   ],
+  define: {
+    STRCALC_BACKEND: JSON.stringify(process.env.STRCALC_BACKEND)
+  },
   build: {
     outDir: buildDir('webapp'),
     sourcemap: true

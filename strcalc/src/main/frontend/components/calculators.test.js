@@ -19,13 +19,27 @@ describe('calculators', () => {
 
   afterEach(() => { vi.unstubAllGlobals() })
 
-  test('defaultPost requests expected backend', async () => {
-    const data = setupData('2,2')
-    const fetchStub = setupFetchStub(JSON.stringify({ result: 5 }))
+  describe('defaultPost', () => {
+    test('posts same server by default', async () => {
+      const data = setupData('2,2')
+      const fetchStub = setupFetchStub(JSON.stringify({ result: 5 }))
 
-    await expect(calculators.api.impl(data)).resolves.toEqual({ result: 5 })
-    expect(fetchStub).toHaveBeenCalledWith(
-      DEFAULT_ENDPOINT, postOptions({ numbers: '2,2' }))
+      await expect(calculators.api.impl(data)).resolves.toEqual({ result: 5 })
+      expect(fetchStub).toHaveBeenCalledWith(
+        DEFAULT_ENDPOINT, postOptions({ numbers: '2,2' }))
+    })
+
+    test('posts to globalThis.STRCALC_BACKEND', async () => {
+      const data = setupData('2,2')
+      const fetchStub = setupFetchStub(JSON.stringify({ result: 5 }))
+      vi.stubGlobal('STRCALC_BACKEND', 'http://localhost:8080/strcalc/')
+
+      await expect(calculators.api.impl(data)).resolves.toEqual({ result: 5 })
+      expect(fetchStub).toHaveBeenCalledWith(
+        new URL(DEFAULT_ENDPOINT, 'http://localhost:8080/strcalc/').toString(),
+        postOptions({ numbers: '2,2' })
+      )
+    })
   })
 
   test('tempCalculator rejects with Error', async () => {

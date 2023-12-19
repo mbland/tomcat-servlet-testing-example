@@ -750,6 +750,47 @@ plugin:
 - Configure the selected plugin to process the downloaded
 `jacocoXmlTestReport.xml` file.
 
+## Allow frontend dev server to access Tomcat backend
+
+It's possible to develop the frontend code served by Vite and
+the backend code served by Tomcat simultaneously.
+
+### Start Tomcat
+
+For now, this requires running a fresh build of the app in Docker or setting
+up your own IntelliJ IDEA Run Configuration. I hope to have another solution
+set up shortly that would require neither.
+
+```sh
+# Compile the current code into strcalc.war.
+./gradlew build
+
+# Serve the strcalc.war file via Docker
+./bin/tomcat-docker.sh
+```
+
+This is enabled by the `CORSFilter` settings in the application's
+[web.xml](./strcalc/src/main/webapp/WEB-INF/web.xml) file. See the comment
+in that file for further references.
+
+### Start frontend dev server
+
+```sh
+cd strcalc/src/main/frontend
+STRCALC_BACKEND='http://localhost:8080/strcalc/' pnpm dev
+```
+
+### Start frontend preview server
+
+In preview mode (`pnpm build && pnpm preview`), the STRCALC_BACKEND value
+will not propagate to the compiled bundle. However, entering the
+following in the browser console will enable the compiled version to
+communciate with the backend:
+
+```js
+globalThis.STRCALC_BACKEND='http://localhost:8080/strcalc/'
+```
+
 ## Adding large tests
 
 Coming soon...

@@ -12,4 +12,23 @@
             jakarta.enterprise.inject.spi.BeanManager
         </resource-env-ref-type>
     </resource-env-ref>
+
+    <!-- Set CORS headers to run frontend and backend separately.
+         - https://stackoverflow.com/a/18850438
+         - https://tomcat.apache.org/tomcat-10.1-doc/config/filter.html#CORS_Filter
+         - https://tomcat.apache.org/tomcat-10.1-doc/images/cors-flowchart.png
+         - https://tomcat.apache.org/tomcat-10.1-doc/api/org/apache/catalina/filters/CorsFilter.html
+     -->
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+        <init-param>
+            <param-name>cors.allowed.origins</param-name>
+            <param-value>http://localhost:5173, http://localhost:4173</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>
