@@ -11,15 +11,28 @@ import setupFetchStub from '../test/fetch-stub'
 import { postOptions } from './request'
 
 describe('calculators', () => {
+  const setupData = (numbersStr) => {
+    const data = new FormData()
+    data.append('numbers', numbersStr)
+    return data
+  }
+
   afterEach(() => { vi.unstubAllGlobals() })
 
   test('defaultPost requests expected backend', async () => {
-    const data = new FormData()
-    const fetchStub = setupFetchStub(JSON.stringify({ ok: true }))
-    data.append('want', 'status')
+    const data = setupData('2,2')
+    const fetchStub = setupFetchStub(JSON.stringify({ result: 5 }))
 
-    await expect(calculators.api.impl(data)).resolves.toEqual({ ok: true })
+    await expect(calculators.api.impl(data)).resolves.toEqual({ result: 5 })
     expect(fetchStub).toHaveBeenCalledWith(
-      DEFAULT_ENDPOINT, postOptions({ want: 'status' }))
+      DEFAULT_ENDPOINT, postOptions({ numbers: '2,2' }))
+  })
+
+  test('tempCalculator rejects with Error', async () => {
+    const data = setupData('2,2')
+
+    await expect(calculators.browser.impl(data)).rejects.toThrow(
+      new Error('Temporary in-browser calculator received: "2,2"')
+    )
   })
 })
