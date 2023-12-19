@@ -10,10 +10,14 @@ export const DEFAULT_ENDPOINT = './add'
 
 const defaultPost = async (data)=> postFormData(DEFAULT_ENDPOINT, data)
 
+const tempCalculator = async (data) => Promise.reject(new Error(
+  `Temporary in-browser calculator received: "${data.get('numbers')}"`
+))
+
 /**
  * Collection of production String Calculator implementations
  */
 export default {
   'api': { label: 'Tomcat backend API (Java)', impl: defaultPost },
-  'browser': { label: 'In-browser (JavaScript)', impl: defaultPost }
+  'browser': { label: 'In-browser (JavaScript)', impl: tempCalculator }
 }
