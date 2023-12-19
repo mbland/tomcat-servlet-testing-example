@@ -8,7 +8,11 @@ import { postFormData } from './request'
 
 export const DEFAULT_ENDPOINT = './add'
 
-const defaultPost = async (data)=> postFormData(DEFAULT_ENDPOINT, data)
+const backendUrl = () => globalThis.STRCALC_BACKEND ?
+  new URL(DEFAULT_ENDPOINT, globalThis.STRCALC_BACKEND).toString() :
+  DEFAULT_ENDPOINT
+
+const backendCalculator = async (data)=> postFormData(backendUrl(), data)
 
 const tempCalculator = async (data) => Promise.reject(new Error(
   `Temporary in-browser calculator received: "${data.get('numbers')}"`
@@ -16,8 +20,11 @@ const tempCalculator = async (data) => Promise.reject(new Error(
 
 /**
  * Collection of production String Calculator implementations
+ *
+ * Each implementation takes a FormData instance containing only a
+ * 'numbers' field as its single argument.
  */
 export default {
-  'api': { label: 'Tomcat backend API (Java)', impl: defaultPost },
+  'api': { label: 'Tomcat backend API (Java)', impl: backendCalculator },
   'browser': { label: 'In-browser (JavaScript)', impl: tempCalculator }
 }
