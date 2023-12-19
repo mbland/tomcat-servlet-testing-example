@@ -19,11 +19,15 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+
       - name: Post test report
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          artifact: test-results
           name: Test Results
           path: '**/build/test-results/test*/TESTS-TestSuites.xml'
           reporter: java-junit
