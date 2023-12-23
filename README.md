@@ -47,26 +47,10 @@ application deployment).
 ### OS Compatibility
 
 I run Arm64/aarch64 builds of [Ubuntu Linux][] and [Windows 11 Professional][]
-under [Parallels Desktop for Mac][] on Apple Silicon. There's some work to allow
-WebDriver to use [Chromium][] or [Firefox][] on Linux, as no aarch64 build of
-[Google Chrome][] is available. The [node-gradle/gradle-node-plugin][] breaks on
-Windows 11 when it tries to execute `uname`:
-
-```text
-PS C:\Users\msb\src\mbland\tomcat-servlet-testing-example> ./gradlew.bat
-Starting a Gradle Daemon, 1 incompatible and 1 stopped Daemons could not be
-reused, use --status for details
-
-FAILURE: Build failed with an exception.
-
-* Where:
-Build file 'C:\Users\msb\src\mbland\tomcat-servlet-testing-example\strcalc\build.gradle.kts' line: 8
-
-* What went wrong:
-An exception occurred applying plugin request [id: 'com.github.node-gradle.node']
-> Failed to apply plugin 'com.github.node-gradle.node'.
-   > A problem occurred starting process 'command 'uname''
-```
+under [Parallels Desktop for Mac][] on Apple Silicon. `vite.config.js` contains
+a workaround to allow WebDriver to use [Chromium][] or [Firefox][] on Linux, as
+no aarch64 build of [Google Chrome][] is available. (I hope to contribute
+this workaround upstream, at which point I'll remove it from `vite.config.js`.)
 
 Also, [it doesn't appear as though nested virtualzation will ever be supported by
 the aarch 64 Windows 11 on an Apple M1][no-vm-nesting]. This means the
@@ -802,7 +786,6 @@ TODO(mbland): Document how the following are configured:
   - [Selenium: Design patterns and development strategies][]
 - [TestTomcat](./strcalc/src/test/java/com/mike_bland/training/testing/utils/TestTomcat.java)
   (for medium tests)
-- [node-gradle/gradle-node-plugin][]
 
 ## Implementing core logic using Test Driven Development and unit tests
 
@@ -821,7 +804,6 @@ Coming soon...
 [headless Chrome]: https://developer.chrome.com/blog/headless-chrome/
 [test doubles]: https://mike-bland.com/2023/09/06/test-doubles.html
 [Apache Solr]: https://solr.apache.org/
-[node-gradle/gradle-node-plugin]: https://github.com/node-gradle/gradle-node-plugin
 [Ubuntu Linux]: https://ubuntu.com/desktop
 [Windows 11 Professional]: https://kb.parallels.com/125375/
 [Parallels Desktop for Mac]: https://www.parallels.com/products/desktop/
