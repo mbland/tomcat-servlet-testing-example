@@ -7,7 +7,9 @@
 package com.mike_bland.training.testing.stringcalculator;
 
 import com.mike_bland.training.testing.annotations.LargeTest;
-import com.mike_bland.training.testing.utils.LocalServer;
+import com.mike_bland.training.testing.utils.PortPicker;
+import com.mike_bland.training.testing.utils.TestTomcat;
+import org.apache.catalina.LifecycleException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,7 +23,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.time.Duration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,16 +30,15 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebApplicationTest {
-    private static LocalServer app;
-    private static URI appUri;
+    private static TestTomcat tomcat;
     private WebDriver driver;
 
     @BeforeAll
-    static void setUpClass() throws IOException, InterruptedException {
-        app = new LocalServer(
-                "dockerfiles/Dockerfile.tomcat-test", 8080
+    static void setUpClass() throws LifecycleException, IOException {
+        tomcat = new TestTomcat(
+                PortPicker.pickUnusedPort(), Servlet.DEFAULT_ROOT
         );
-        appUri = app.start(2500);
+        tomcat.startWithWarFile("strcalc.war");
     }
 
     @BeforeEach
@@ -121,8 +121,8 @@ public class WebApplicationTest {
     }
 
     @AfterAll
-    static void tearDownClass() throws IOException, InterruptedException {
-        app.stop(2500);
+    static void tearDownClass() throws LifecycleException, IOException {
+        tomcat.stop();
     }
 
     String endpoint(String relPath) {
@@ -130,9 +130,7 @@ public class WebApplicationTest {
             final var msg = "endpoint path should begin with '/', got: \"%s\"";
             throw new IllegalArgumentException(msg.formatted(relPath));
         }
-        return appUri
-                .resolve("%s%s".formatted(Servlet.DEFAULT_ROOT, relPath))
-                .toString();
+        return tomcat.resolveEndpoint(relPath).toString();
     }
 
     // This title test exists solely to allow the Gradle "test-large" task to
