@@ -39,13 +39,6 @@ dependencies {
     antJUnit(libs.antJunit)
 }
 
-// Apply a specific Java toolchain to ease working on different environments.
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
-}
-
 jacoco {
     toolVersion = "0.8.11"
 }
