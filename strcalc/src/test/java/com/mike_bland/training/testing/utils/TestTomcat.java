@@ -188,6 +188,10 @@ public class TestTomcat {
     private static void disableChecks(StandardContext ctx) {
         ctx.setClearReferencesThreadLocals(false);
         ctx.setClearReferencesRmiTargets(false);
+
+        // Prevent deleteBaseDir() failures on Windows, thanks to:
+        // - https://stackoverflow.com/a/20757153
+        ctx.setAntiResourceLocking(true);
     }
 
     public URI resolveEndpoint(String endpoint)
@@ -203,6 +207,7 @@ public class TestTomcat {
         if (!running) return;
         running = false;
         tomcat.stop();
+        tomcat.destroy();
         deleteBaseDir(this.baseDir);
     }
 
