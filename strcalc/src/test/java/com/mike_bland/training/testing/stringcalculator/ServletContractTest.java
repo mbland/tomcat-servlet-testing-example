@@ -99,7 +99,7 @@ class ServletContractTest {
     @MediumTest
     void servesLandingPage() throws Exception {
         var req = newRequestBuilder("/").GET().build();
-        tomcat.start();
+        tomcat.startWithBuildInputs();
 
         var resp = sendRequest(req);
 
@@ -244,7 +244,7 @@ class ServletContractTest {
     //   business logic.
     @MediumTest
     void productionImplementationTemporarilyReturnsError() throws Exception {
-        tomcat.start();
+        tomcat.startWithBuildInputs();
 
         var r = sendStringCalculatorRequest("");
 
