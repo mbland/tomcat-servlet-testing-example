@@ -7,7 +7,7 @@ antJunitVer = "1.10.14"
 seleniumVer = "4.16.1"
 weldVer = "5.1.2.Final"
 jandexVer = "3.1.6"
-jacksonVer = "2.16.0"
+jacksonVer = "2.16.1"
 
 [libraries.servlet]
 module = "jakarta.servlet:jakarta.servlet-api"
