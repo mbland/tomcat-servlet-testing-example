@@ -40,7 +40,7 @@
     "@vitest/ui": "^1.1.0",
     "eslint": "^8.56.0",
     "eslint-plugin-jsdoc": "^46.9.1",
-    "eslint-plugin-vitest": "^0.3.18",
+    "eslint-plugin-vitest": "^0.3.20",
     "handlebars": "^4.7.8",
     "jsdom": "^23.0.1",
     "vite": "^5.0.10",
