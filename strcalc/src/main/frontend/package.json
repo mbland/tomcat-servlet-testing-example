@@ -29,7 +29,7 @@
     "test-ui": "vitest --ui --coverage",
     "test-ci": "eslint --color --max-warnings 0 . && vitest run --config ci/vitest.config.js && vitest run --config ci/vitest.config.browser.js",
     "coverage": "vitest run --coverage",
-    "jsdoc": "bin/jsdoc -c ./jsdoc.json ."
+    "jsdoc": "node bin/jsdoc-cli-wrapper.js -c ./jsdoc.json ."
   },
   "devDependencies": {
     "@rollup/pluginutils": "^5.1.0",
