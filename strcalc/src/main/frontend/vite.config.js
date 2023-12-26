@@ -88,9 +88,9 @@ export default defineConfig({
     outputFile: buildDir('test-results/test-frontend/TESTS-TestSuites.xml'),
     coverage: {
       reportsDirectory: buildDir('reports/frontend/coverage'),
-      // Remove 'exclude:' once rollup-plugin-handlebars-precompile moves
-      // into its own repository.
-      exclude: [ ...configDefaults.coverage.exclude, 'plugins/*' ]
+      // Remove 'exclude:' once rollup-plugin-handlebars-precompile
+      // and bin/jsdoc-cli-wrapper.js move into their own repositories.
+      exclude: [ ...configDefaults.coverage.exclude, 'plugins/*', 'bin/*' ]
     },
     browser: {
       name: 'chrome',
