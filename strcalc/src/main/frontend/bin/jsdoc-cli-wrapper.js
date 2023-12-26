@@ -19,8 +19,9 @@ import path from 'node:path'
 import { exit, stdout } from 'node:process'
 
 try {
-  const jsdocArgs = process.argv.slice(2)
-  const {exitCode, indexHtml} = await runJsdoc(jsdocArgs, process.env)
+  const {exitCode, indexHtml} = await runJsdoc(
+    process.argv.slice(2), process.env, process.platform
+  )
   if (indexHtml !== undefined) stdout.write(`${indexHtml}\n`)
   exit(exitCode)
 
@@ -40,13 +41,14 @@ try {
  * Removes the existing JSDoc directory, runs `jsdoc`, and emits the result path
  * @param {string[]} argv - JSDoc command line interface arguments
  * @param {object} env - environment variables, presumably process.env
+ * @param {string} platform - the process.platform string
  * @returns {Promise<RunJsdocResults>} - result of `jsdoc` execution
  */
-async function runJsdoc(argv, env) {
+async function runJsdoc(argv, env, platform) {
   let jsdocPath
 
   try {
-    jsdocPath = await getPath('jsdoc', env)
+    jsdocPath = await getPath('jsdoc', env, platform)
   } catch {
     return Promise.reject(
       'Run \'pnpm add -g jsdoc\' to install JSDoc: https://jsdoc.app\n'
@@ -78,11 +80,16 @@ async function runJsdoc(argv, env) {
  * @param {string} cmdName - command to find in env.PATH
  * @param {object} env - environment variables, presumably process.env
  * @param {string} env.PATH - the PATH environment variable
+ * @param {string} platform - the process.platform string
  * @returns {Promise<string>} - path to the command
  */
-async function getPath(cmdName, env) {
+async function getPath(cmdName, env, platform) {
   for (const p of env.PATH.split(path.delimiter)) {
-    const candidate = path.join(p, cmdName)
+    // pnpm will install both the original script and versions ending with .CMD
+    // and .ps1. We'll just default to .CMD.
+    const extension = (platform === 'win32') ? '.CMD' : ''
+    const candidate = path.join(p, cmdName) + extension
+
     try {
       await access(candidate)
       return candidate
