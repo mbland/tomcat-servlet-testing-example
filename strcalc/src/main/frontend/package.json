@@ -29,7 +29,7 @@
     "test-ui": "vitest --ui --coverage",
     "test-ci": "eslint --color --max-warnings 0 . && vitest run --config ci/vitest.config.js && vitest run --config ci/vitest.config.browser.js",
     "coverage": "vitest run --coverage",
-    "jsdoc": "node bin/jsdoc-cli-wrapper.js -c ./jsdoc.json ."
+    "jsdoc": "jsdoc-cli-wrapper -c ./jsdoc.json ."
   },
   "devDependencies": {
     "@rollup/pluginutils": "^5.1.0",
@@ -42,6 +42,7 @@
     "eslint-plugin-jsdoc": "^46.9.1",
     "eslint-plugin-vitest": "^0.3.20",
     "handlebars": "^4.7.8",
+    "jsdoc-cli-wrapper": "^1.0.0",
     "jsdom": "^23.0.1",
     "vite": "^5.0.10",
     "vitest": "^1.1.0",
