@@ -35,6 +35,9 @@ devDependencies:
   handlebars:
     specifier: ^4.7.8
     version: 4.7.8
+  jsdoc-cli-wrapper:
+    specifier: ^1.0.0
+    version: 1.0.0
   jsdom:
     specifier: ^23.0.1
     version: 23.0.1
@@ -2494,6 +2497,12 @@ packages:
     hasBin: true
     dependencies:
       argparse: 2.0.1
+    dev: true
+
+  /jsdoc-cli-wrapper@1.0.0:
+    resolution: {integrity: sha512-WYwKHGL4NT2RTn2B5QtvZydKTK4P73bKPy/CrnNjSiU/CNTYUF4jsK5emwxPARKsmA2mD8qY2gWAa/DAlzZrfg==}
+    engines: {node: '>= 18.0.0'}
+    hasBin: true
     dev: true
 
   /jsdoc-type-pratt-parser@4.0.0:
