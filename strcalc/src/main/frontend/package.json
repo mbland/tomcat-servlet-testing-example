@@ -33,19 +33,19 @@
   },
   "devDependencies": {
     "@rollup/pluginutils": "^5.1.0",
-    "@stylistic/eslint-plugin-js": "^1.5.1",
-    "@vitest/browser": "^1.1.0",
-    "@vitest/coverage-istanbul": "^1.1.0",
-    "@vitest/coverage-v8": "^1.1.0",
-    "@vitest/ui": "^1.1.0",
+    "@stylistic/eslint-plugin-js": "^1.5.3",
+    "@vitest/browser": "^1.1.2",
+    "@vitest/coverage-istanbul": "^1.1.2",
+    "@vitest/coverage-v8": "^1.1.2",
+    "@vitest/ui": "^1.1.2",
     "eslint": "^8.56.0",
-    "eslint-plugin-jsdoc": "^46.9.1",
+    "eslint-plugin-jsdoc": "^46.10.1",
     "eslint-plugin-vitest": "^0.3.20",
     "handlebars": "^4.7.8",
-    "jsdoc-cli-wrapper": "^1.0.0",
+    "jsdoc-cli-wrapper": "^1.0.4",
     "jsdom": "^23.0.1",
     "vite": "^5.0.10",
-    "vitest": "^1.1.0",
+    "vitest": "^1.1.2",
     "webdriverio": "^8.27.0"
   }
 }
