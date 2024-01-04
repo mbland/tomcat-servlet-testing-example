@@ -60,12 +60,6 @@ FWIW, [Windows Subsystem for Linux 2 also requires nested
 virtualization][wsl2-nesting]. WSL 1 will work fine, but it appears [prospects
 to run Docker in WSL 1 are rather dim][wsl1-docker].
 
-## Open Source License
-
-This software is made available as [Open Source software][] under the [Mozilla
-Public License 2.0][]. For the text of the license, see the
-[LICENSE.txt](LICENSE.txt) file.
-
 ## Development environment setup
 
 ### Install the Java Development Kit
@@ -795,6 +789,17 @@ Coming soon...
 
 - [Building a web application with Gradle](https://openliberty.io/guides/gradle-intro.html)
 
+## Copyright
+
+&copy; 2023 Mike Bland &lt;<mbland@acm.org>&gt; (<https://mike-bland.com/>)
+
+## Open Source License
+
+This software is made available as [Open Source software][] under the [Mozilla
+Public License 2.0][]. For the text of the license, see the
+[LICENSE.txt](LICENSE.txt) file. See the [MPL 2.0 FAQ][mpl-faq] for a
+higher level explanation.
+
 [coveralls-tste]: https://coveralls.io/github/mbland/tomcat-servlet-testing-example?branch=main
 [String Calculator kata]: https://osherove.com/tdd-kata-1
 [Test Pyramid]: https://mike-bland.com/2023/08/31/the-test-pyramid-and-the-chain-reaction.html
@@ -814,8 +819,6 @@ Coming soon...
 [no-vm-nesting]: https://kb.parallels.com/en/128914
 [wsl2-nesting]: https://support.microsoft.com/windows/options-for-using-windows-11-with-mac-computers-with-apple-m1-and-m2-chips-cd15fd62-9b34-4b78-b0bc-121baa3c568c
 [wsl1-docker]: https://stackoverflow.com/a/72398035
-[Open Source software]: https://opensource.org/osd-annotated
-[Mozilla Public License 2.0]: https://www.mozilla.org/MPL/
 [jdk-21]: https://docs.oracle.com/en/java/javase/21/docs/api/index.html
 [Eclipse Temurin&trade; Latest Releases]: https://adoptium.net/temurin/releases/
 [SDKMAN!]: https://sdkman.io
@@ -879,3 +882,6 @@ Coming soon...
 [GitHub Actions marketplace]: https://github.com/marketplace?type=actions
 [JaCoCo related GitHub Actions plugins]: https://github.com/marketplace?category=&type=actions&verification=&query=jacoco
 [Selenium: Design patterns and development strategies]: https://www.selenium.dev/documentation/test_practices/design_strategies/
+[Open Source software]: https://opensource.org/osd-annotated
+[Mozilla Public License 2.0]: https://www.mozilla.org/MPL/
+[mpl-faq]: https://www.mozilla.org/MPL/2.0/FAQ/
