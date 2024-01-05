@@ -16,7 +16,7 @@
  * @module main
  */
 import App from './components/app.js'
-import calculators from './components/calculators'
+import calculators from './components/calculators.js'
 
 /**
  * Calls the app initializer with production parameters.

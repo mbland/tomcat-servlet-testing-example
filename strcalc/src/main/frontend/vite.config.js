@@ -89,6 +89,13 @@ export default defineConfig({
       // and bin/jsdoc-cli-wrapper.js move into their own repositories.
       exclude: [ ...configDefaults.coverage.exclude, 'plugins/*', 'bin/*' ]
     },
+    server: {
+      deps: {
+        // Without this, jsdom tests will fail to import '.hbs' files
+        // transformed by rollup-plugin-handlebars-precompiler.
+        inline: ['test-page-opener']
+      }
+    },
     browser: {
       name: 'chrome',
       providerOptions: getProviderOptions()

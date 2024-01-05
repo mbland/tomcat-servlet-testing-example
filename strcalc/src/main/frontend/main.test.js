@@ -4,16 +4,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-import { describe, afterEach, expect, test } from 'vitest'
-import { PageLoader } from './test/page-loader.js'
-import StringCalculatorPage from './test/page'
+import { afterEach, beforeAll, describe, expect, test } from 'vitest'
+import StringCalculatorPage from './test/page.js'
+import TestPageOpener from 'test-page-opener'
 
 describe('String Calculator UI on initial page load', () => {
-  const loader = new PageLoader('/strcalc/')
-  afterEach(() => loader.closeAll())
+  let opener
+
+  beforeAll(async () => opener = await TestPageOpener.create('/strcalc/'))
+  afterEach(() => opener.closeAll())
 
   test('contains the "Hello, World!" placeholder', async () => {
-    const { document } = await loader.load('index.html')
+    const { document } = await opener.open('index.html')
     const appElem = document.querySelector('#app')
 
     const e = new StringCalculatorPage(appElem, document).title()
