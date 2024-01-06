@@ -10,8 +10,8 @@
  * @module init
  */
 
-import Introduction from './introduction'
-import Calculator from './calculator'
+import Introduction from './introduction.js'
+import Calculator from './calculator.js'
 
 export default class App {
   /**

@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { postFormData } from './request'
+import { postFormData } from './request.js'
 
 export const DEFAULT_ENDPOINT = './add'
 
