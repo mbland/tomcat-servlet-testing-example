@@ -1,7 +1,5 @@
-import handlebarsPrecompiler from
-  './plugins/rollup-plugin-handlebars-precompiler.js'
+import HandlebarsPrecompiler from 'rollup-plugin-handlebars-precompiler'
 import { defineConfig } from 'vite'
-import { configDefaults } from 'vitest/config'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path/posix'
@@ -69,7 +67,7 @@ function getProviderOptions(){
 export default defineConfig({
   base: '/strcalc/',
   plugins: [
-    handlebarsPrecompiler({ helpers: ['components/helpers.js'] })
+    HandlebarsPrecompiler({ helpers: ['components/helpers.js'] })
   ],
   define: {
     STRCALC_BACKEND: JSON.stringify(process.env.STRCALC_BACKEND)
@@ -84,10 +82,7 @@ export default defineConfig({
   test: {
     outputFile: buildDir('test-results/test-frontend/TESTS-TestSuites.xml'),
     coverage: {
-      reportsDirectory: buildDir('reports/frontend/coverage'),
-      // Remove 'exclude:' once rollup-plugin-handlebars-precompile
-      // and bin/jsdoc-cli-wrapper.js move into their own repositories.
-      exclude: [ ...configDefaults.coverage.exclude, 'plugins/*', 'bin/*' ]
+      reportsDirectory: buildDir('reports/frontend/coverage')
     },
     server: {
       deps: {
