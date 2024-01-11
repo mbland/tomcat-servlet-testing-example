@@ -41,6 +41,9 @@ devDependencies:
   jsdom:
     specifier: ^23.1.0
     version: 23.1.0
+  rollup-plugin-handlebars-precompiler:
+    specifier: ^1.0.0
+    version: 1.0.0
   test-page-opener:
     specifier: ^1.0.3
     version: 1.0.3
@@ -3260,6 +3263,16 @@ packages:
     hasBin: true
     dependencies:
       glob: 7.2.3
+    dev: true
+
+  /rollup-plugin-handlebars-precompiler@1.0.0:
+    resolution: {integrity: sha512-ZmN/ESpEp+zX/4fekOg3mMNVxE8f4Jk9d44t1V1QZTmn3yXcDe86/SZwjDcxi9j6QWmXnfg13fF/qI1WHPME4g==}
+    engines: {node: '>=18.0.0'}
+    dependencies:
+      '@rollup/pluginutils': 5.1.0
+      handlebars: 4.7.8
+    transitivePeerDependencies:
+      - rollup
     dev: true
 
   /rollup@4.9.3:

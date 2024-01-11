@@ -44,6 +44,7 @@
     "handlebars": "^4.7.8",
     "jsdoc-cli-wrapper": "^1.0.4",
     "jsdom": "^23.1.0",
+    "rollup-plugin-handlebars-precompiler": "^1.0.0",
     "test-page-opener": "^1.0.3",
     "vite": "^5.0.11",
     "vitest": "^1.1.3",
