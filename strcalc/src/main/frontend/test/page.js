@@ -18,9 +18,19 @@ export default class StringCalculatorPage {
   appElem
   #select
 
+  /**
+   * @param {Element} appElem - root element of the StringCalculator application
+   * @param {Document} doc - Document object containing the application
+   */
   constructor(appElem, doc = document) {
     this.appElem = appElem
-    this.#select = sel => doc.querySelector(`#${appElem.id} ${sel}`)
+
+    /**
+     * @param {string} sel - argument for Document.querySelector()
+     * @returns {(Element | {})} - the selected element from the doc, or an
+     *   empty object if not found
+     */
+    this.#select = sel => (doc.querySelector(`#${appElem.id} ${sel}`) || {})
   }
 
   static new() {
@@ -33,28 +43,69 @@ export default class StringCalculatorPage {
   clear() { this.appElem.replaceChildren() }
   remove() { this.appElem.remove() }
 
-  title() { return this.#select('.title a') }
-  form() { return this.#select('form') }
-  input() { return this.#select('form input[name="numbers"]') }
-  submit() { return this.#select('form input[type="submit"]') }
-  result() { return this.#select('.result p') }
+  title() {
+    return /** @type {HTMLAnchorElement} */ (this.#select('.title a'))
+  }
 
+  form() {
+    return /** @type {HTMLFormElement} */ (this.#select('form'))
+  }
+
+  input() {
+    return /** @type {HTMLInputElement} */ (
+      this.#select('form input[name="numbers"]')
+    )
+  }
+
+  impl() {
+    return /** @type {HTMLInputElement} */ (
+      this.#select('form input[name="impl"]:checked')
+    )
+  }
+
+  submitButton() {
+    return /** @type {HTMLInputElement} */ (
+      this.#select('form input[type="submit"]')
+    )
+  }
+
+  result() {
+    return /** @type {HTMLParagraphElement} */ (this.#select('.result p'))
+  }
+
+  /**
+   * @callback SubmitCallback
+   * @returns {Promise<string>} the StringCalculator result
+   * @throws {Error} if the .result element is missing
+   * @throws {string} if the result field hasn't changed
+   */
+
+  /**
+   * @param {string} value - input value for the StringCalculator UI
+   * @returns {SubmitCallback} - the StringCalculator result
+   */
   enterValueAndSubmit(value) {
     const orig = this.result().textContent
 
     this.input().value = value
-
-    // You would _think_ that this.submit().click() would submit the form...
-    // Nope:
-    // - https://developer.mozilla.org/docs/Web/API/HTMLFormElement/requestSubmit
-    this.form().requestSubmit(this.submit())
+    this.doSubmit()
 
     return async () => {
       const result = this.result().textContent
+      if (result === null) throw new Error('missing .result element')
       if (result === orig) {
         return Promise.reject(`Result field hasn't changed: ${orig}`)
       }
       return Promise.resolve(result)
     }
+  }
+
+  /**
+   * Submits the form via HTMLFormElement.requestSubmit()
+   * You would _think_ that this.submit().click() would submit the form... Nope.
+   * @see https://developer.mozilla.org/docs/Web/API/HTMLFormElement/requestSubmit
+   */
+  doSubmit() {
+    this.form().requestSubmit(this.submitButton())
   }
 }

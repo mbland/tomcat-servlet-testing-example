@@ -4,9 +4,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-import { post, postFormData, postOptions } from './request'
+import { post, postFormData, postOptions } from './request.js'
 import { afterEach, describe, expect, test, vi } from 'vitest'
-import setupFetchStub from '../test/fetch-stub'
+import setupFetchStub from '../test/fetch-stub.js'
 
 // @vitest-environment jsdom
 describe('Request', () => {
@@ -17,7 +17,7 @@ describe('Request', () => {
   describe('post', () => {
     test('succeeds', async () => {
       const res = { foo: 'bar' }
-      const fetchStub = setupFetchStub(JSON.stringify(res))
+      const fetchStub = setupFetchStub(res)
 
       await expect(post('/fetch', req)).resolves.toEqual(res)
       expect(fetchStub).toHaveBeenCalledWith('/fetch', postOptions(req))
@@ -25,7 +25,7 @@ describe('Request', () => {
 
     test('rejects with an error if the response contains "error"', async () => {
       const res = { error: 'OK status, but still an error' }
-      setupFetchStub(JSON.stringify(res))
+      setupFetchStub(res)
 
       await expect(post('/fetch', req)).rejects.toThrow(res.error)
     })
@@ -49,7 +49,7 @@ describe('Request', () => {
     test('succeeds', async () => {
       const fd = new FormData()
       const res = { foo: 'bar' }
-      const fetchStub = setupFetchStub(JSON.stringify(res))
+      const fetchStub = setupFetchStub(res)
       Object.entries(req).forEach(([k,v]) => fd.append(k,v))
 
       await expect(postFormData('/fetch', fd)).resolves.toEqual(res)

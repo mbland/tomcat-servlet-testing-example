@@ -1,8 +1,8 @@
 {
-  "env" : {
-    "browser" : true,
+  "env": {
+    "browser": true,
     "node": true,
-    "es2023" : true
+    "es2023": true
   },
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -15,7 +15,7 @@
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:jsdoc/recommended"
+    "plugin:jsdoc/recommended-typescript-flavor-error"
   ],
   "overrides": [
     {
@@ -26,7 +26,7 @@
       ]
     }
   ],
-  "rules" : {
+  "rules": {
     "@stylistic/js/comma-dangle": [
       "error", "never"
     ],
@@ -51,5 +51,12 @@
     "no-console": [
       "error", { "allow": [ "warn", "error" ]}
     ]
+  },
+  "settings": {
+    "jsdoc": {
+      "preferredTypes": {
+        "Object": "object"
+      }
+    }
   }
 }

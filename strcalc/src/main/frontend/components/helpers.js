@@ -21,7 +21,19 @@
  * @param {module} Handlebars The Handlebars runtime module
  */
 export default function(Handlebars) {
-  Handlebars.registerHelper('link', function(text, options) {
+  /**
+   * @typedef {object} LinkHelperOptions
+   * @property {Object.<string, string>} hash - hash arguments from the link tag
+   * @see https://handlebarsjs.com/guide/expressions.html#helpers
+   */
+
+  /**
+   * @param {string} text - the anchor text for the generated link
+   * @param {LinkHelperOptions} options - options including the href URL
+   * @returns {import("handlebars").SafeString} - properly escaped <a> element
+   *   text
+   */
+  const linkHelper = function(text, options) {
     const attrs = Object.keys(options.hash).map(key => {
       return `${Handlebars.escapeExpression(key)}=` +
         `"${Handlebars.escapeExpression(options.hash[key])}"`
@@ -29,5 +41,6 @@ export default function(Handlebars) {
     return new Handlebars.SafeString(
       `<a ${attrs.join(' ')}>${Handlebars.escapeExpression(text)}</a>`
     )
-  })
+  }
+  Handlebars.registerHelper('link', linkHelper)
 }

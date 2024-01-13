@@ -21,7 +21,8 @@ export default class App {
    * demonstrate how to design much larger applications for testability.
    * @param {object} params - parameters made available to all initializers
    * @param {Element} params.appElem - parent Element containing all components
-   * @param {object} params.calculators - calculator implementations
+   * @param {import('./calculators.js').StrCalcDescriptors} params.calculators -
+   *   calculator implementations
    */
   init(params) {
     // In this example application, none of the components depend on one

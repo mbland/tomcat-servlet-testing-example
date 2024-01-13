@@ -5,9 +5,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import Calculator from './calculator'
+import Calculator from './calculator.js'
+import Template from './calculator.hbs'
 import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
-import StringCalculatorPage from '../test/page'
+import StringCalculatorPage from '../test/page.js'
 
 // @vitest-environment jsdom
 describe('Calculator', () => {
@@ -15,22 +16,45 @@ describe('Calculator', () => {
 
   const setup = () => {
     const postFormData = vi.fn()
+    /** @type {import('./calculators.js').StrCalcDescriptors} */
     const calculators = {
       'api': { label: 'API', impl: postFormData },
-      'browser': { label: 'Browser', impl: () => {} }
+      'browser': { label: 'Browser', impl: vi.fn() }
     }
 
     new Calculator().init({ appElem: page.appElem, calculators })
     return { page, postFormData }
   }
 
+  const setupConsoleErrorSpy = () => {
+    const consoleSpy = vi.spyOn(console, 'error')
+      .mockImplementationOnce(() => {})
+
+    return {
+      consoleSpy,
+      loggedError: () => {
+        const lastCall = consoleSpy.mock.lastCall
+        if (!lastCall) throw new Error('error not logged')
+        return lastCall
+      }
+    }
+  }
+
+  /**
+   * @param {string} numbersString - input to the StringCalculator
+   * @returns {FormData} - form data to submit to the implementation
+   */
   const expectedFormData = (numbersString) => {
     const data = new FormData()
     data.append('numbers', numbersString)
     return data
   }
 
-  afterEach(() => page.clear())
+  afterEach(() => {
+    vi.restoreAllMocks()
+    page.clear()
+  })
+
   afterAll(() => page.remove())
 
   test('renders form and result placeholder', async () => {
@@ -58,5 +82,52 @@ describe('Calculator', () => {
 
     await expect(result).resolves.toBe('Error: D\'oh!')
     expect(postFormData).toHaveBeenCalledWith(expectedFormData('2,2'))
+  })
+
+  test('logs error if missing numbers input element', async () => {
+    const { loggedError } = setupConsoleErrorSpy()
+    /** @type {import('./calculators.js').StrCalcDescriptors} */
+    const calculators = {}
+    /**
+     * @param {any} context - init parameters for template
+     * @returns {DocumentFragment} - template elements without #numbers element
+     */
+    const BadTemplate = (context) => {
+      const t = Template({ context })
+      const [ form ] = t.children
+      const input = form.querySelector('#numbers')
+
+      if (input !== null) input.remove()
+      return t
+    }
+
+    new Calculator().init(
+      { appElem: page.appElem, calculators, instantiate: BadTemplate }
+    )
+
+    expect(await vi.waitFor(loggedError))
+      .toStrictEqual(['missing numbers input'])
+  })
+
+  test('logs error if missing implementation input element', async () => {
+    const { page } = setup()
+    const { loggedError } = setupConsoleErrorSpy()
+
+    page.impl().remove()
+    page.enterValueAndSubmit('2,2')
+
+    expect(await vi.waitFor(loggedError))
+      .toStrictEqual(['missing implementation input'])
+  })
+
+  test('logs error if missing result element', async () => {
+    const { page } = setup()
+    const { loggedError } = setupConsoleErrorSpy()
+
+    page.result().remove()
+    page.enterValueAndSubmit('2,2')
+
+    expect(await vi.waitFor(loggedError))
+      .toStrictEqual(['missing result element'])
   })
 })
