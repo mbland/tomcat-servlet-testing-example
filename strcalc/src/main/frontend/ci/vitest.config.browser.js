@@ -1,5 +1,5 @@
 import { defineConfig, mergeConfig } from 'vitest/config'
-import viteConfig, { buildDir } from '../vite.config'
+import viteConfig, { buildDir } from '../vite.config.js'
 
 export default mergeConfig(viteConfig, defineConfig({
   test: {

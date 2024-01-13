@@ -3,27 +3,58 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+/* global STRCALC_BACKEND */
 
 import { postFormData } from './request.js'
 
 export const DEFAULT_ENDPOINT = './add'
 
-const backendUrl = () => globalThis.STRCALC_BACKEND ?
-  new URL(DEFAULT_ENDPOINT, globalThis.STRCALC_BACKEND).toString() :
+const backendUrl = () => STRCALC_BACKEND ?
+  new URL(DEFAULT_ENDPOINT, STRCALC_BACKEND).toString() :
   DEFAULT_ENDPOINT
 
-const backendCalculator = async (data)=> postFormData(backendUrl(), data)
+/**
+ * @typedef {object} StrCalcPayload
+ * @property {number} [result] - the result of the calculation
+ * @property {string} [error] - error message if the request failed
+ */
 
+/**
+ * Function that invokes a specific String Calculator implementation
+ * @callback StrCalcCallback
+ * @param {FormData} data - form data providing String Calculator input
+ * @returns {Promise<StrCalcPayload>} - the String Calculator result
+ */
+
+/**
+ * Posts the String Calculator input to the backend implementation
+ * @type {StrCalcCallback}
+ */
+const backendCalculator = async (data) => postFormData(backendUrl(), data)
+
+/**
+ * Returns an error as a placeholder for an in-browser StringCalculator
+ * @type {StrCalcCallback}
+ */
 const tempCalculator = async (data) => Promise.reject(new Error(
   `Temporary in-browser calculator received: "${data.get('numbers')}"`
 ))
+
+/**
+ * Describes a specific StringCalculator implementation
+ * @typedef {object} StrCalcDescriptor
+ * @property {string} label - descriptive name describing the implementation
+ * @property {StrCalcCallback} impl - callback invoking StringCalculator impl
+ */
 
 /**
  * Collection of production String Calculator implementations
  *
  * Each implementation takes a FormData instance containing only a
  * 'numbers' field as its single argument.
+ * @typedef {Object.<string, StrCalcDescriptor>} StrCalcDescriptors
  */
+/** @type {StrCalcDescriptors} */
 export default {
   'api': { label: 'Tomcat backend API (Java)', impl: backendCalculator },
   'browser': { label: 'In-browser (JavaScript)', impl: tempCalculator }

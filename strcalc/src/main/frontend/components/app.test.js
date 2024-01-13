@@ -6,16 +6,22 @@
  */
 import App from './app.js'
 import { afterAll, afterEach, describe, expect, test } from 'vitest'
-import StringCalculatorPage from '../test/page'
+import StringCalculatorPage from '../test/page.js'
 
 // @vitest-environment jsdom
 describe('initial state after calling App.init()', () => {
-  const page = StringCalculatorPage.new()
+  /** @type {import('./calculators.js').StrCalcCallback} */
+  // eslint-disable-next-line no-unused-vars
+  const implStub = async _ => ({})
+
+  /** @type {import('./calculators.js').StrCalcDescriptors} */
   const calculators = {
-    'first': { label: 'First calculator', impl: null },
-    'second': { label: 'Second calculator', impl: null },
-    'third': { label: 'Third calculator', impl: null }
+    'first': { label: 'First calculator', impl: implStub },
+    'second': { label: 'Second calculator', impl: implStub },
+    'third': { label: 'Third calculator', impl: implStub }
   }
+
+  const page = StringCalculatorPage.new()
 
   afterEach(() => page.clear())
   afterAll(() => page.remove())
@@ -28,4 +34,3 @@ describe('initial state after calling App.init()', () => {
     expect(e.href).toContain('%22Hello,_World!%22')
   })
 })
-

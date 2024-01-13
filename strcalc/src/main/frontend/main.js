@@ -30,7 +30,9 @@ document.addEventListener(
   'DOMContentLoaded',
   () => {
     const appElem = document.querySelector('#app')
-    new App().init({ appElem, calculators })
+
+    if (appElem === null) console.error('missing #app element')
+    else new App().init({ appElem, calculators })
   },
   { once: true }
 )

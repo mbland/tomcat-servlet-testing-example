@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "module": "nodenext",
+    "strict": true
+  },
+  "exclude": [
+    "node_modules/**",
+    "coverage/**",
+    "jsdoc/**"
+  ]
+}

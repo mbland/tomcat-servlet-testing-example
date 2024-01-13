@@ -14,17 +14,18 @@ import {vi} from 'vitest'
  * after every test.
  * @see https://developer.mozilla.org/docs/Web/API/Fetch_API/Using_Fetch
  * @see https://developer.mozilla.org/docs/Web/API/Response/Response
- * @param {object} body - an object defining a body for the response
- * @param {object} options - optional values to include in the response
- * @param {object} options.status - HTTP status code of the response
- * @param {object} options.statusText - text accompanying the status response
- * @param {object} options.headers - HTTP Headers to include with the response
+ * @param {(object | string)} body - object or string defining a body for the
+ *   response
+ * @param {ResponseInit} [options] - optional values to include in the response
  * @returns {Function} - a vi.fn() stub configured to return a Response once
  */
 export default function setupFetchStub(body, options) {
   const fetchStub = vi.fn()
+  const responseBody = typeof body === 'object' ? JSON.stringify(body) : body
 
-  fetchStub.mockReturnValueOnce(Promise.resolve(new Response(body, options)))
+  fetchStub.mockReturnValueOnce(
+    Promise.resolve(new Response(responseBody, options))
+  )
   vi.stubGlobal('fetch', fetchStub)
   return fetchStub
 }
