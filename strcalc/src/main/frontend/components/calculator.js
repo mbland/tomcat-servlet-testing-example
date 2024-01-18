@@ -11,23 +11,23 @@ export default class Calculator {
    * Initializes the Calculator within the document.
    * @param {object} params - parameters made available to all initializers
    * @param {Element} params.appElem - parent Element containing all components
-   * @param {import('./calculators.js').StrCalcDescriptors} params.calculators -
+   * @param {import("./calculators.js").StrCalcDescriptors} params.calculators -
    *   calculator implementations
-   * @param {Function} [params.instantiate] - alternative template instantiation
-   *   function for testing
+   * @param {HandlebarsPrecompiler.TemplateRenderer} [params.render] -
+   *   alternative template rendering function for testing
    * @returns {void}
    */
-  init({ appElem, calculators, instantiate = Template }) {
+  init({ appElem, calculators, render = Template }) {
     const calcOptions = Object.entries(calculators)
       .map(([k, v]) => ({ value: k, label: v.label }))
-    const t = instantiate({ calcOptions })
+    const t = render({ calcOptions })
     const [ form, resultElem ] = t.children
 
     appElem.appendChild(t)
 
     /** @type {(HTMLInputElement | null)} */
     const numbers = document.querySelector('#numbers')
-    if (numbers === null) return console.error('missing numbers input')
+    if (numbers === null) return void console.error('missing numbers input')
     numbers.focus()
 
     form.addEventListener(

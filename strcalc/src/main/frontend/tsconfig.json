@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "module": "nodenext",
+    "strict": true,
+    "noEmit": true,
+    "pretty": true
+  },
+  "exclude": [
+    "node_modules",
+    "coverage",
+    "jsdoc"
+  ]
+}
