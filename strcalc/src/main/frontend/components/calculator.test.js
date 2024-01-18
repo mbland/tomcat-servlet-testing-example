@@ -102,7 +102,7 @@ describe('Calculator', () => {
     }
 
     new Calculator().init(
-      { appElem: page.appElem, calculators, instantiate: BadTemplate }
+      { appElem: page.appElem, calculators, render: BadTemplate }
     )
 
     expect(await vi.waitFor(loggedError))
