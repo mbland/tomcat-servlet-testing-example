@@ -1,10 +1,10 @@
 [versions]
 servletVer = "6.0.0"
-tomcatVer = "10.1.17"
-junitVer = "5.10.1"
+tomcatVer = "10.1.19"
+junitVer = "5.10.2"
 hamcrestVer = "2.2"
 antJunitVer = "1.10.14"
-seleniumVer = "4.16.1"
+seleniumVer = "4.18.1"
 weldVer = "5.1.2.Final"
 jandexVer = "3.1.6"
 jacksonVer = "2.16.1"
