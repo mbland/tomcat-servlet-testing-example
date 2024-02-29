@@ -13,10 +13,11 @@ public class ProdStringCalculator {
         }
 
         var parts = s.split(",");
+        var result = Integer.parseInt(parts[0]);
 
         if (parts.length == 2) {
-            return Integer.parseInt(parts[0]) + Integer.parseInt(parts[1]);
+            result += Integer.parseInt(parts[1]);
         }
-        return Integer.parseInt(s);
+        return result;
     }
 }
