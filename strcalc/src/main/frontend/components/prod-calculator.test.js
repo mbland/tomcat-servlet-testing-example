@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-
+import ProdStringCalculator from './prod-calculator.js'
 import { describe, test } from 'vitest'
 
 describe('ProdStringCalculator', () => {
