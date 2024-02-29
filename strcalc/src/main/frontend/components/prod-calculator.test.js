@@ -24,4 +24,12 @@ describe('ProdStringCalculator', () => {
 
     expect(result).toEqual(1)
   })
+
+  test('returns sum of two numbers', () => {
+    let calc = new ProdStringCalculator()
+
+    let result = calc.add('1,2')
+
+    expect(result).toEqual(3)
+  })
 })
