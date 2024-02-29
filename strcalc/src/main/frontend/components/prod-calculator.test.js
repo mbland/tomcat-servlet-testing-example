@@ -10,5 +10,6 @@ import { describe, test } from 'vitest'
 
 describe('ProdStringCalculator', () => {
   test('empty string returns zero', () => {
+    let calc = new ProdStringCalculator()
   })
 })
