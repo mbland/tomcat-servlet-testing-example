@@ -19,4 +19,13 @@ public class ProdStringCalculatorTest {
 
         assertEquals(0, result);
     }
+
+    @SmallTest
+    void singleNumberReturnsSameNumber() {
+        var calc = new ProdStringCalculator();
+
+        int result = calc.add("1");
+
+        assertEquals(1, result);
+    }
 }
