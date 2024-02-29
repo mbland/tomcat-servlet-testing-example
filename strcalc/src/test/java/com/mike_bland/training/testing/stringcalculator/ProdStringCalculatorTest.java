@@ -8,9 +8,15 @@ package com.mike_bland.training.testing.stringcalculator;
 
 import com.mike_bland.training.testing.annotations.SmallTest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class ProdStringCalculatorTest {
     @SmallTest
     void emptyStringReturnsZero() {
         var calc = new ProdStringCalculator();
+
+        int result = calc.add("");
+
+        assertEquals(0, result);
     }
 }
