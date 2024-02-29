@@ -6,30 +6,25 @@
  */
 
 import ProdStringCalculator from './prod-calculator.js'
-import { describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 
 describe('ProdStringCalculator', () => {
+  /** @type {ProdStringCalculator} */
+  let calc
+
+  beforeEach(() => {
+    calc = new ProdStringCalculator()
+  })
+
   test('empty string returns zero', () => {
-    let calc = new ProdStringCalculator()
-
-    let result = calc.add('')
-
-    expect(result).toEqual(0)
+    expect(calc.add('')).toEqual(0)
   })
 
   test('single number returns same number', () => {
-    let calc = new ProdStringCalculator()
-
-    let result = calc.add('1')
-
-    expect(result).toEqual(1)
+    expect(calc.add('1')).toEqual(1)
   })
 
   test('returns sum of two numbers', () => {
-    let calc = new ProdStringCalculator()
-
-    let result = calc.add('1,2')
-
-    expect(result).toEqual(3)
+    expect(calc.add('1,2')).toEqual(3)
   })
 })
