@@ -28,4 +28,13 @@ public class ProdStringCalculatorTest {
 
         assertEquals(1, result);
     }
+
+    @SmallTest
+    void returnsSumOfTwoNumbers() {
+        var calc = new ProdStringCalculator();
+
+        int result = calc.add("1,2");
+
+        assertEquals(3, result);
+    }
 }
