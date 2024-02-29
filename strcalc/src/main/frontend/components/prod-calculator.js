@@ -12,6 +12,9 @@ export default class ProdStringCalculator {
    * @returns {number} - the sum of the numbers in s
    */
   add(s) {
-    return 0
+    if (s === '') {
+      return 0
+    }
+    return parseInt(s)
   }
 }
