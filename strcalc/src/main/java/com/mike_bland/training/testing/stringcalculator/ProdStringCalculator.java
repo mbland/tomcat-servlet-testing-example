@@ -7,4 +7,7 @@
 package com.mike_bland.training.testing.stringcalculator;
 
 public class ProdStringCalculator {
+    int add(String s) {
+        return 0;
+    }
 }
