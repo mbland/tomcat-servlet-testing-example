@@ -5,6 +5,7 @@
  */
 /* global STRCALC_BACKEND */
 
+import ProdStringCalculator from './prod-calculator.js'
 import { postFormData } from './request.js'
 
 export const DEFAULT_ENDPOINT = './add'
@@ -33,12 +34,12 @@ const backendUrl = () => STRCALC_BACKEND ?
 const backendCalculator = async (data) => postFormData(backendUrl(), data)
 
 /**
- * Returns an error as a placeholder for an in-browser StringCalculator
+ * Returns the result from the in-browser ProdStringCalculator
  * @type {StrCalcCallback}
  */
-const tempCalculator = async (data) => Promise.reject(new Error(
-  `Temporary in-browser calculator received: "${data.get('numbers')}"`
-))
+const browserCalculator = async (data) => ({
+  result: new ProdStringCalculator().add(`${data.get('numbers')}`)
+})
 
 /**
  * Describes a specific StringCalculator implementation
@@ -57,5 +58,5 @@ const tempCalculator = async (data) => Promise.reject(new Error(
 /** @type {StrCalcDescriptors} */
 export default {
   'api': { label: 'Tomcat backend API (Java)', impl: backendCalculator },
-  'browser': { label: 'In-browser (JavaScript)', impl: tempCalculator }
+  'browser': { label: 'In-browser (JavaScript)', impl: browserCalculator }
 }
