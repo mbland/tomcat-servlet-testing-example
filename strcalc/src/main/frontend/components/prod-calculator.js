@@ -17,10 +17,11 @@ export default class ProdStringCalculator {
     }
 
     let parts = s.split(',')
+    let result = parseInt(parts[0])
 
     if (parts.length === 2) {
-      return parseInt(parts[0]) + parseInt(parts[1])
+      result += parseInt(parts[1])
     }
-    return parseInt(s)
+    return result
   }
 }
