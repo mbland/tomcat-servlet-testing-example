@@ -6,10 +6,14 @@
  */
 
 import ProdStringCalculator from './prod-calculator.js'
-import { describe, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 
 describe('ProdStringCalculator', () => {
   test('empty string returns zero', () => {
     let calc = new ProdStringCalculator()
+
+    let result = calc.add('')
+
+    expect(result).toEqual(0)
   })
 })
