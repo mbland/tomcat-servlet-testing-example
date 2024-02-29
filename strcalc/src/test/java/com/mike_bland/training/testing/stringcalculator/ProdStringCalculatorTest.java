@@ -11,5 +11,6 @@ import com.mike_bland.training.testing.annotations.SmallTest;
 public class ProdStringCalculatorTest {
     @SmallTest
     void emptyStringReturnsZero() {
+        var calc = new ProdStringCalculator();
     }
 }
