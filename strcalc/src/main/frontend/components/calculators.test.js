@@ -46,11 +46,9 @@ describe('calculators', () => {
     })
   })
 
-  test('tempCalculator rejects with Error', async () => {
+  test('browserCalculator returns valid value', async () => {
     const data = setupData('2,2')
 
-    await expect(calculators.browser.impl(data)).rejects.toThrow(
-      new Error('Temporary in-browser calculator received: "2,2"')
-    )
+    await expect(calculators.browser.impl(data)).resolves.toEqual({ result: 4 })
   })
 })
