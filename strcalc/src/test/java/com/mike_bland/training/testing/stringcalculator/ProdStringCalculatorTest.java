@@ -7,34 +7,30 @@
 package com.mike_bland.training.testing.stringcalculator;
 
 import com.mike_bland.training.testing.annotations.SmallTest;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProdStringCalculatorTest {
+    ProdStringCalculator calc;
+
+    @BeforeEach
+    void setUp() {
+        calc = new ProdStringCalculator();
+    }
+
     @SmallTest
     void emptyStringReturnsZero() {
-        var calc = new ProdStringCalculator();
-
-        int result = calc.add("");
-
-        assertEquals(0, result);
+        assertEquals(0, calc.add(""));
     }
 
     @SmallTest
     void singleNumberReturnsSameNumber() {
-        var calc = new ProdStringCalculator();
-
-        int result = calc.add("1");
-
-        assertEquals(1, result);
+        assertEquals(1, calc.add("1"));
     }
 
     @SmallTest
     void returnsSumOfTwoNumbers() {
-        var calc = new ProdStringCalculator();
-
-        int result = calc.add("1,2");
-
-        assertEquals(3, result);
+        assertEquals(3, calc.add("1,2"));
     }
 }
