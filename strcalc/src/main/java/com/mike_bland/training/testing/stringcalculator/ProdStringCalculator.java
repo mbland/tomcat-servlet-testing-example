@@ -11,6 +11,12 @@ public class ProdStringCalculator {
         if (s.isEmpty()) {
             return 0;
         }
+
+        var parts = s.split(",");
+
+        if (parts.length == 2) {
+            return Integer.parseInt(parts[0]) + Integer.parseInt(parts[1]);
+        }
         return Integer.parseInt(s);
     }
 }
