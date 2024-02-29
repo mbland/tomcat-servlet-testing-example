@@ -16,4 +16,12 @@ describe('ProdStringCalculator', () => {
 
     expect(result).toEqual(0)
   })
+
+  test('single number returns same number', () => {
+    let calc = new ProdStringCalculator()
+
+    let result = calc.add('1')
+
+    expect(result).toEqual(1)
+  })
 })
