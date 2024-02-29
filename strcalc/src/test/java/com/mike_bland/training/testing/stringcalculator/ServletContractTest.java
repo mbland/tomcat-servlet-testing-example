@@ -120,7 +120,7 @@ class ServletContractTest {
     // test, so we collect coverage for (most of) them. These tests are
     // annotated with @MediumCoverageTest.
     //
-    // The exception is productionImplementationTemporarilyReturnsError(), which
+    // The exception is productionImplementationReturnsSuccessfully(), which
     // is a @MediumTest, for reasons explained in that test's comment.
     // ---------------------------------------------
 
@@ -148,8 +148,8 @@ class ServletContractTest {
         assertEquals("placeholder for /add API endpoint", resp.body());
     }
 
-    // Tests that our TemporaryStringCalculator, configured via Weld/CDI
-    // based on our settings in src/main/webapp, returns an error as expected.
+    // Tests that our ProdStringCalculator, configured via Weld/CDI
+    // based on our settings in src/main/webapp, returns a valid value.
     //
     // When the actual StringCalculator class is in place, this tests should
     // be updated or replaced to validate that the system uses that
@@ -243,16 +243,14 @@ class ServletContractTest {
     //   higher level issues and system integration without worrying about
     //   business logic.
     @MediumTest
-    void productionImplementationTemporarilyReturnsError() throws Exception {
+    void productionImplementationReturnsSuccessfully() throws Exception {
         tomcat.startWithBuildInputs();
 
-        var r = sendStringCalculatorRequest("");
+        var r = sendStringCalculatorRequest("1,2");
 
-        assertEquals(HttpServletResponse.SC_BAD_REQUEST, r.resp.statusCode());
+        assertEquals(HttpServletResponse.SC_OK, r.resp.statusCode());
         assertThat(r.resp, hasContentType("application/json;charset=UTF-8"));
-        var expected = new Servlet.CalculatorResponse(
-                0, "TemporaryStringCalculator received: \"\""
-        );
+        var expected = new Servlet.CalculatorResponse(3, null);
         assertThat(r.payload, samePropertyValuesAs(expected));
     }
 
@@ -319,49 +317,6 @@ class ServletContractTest {
     }
 
     // Tests the error path through Servlet.doPost().
-    //
-    // NOTE ON KEEPING SEEMINGLY REDUNDANT TEST METHODS:
-    // ------------------------------------------------
-    // You may notice that the productionImplementationTemporarilyReturnsError
-    // test method covers the same error path. So if we already have that
-    // test, why have this one?
-    //
-    // Solely from the perspective of the teaching example, this case helps
-    // illustrate how one can easily simulate an error with a test double.
-    // It's often the case that simulating errors using production dependencies
-    // can be complex, unreliable, and cost prohibitive, if even possible.
-    // Easily, cheaply, and reliably simulating error conditions is one of
-    // the biggest benefits of using test doubles.
-    //
-    // From the perspective of the current configuration, this test is a
-    // @MediumCoverageTest, and the earlier test is a @MediumTest. If we
-    // remove this test, we either lose code coverage, or we'll have to make
-    // the @MediumTest into a @MediumCoverageTest. This is a relatively minor
-    // concern, but still worth noting explicitly.
-    //
-    // Beyond that, building on the earlier conversation regarding
-    // @MediumTests and @MediumCoverageTests, there will necessarily be some
-    // degree of overlap between the two. However, keeping the smaller test
-    // helps us iterate quickly when working on the same code path. The
-    // smaller test, even in its current form, is orders of magnitude faster
-    // than the @MediumTest.
-    //
-    // As one moves up the Test Pyramid, there will be larger tests that
-    // necessarily execute the same code paths as smaller tests. One may not
-    // want to unnecessarily duplicate test coverage on principle, but trying to
-    // eliminate all duplication between tests can prove even more inefficient.
-    //
-    // In fact, it could prove harmful. Note the commment for
-    // productionImplementationTemporarilyReturnsError() recommends updating or
-    // replacing it with the actual StringCalculator implementation when ready.
-    // At that point, this test may no longer be redundant. If the student
-    // chooses to validate a successful StringCalculator operation, the previous
-    // test case will become redundant! If we remove this "redundant" test
-    // now, we might end up with a testing gap later without realizing it.
-    //
-    // Given that the smaller test should be relatively easy to maintain,
-    // there's no harm and some appreciable benefit to keeping this
-    // "overlapping" test case around.
     @MediumCoverageTest
     void addRequestError() throws Exception {
         tomcat.start(new Servlet(numbers -> {

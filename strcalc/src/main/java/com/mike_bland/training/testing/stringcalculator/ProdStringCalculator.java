@@ -6,8 +6,12 @@
 
 package com.mike_bland.training.testing.stringcalculator;
 
-public class ProdStringCalculator {
-    int add(String s) {
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
+public class ProdStringCalculator implements StringCalculator {
+    @Override
+    public int add(String s) {
         if (s.isEmpty()) {
             return 0;
         }

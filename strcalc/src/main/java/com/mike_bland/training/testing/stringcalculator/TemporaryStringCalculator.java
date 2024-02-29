@@ -1,8 +1,5 @@
 package com.mike_bland.training.testing.stringcalculator;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
-@ApplicationScoped
 public class TemporaryStringCalculator implements StringCalculator {
     public static class Exception extends StringCalculator.Exception {
         public Exception(String numbers) {
